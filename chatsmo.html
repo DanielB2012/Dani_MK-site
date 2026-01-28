@@ -4,22 +4,185 @@
 <meta charset="UTF-8">
 <title>ChatSmo - Dani_MK</title>
 <style>
-/* CSS simplifié pour le chat */
-body { font-family:'Segoe UI', sans-serif; background:#000; color:white; margin:0; }
-.page { display:flex; justify-content:center; align-items:center; min-height:100vh; padding-top:50px; }
-.chat-card { width:90%; max-width:800px; height:600px; background:#111; border-radius:20px; display:flex; flex-direction:column; }
-.chat-window { flex:1; padding:15px; overflow-y:auto; display:flex; flex-direction:column; gap:10px; }
-.chat-input { display:flex; padding:10px; border-top:1px solid #333; }
-.chat-input input { flex:1; padding:10px; border-radius:10px; border:none; }
-.chat-input button { margin-left:10px; padding:0 20px; border-radius:10px; border:none; background:#4c00ff; color:white; cursor:pointer; }
-.message { padding:8px 12px; border-radius:10px; max-width:80%; }
-.user { background:#333; align-self:flex-end; }
-.ia { background:#4c00ff; align-self:flex-start; }
+* { box-sizing: border-box; }
+
+/* Fond violet stylé et police */
+body {
+    margin: 0;
+    font-family:'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #4c00ff, #aa00ff);
+    color: white;
+    min-height: 100vh;
+}
+
+/* Navbar */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 70px;
+    background: rgba(0,0,0,0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 25px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.6);
+    z-index: 1000;
+}
+
+.nav-btn {
+    padding: 12px 26px;
+    border-radius: 20px;
+    border: none;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+}
+
+/* Boutons navbar */
+.nav-btn.totk { background: #ff0000; }
+.nav-btn.smo { background: #00cc44; }
+.nav-btn.botw { background: #0066ff; }
+.nav-btn.accueil { background: linear-gradient(135deg, #ff0000, #6a00ff); }
+
+.nav-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(255,255,255,0.4);
+}
+
+.nav-btn.totk:hover { background: #ff3333; }
+.nav-btn.smo:hover { background: #33dd66; }
+.nav-btn.botw:hover { background: #3399ff; }
+.nav-btn.accueil:hover { background: linear-gradient(135deg, #ff3333, #8a2bff); }
+
+/* Page container */
+.page {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding-top: 100px; /* pour navbar */
+    min-height: calc(100vh - 100px);
+    gap: 30px;
+}
+
+/* Chat container */
+.chat-card {
+    width: 90%;
+    max-width: 800px;
+    height: 600px;
+    background: rgba(0,0,0,0.85);
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 0 30px rgba(0,0,0,0.6);
+}
+
+.chat-window {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.chat-input {
+    display: flex;
+    padding: 10px;
+    border-top: 1px solid #333;
+}
+
+.chat-input input {
+    flex: 1;
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+}
+
+.chat-input button {
+    margin-left: 10px;
+    padding: 0 20px;
+    border-radius: 10px;
+    border: none;
+    background: #4c00ff;
+    color: white;
+    cursor: pointer;
+}
+
+/* Messages */
+.message {
+    padding: 8px 12px;
+    border-radius: 10px;
+    max-width: 80%;
+}
+
+.user { background: #333; align-self: flex-end; }
+.ia { background: #4c00ff; align-self: flex-start; }
+
+/* Bouton Shorts bas gauche */
+.shorts-btn {
+    position: fixed;
+    bottom: 25px;
+    left: 25px;
+    padding: 16px 30px;
+    border-radius: 30px;
+    border: none;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    background: linear-gradient(135deg, #2600ff, #00ffc8);
+    color: white;
+    z-index: 2000;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.shorts-btn:hover {
+    transform: scale(1.12);
+    box-shadow: 0 0 25px rgba(0,255,200,0.7);
+}
+
+/* Bouton Trickjumps bas droite */
+.jumps-btn {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    padding: 16px 28px;
+    border-radius: 30px;
+    border: none;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    background: #666;
+    color: white;
+    z-index: 2000;
+    transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+}
+
+.jumps-btn:hover {
+    background: #888;
+    transform: scale(1.12);
+    box-shadow: 0 0 20px rgba(255,255,255,0.4);
+}
 </style>
 </head>
 <body>
 
+<!-- Navbar -->
+<div class="navbar">
+    <button class="nav-btn totk" onclick="goTOTK()">TOTK</button>
+    <button class="nav-btn smo" onclick="goSMO()">SMO</button>
+    <button class="nav-btn botw" onclick="goBOTW()">BOTW</button>
+    <button class="nav-btn accueil" onclick="goAccueil()">Accueil</button>
+</div>
+
+<!-- Page principale -->
 <div class="page">
+
+    <!-- Chat -->
     <div class="chat-card">
         <div class="chat-window" id="chat-window">
             Tapez un message pour commencer...
@@ -29,7 +192,17 @@ body { font-family:'Segoe UI', sans-serif; background:#000; color:white; margin:
             <button onclick="sendMessage()">Envoyer</button>
         </div>
     </div>
+
 </div>
+
+<!-- Boutons fixes -->
+<a href="shorts.html">
+    <button class="shorts-btn">Mes Shorts</button>
+</a>
+
+<button class="jumps-btn" onclick="window.open('https://danielb2012.github.io/Dani_MK-site/jumps.html', '_blank')">
+    Serveurs Trickjumps
+</button>
 
 <script>
 function addMessage(text, type){
@@ -50,23 +223,27 @@ async function sendMessage(){
 
     try {
         const res = await fetch("https://flask-danielabernard.replit.app/chat", {
-        method:"POST",
-         headers:{"Content-Type":"application/json"},
-         body: JSON.stringify({message})
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body: JSON.stringify({message})
         });
-
         const data = await res.json();
         addMessage(data.response, "ia");
     } catch(err){
         console.error(err);
-        addMessage("Erreur: Impossible de contacter le serveur.", "ia");
+        addMessage("Erreur serveur: Pas encore dispo !!.", "ia");
     }
 }
 
 document.getElementById("user-input").addEventListener("keypress", function(e){
     if(e.key === "Enter") sendMessage();
 });
-</script>
 
+/* Navigation */
+function goTOTK() { window.location.href = "totk.html"; }
+function goSMO() { window.location.href = "smo.html"; }
+function goBOTW() { window.location.href = "botw.html"; }
+function goAccueil() { window.location.href = "index.html"; }
+</script>
 </body>
 </html>
