@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Mes Shorts - Dani_MK</title>
+<style>
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background: #000;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    color: white;
+}
+
+/* Navbar */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 70px;
+    background: rgba(0,0,0,0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 25px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.6);
+    z-index: 1000;
+}
+
+.nav-btn {
+    padding: 12px 26px;
+    border-radius: 20px;
+    border: none;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    color: white;
+    transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+}
+
+/* Boutons navbar */
+.nav-btn.totk { background: #ff0000; }
+.nav-btn.accueil { background: linear-gradient(135deg, #ff0000, #6a00ff); }
+.nav-btn.smo { background: #00cc44; }
+.nav-btn.botw { background: #0066ff; }
+.nav-btn.chatsmo { background: #4c00ff; }
+
+.nav-btn.totk:hover {
+    background: #ff3333;
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(255,255,255,0.4);
+}
+.nav-btn.accueil:hover {
+    background: linear-gradient(135deg, #ff3333, #8a2bff);
+    transform: scale(1.1);
+    box-shadow: 0 0 20px rgba(255,255,255,0.45);
+}
+.nav-btn.smo:hover {
+    background: #33dd66;
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(255,255,255,0.4);
+}
+.nav-btn.botw:hover {
+    background: #3399ff;
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(255,255,255,0.4);
+}
+.nav-btn.chatsmo:hover {
+    background: #7439ff;
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(255,255,255,0.4);
+}
+
+/* Contenu */
+.page {
+    min-height: 100vh;
+    padding-top: 90px;
+    padding-bottom: 50px;
+}
+
+h1 {
+    text-align: center;
+    margin: 20px 0;
+    font-size: 38px;
+    text-shadow: 0 0 15px rgba(255,255,255,0.3);
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    width: 90%;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+iframe {
+    width: 100%;
+    aspect-ratio: 9/16;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(255,255,255,0.4);
+}
+
+footer {
+    margin-top: 35px;
+    font-size: 14px;
+    color: #aaa;
+    opacity: 0.85;
+    text-align: center;
+    grid-column: 1 / -1;
+}
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<div class="navbar">
+    <button class="nav-btn totk" onclick="goTOTK()">TOTK</button>
+    <button class="nav-btn accueil" onclick="goAccueil()">Accueil</button>
+    <button class="nav-btn smo" onclick="goSMO()">SMO</button>
+    <button class="nav-btn botw" onclick="goBOTW()">BOTW</button>
+    <button class="nav-btn chatsmo" onclick="goChatSMO()">Chatsmo</button>
+</div>
+
+<!-- Contenu -->
+<div class="page">
+    <h1>🎬 Mes Shorts</h1>
+    <div class="grid">
+
+        <iframe src="https://www.youtube.com/embed/XAMDLNXVKLc" allowfullscreen></iframe>
+        <iframe src="https://www.youtube.com/embed/7yndClItC44" allowfullscreen></iframe>
+        <iframe src="https://www.youtube.com/embed/dNNV309vMxI" allowfullscreen></iframe>
+        <iframe src="https://www.youtube.com/embed/pBxUJm0m6iE" allowfullscreen></iframe>
+        <iframe src="https://www.youtube.com/embed/HNnnQHNR-0U" allowfullscreen></iframe>
+        <iframe src="https://www.youtube.com/embed/09yB80ybSn4" allowfullscreen></iframe>
+        <iframe src="https://www.youtube.com/embed/S76PXn7ercA" allowfullscreen></iframe>
+        <iframe src="https://www.youtube.com/embed/9p8wq1Ci7vk" allowfullscreen></iframe>
+        <iframe src="https://www.youtube.com/embed/xofZMYEovYk" allowfullscreen></iframe>
+        <iframe src="https://www.youtube.com/embed/GSv07rIidtY" allowfullscreen></iframe>
+        <iframe src="https://www.youtube.com/embed/u2fPx2xjZ2M" allowfullscreen></iframe>
+        <iframe src="https://www.youtube.com/embed/3HqMT8jYLsE" allowfullscreen></iframe>
+        <iframe src="https://www.youtube.com/embed/i9PSTeuRNJ4" allowfullscreen></iframe>
+
+        <footer>© 2026 • Dani_MK</footer>
+    </div>
+</div>
+
+<script>
+function goSMO() { window.location.href = "smo.html"; }
+function goTOTK() { window.location.href = "totk.html"; }
+function goBOTW() { window.location.href = "botw.html"; }
+function goAccueil() { window.location.href = "index.html"; }
+function goChatSMO() { window.location.href = "chatsmo.html"; }
+</script>
+
+</body>
+</html>

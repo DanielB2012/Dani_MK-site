@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>BOTW Downloads - Dani_MK</title>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0066ff, #003399);
+    font-family: 'Segoe UI', Arial, sans-serif;
+    color: white;
+}
+
+/* Navbar */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 70px;
+    background: rgba(0,0,0,0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 25px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.6);
+    z-index: 1000;
+}
+
+.nav-btn {
+    padding: 12px 26px;
+    border-radius: 20px;
+    border: none;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    color: white;
+    transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+}
+
+/* Boutons navbar */
+.nav-btn.totk { background: #ff0000; }
+.nav-btn.accueil { background: linear-gradient(135deg, #ff0000, #6a00ff); }
+.nav-btn.smo { background: #00cc44; }
+.nav-btn.chatsmo { background:#4c00ff; }
+
+.nav-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(255,255,255,0.4);
+}
+
+.nav-btn.totk:hover { background: #ff3333; }
+.nav-btn.accueil:hover { background: linear-gradient(135deg, #ff3333, #8a2bff); }
+.nav-btn.smo:hover { background: #33dd66; }
+.nav-btn.chatsmo:hover { background: #7439ff; }
+
+/* Bouton Trickjumps */
+.jumps-btn {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    padding: 16px 28px;
+    border-radius: 30px;
+    border: none;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    background: #666;
+    color: white;
+    z-index: 2000;
+    transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+}
+
+.jumps-btn:hover {
+    background: #888;
+    transform: scale(1.12);
+    box-shadow: 0 0 20px rgba(255,255,255,0.4);
+}
+
+/* Bouton Shorts */
+.shorts-btn {
+    position: fixed;
+    bottom: 25px;
+    left: 25px;
+    padding: 16px 30px;
+    border-radius: 30px;
+    border: none;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    background: linear-gradient(135deg, #2600ff, #00ffc8);
+    color: white;
+    z-index: 2000;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.shorts-btn:hover {
+    transform: scale(1.12);
+    box-shadow: 0 0 25px rgba(0,255,200,0.7);
+}
+
+/* Contenu */
+.page {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 90px;
+}
+
+.card {
+    background: rgba(0,0,0,0.85);
+    border-radius: 30px;
+    padding: 50px 40px;
+    width: 100%;
+    max-width: 520px;
+    text-align: center;
+    box-shadow: 0 0 50px rgba(0,0,0,0.9);
+}
+
+h1 {
+    font-size: 38px;
+    margin: 10px 0;
+    text-shadow: 0 0 15px rgba(255,255,255,0.3);
+}
+
+.subtitle {
+    font-size: 16px;
+    color: #ccc;
+    margin-bottom: 40px;
+}
+
+button.download-btn {
+    width: 100%;
+    padding: 22px;
+    font-size: 24px;
+    border: none;
+    border-radius: 16px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: white;
+    background: linear-gradient(135deg, #3399ff, #0066ff);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+button.download-btn:hover {
+    background: linear-gradient(135deg, #66b3ff, #3399ff);
+    transform: scale(1.06);
+    box-shadow: 0 0 30px rgba(255,255,255,0.35);
+}
+
+footer {
+    margin-top: 35px;
+    font-size: 14px;
+    color: #aaa;
+    opacity: 0.85;
+}
+</style>
+</head>
+
+<body>
+
+<!-- Navbar -->
+<div class="navbar">
+    <button class="nav-btn totk" onclick="goTOTK()">TOTK</button>
+    <button class="nav-btn accueil" onclick="goAccueil()">Accueil</button>
+    <button class="nav-btn smo" onclick="goSMO()">SMO</button>
+    <button class="nav-btn chatsmo" onclick="goChatSMO()">Chatsmo</button>
+</div>
+
+<!-- Boutons fixes -->
+<button class="jumps-btn" onclick="goJumps()">Serveurs Trickjumps</button>
+
+<a href="shorts.html">
+    <button class="shorts-btn">Mes Shorts</button>
+</a>
+
+<!-- Contenu -->
+<div class="page">
+    <div class="card">
+        <h1>BOTW Downloads</h1>
+        <div class="subtitle">Téléchargez les fichiers BOTW :</div>
+
+        <button class="download-btn" onclick="window.open('https://gamebanana.com/dl/1399535', '_blank')">
+            Télécharger "Ultra Cam"
+        </button>
+
+        <button class="download-btn" onclick="window.open('https://github.com/MaxLastBreath/nx-optimizer/archive/refs/heads/main.zip', '_blank')">
+            Télécharger "NXOptimizer"
+        </button>
+
+        <button class="download-btn" onclick="alert('Pas encore disponible')">
+            Télécharger le fichier 3
+        </button>
+
+        <footer>© 2026 • Dani_MK</footer>
+    </div>
+</div>
+
+<script>
+function goSMO() { window.location.href = "smo.html"; }
+function goTOTK() { window.location.href = "totk.html"; }
+function goAccueil() { window.location.href = "index.html"; }
+function goJumps() { window.location.href = "jumps.html"; }
+function goChatSMO() { window.location.href = "chatsmo.html"; }
+</script>
+
+</body>
+</html>

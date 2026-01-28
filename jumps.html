@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Serveurs Trickjumps - Dani_MK</title>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #666, #444);
+    font-family: 'Segoe UI', Arial, sans-serif;
+    color: white;
+}
+
+/* Navbar */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 70px;
+    background: rgba(0,0,0,0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 25px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.6);
+    z-index: 1000;
+}
+
+.nav-btn {
+    padding: 12px 26px;
+    border-radius: 20px;
+    border: none;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+}
+
+/* Boutons navbar */
+.nav-btn.totk { background: #ff0000; }
+.nav-btn.smo { background: #00cc44; }
+.nav-btn.botw { background: #0066ff; }
+.nav-btn.accueil { background: linear-gradient(135deg, #ff0000, #6a00ff); }
+.nav-btn.chatsmo { background: #4c00ff; }
+
+.nav-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(255,255,255,0.4);
+}
+
+.nav-btn.totk:hover { background: #ff3333; }
+.nav-btn.smo:hover { background: #33dd66; }
+.nav-btn.botw:hover { background: #3399ff; }
+.nav-btn.accueil:hover { background: linear-gradient(135deg, #ff3333, #8a2bff); }
+.nav-btn.chatsmo:hover { background: #7439ff; }
+
+/* BOUTON SHORTS (BAS GAUCHE) */
+.shorts-btn {
+    position: fixed;
+    bottom: 25px;
+    left: 25px;
+    padding: 16px 30px;
+    border-radius: 30px;
+    border: none;
+    background: linear-gradient(135deg, #2600ff, #00ffc8);
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 2000;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.shorts-btn:hover {
+    transform: scale(1.12);
+    box-shadow: 0 0 25px rgba(0,255,200,0.7);
+}
+
+/* Contenu */
+.page {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 90px;
+}
+
+.card {
+    background: rgba(0,0,0,0.85);
+    border-radius: 30px;
+    padding: 50px 40px;
+    width: 100%;
+    max-width: 520px;
+    text-align: center;
+    box-shadow: 0 0 50px rgba(0,0,0,0.9);
+}
+
+h1 {
+    font-size: 38px;
+    margin: 10px 0;
+    text-shadow: 0 0 15px rgba(255,255,255,0.3);
+}
+
+.subtitle {
+    font-size: 16px;
+    color: #ccc;
+    margin-bottom: 40px;
+}
+
+.discord-btn {
+    width: 100%;
+    padding: 22px;
+    font-size: 24px;
+    border: none;
+    border-radius: 16px;
+    cursor: pointer;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    margin-bottom: 20px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    background: linear-gradient(135deg, #7289da, #5b6eae);
+    color: white;
+}
+
+.discord-btn:hover {
+    background: linear-gradient(135deg, #99aaf3, #7d8ed1);
+    transform: scale(1.06);
+    box-shadow: 0 0 30px rgba(255,255,255,0.35);
+}
+
+footer {
+    margin-top: 35px;
+    font-size: 14px;
+    color: #aaa;
+    opacity: 0.85;
+}
+</style>
+</head>
+
+<body>
+
+<!-- Navbar -->
+<div class="navbar">
+    <button class="nav-btn totk" onclick="goTOTK()">TOTK</button>
+    <button class="nav-btn smo" onclick="goSMO()">SMO</button>
+    <button class="nav-btn botw" onclick="goBOTW()">BOTW</button>
+    <button class="nav-btn accueil" onclick="goAccueil()">Accueil</button>
+    <button class="nav-btn chatsmo" onclick="goChatSMO()">Chatsmo</button>
+</div>
+
+<!-- Bouton Shorts -->
+<a href="shorts.html">
+    <button class="shorts-btn">Mes Shorts</button>
+</a>
+
+<!-- Contenu -->
+<div class="page">
+    <div class="card">
+        <h1>Serveurs Trickjumps</h1>
+        <div class="subtitle">Choisissez un serveur à rejoindre :</div>
+
+        <button class="discord-btn" onclick="window.open('https://discord.gg/A4tTQspA', '_blank')">
+            Serveur "smo trickjumping"
+        </button>
+
+        <button class="discord-btn" onclick="window.open('https://discord.gg/ZH7cduWr', '_blank')">
+            Serveur "smo database"
+        </button>
+
+        <footer>© 2026 • Dani_MK</footer>
+    </div>
+</div>
+
+<script>
+function goTOTK() { window.location.href = "totk.html"; }
+function goSMO() { window.location.href = "smo.html"; }
+function goBOTW() { window.location.href = "botw.html"; }
+function goAccueil() { window.location.href = "index.html"; }
+function goChatSMO() { window.location.href = "chatsmo.html"; }
+</script>
+
+</body>
+</html>
