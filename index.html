@@ -1,19 +1,23 @@
-<!DOCTYPE html>
-<html lang="fr">
 <head>
 <meta charset="UTF-8">
 <title>Dani_MK - Créateur YouTube</title>
+<!-- Google Fonts pour remplacer Segoe UI -->
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
 <style>
+/* RESET */
 * {
     box-sizing: border-box;
 }
-<!-- test for the site -->
+
+/* TEST COMMENTAIRE CSS */
+/* test for the site */
 
 body {
     margin: 0;
     min-height: 100vh;
     background: linear-gradient(135deg, #ff0000, #6a00ff);
-    font-family: 'Segoe UI', Arial, sans-serif;
+    font-family: 'Roboto', Arial, sans-serif;
     color: white;
     overflow-y: scroll;
 }
@@ -223,83 +227,3 @@ footer {
 }
 </style>
 </head>
-
-<body>
-
-<!-- BARRE DU HAUT -->
-<div class="navbar">
-    <button class="nav-btn totk" onclick="goTOTK()">TOTK</button>
-    <button class="nav-btn smo" onclick="goSMO()">SMO</button>
-    <button class="nav-btn botw" onclick="goBOTW()">BOTW</button>
-    <button class="nav-btn chatsmo" onclick="goChatSMO()">ChatSmo</button>
-</div>
-
-<!-- BOUTONS FIXES BAS -->
-<button class="jumps-btn" onclick="goJumps()">Serveurs Trickjumps</button>
-<button class="shorts-btn" onclick="goShorts()">Mes Shorts</button>
-
-<!-- CONTENU -->
-<div class="page">
-    <div class="card">
-        <img src="https://yt3.ggpht.com/0DVAPHQYW8br9AR2vJF0rCaXFP2HR0yBjGZ3OKTFq0hE7-VapkyXWpT8-9ORIjT2gxoNa0kpub0=s600-c-k-c0x00ffffff-no-rj-rp-mo" alt="Dani_MK" class="profile-img">
-
-        <h1>Dani_MK</h1>
-        <div class="subtitle">
-            Créateur YouTube • Gaming • Fun 🎮🔥
-        </div>
-
-        <button class="main-btn subscribe" onclick="abonner()">
-            <img src="https://yt3.ggpht.com/0DVAPHQYW8br9AR2vJF0rCaXFP2HR0yBjGZ3OKTFq0hE7-VapkyXWpT8-9ORIjT2gxoNa0kpub0=s600-c-k-c0x00ffffff-no-rj-rp-mo" alt="Dani_MK">
-            S'abonner à Dani_MK
-        </button>
-
-        <button class="main-btn later" onclick="rejoindreDiscord()">
-            Rejoindre le Discord
-        </button>
-        <footer>
-            © 2026 • Dani_MK
-        </footer>
-    </div>
-
-    <div class="text-info" id="text-info">
-        <p>Ce site est entièrement stocké sur votre appareil...</p>
-    </div>
-</div>
-
-<script>
-// Scroll animation
-const textInfo = document.getElementById('text-info');
-
-function handleScroll() {
-    const rect = textInfo.getBoundingClientRect();
-    const windowHeight = window.innerHeight || document.documentElement.clientHeight;
-
-    if(rect.top <= windowHeight - 100 && rect.bottom >= 0) {
-        textInfo.classList.add('visible');
-    } else {
-        textInfo.classList.remove('visible');
-    }
-}
-
-window.addEventListener('scroll', handleScroll);
-window.addEventListener('resize', handleScroll);
-handleScroll();
-
-// Navigation
-function abonner() {
-    window.open("https://www.youtube.com/channel/UCw3v5XVphqVzScmTXs-8Yrw?sub_confirmation=1", "_blank");
-}
-function rejoindreDiscord() {
-    window.open("https://discord.gg/dUNNrgDE", "_blank");
-}
-function goTOTK() { window.location.href = "totk.html"; }
-function goSMO() { window.location.href = "smo.html"; }
-function goBOTW() { window.location.href = "botw.html"; }
-function goChatSMO() { window.location.href = "chatsmo.html"; }
-function goJumps() { window.location.href = "jumps.html"; }
-function goShorts() { window.location.href = "shorts.html"; }
-</script>
-
-</body>
-</html>
-
