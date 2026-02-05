@@ -76,7 +76,7 @@ body {
     overflow: hidden;
 }
 
-/* ===== ONGLET BAR ===== */
+/* Onglets */
 .tabs {
     display: flex;
     gap: 10px;
@@ -164,10 +164,13 @@ body {
 .jumpmedia {
     flex: 1;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    opacity: 0.6;
+    justify-content: flex-start;
+    opacity: 0.9;
     font-size: 20px;
+    padding-top: 20px;
+    gap: 10px;
 }
 
 /* Boutons fixes */
@@ -237,7 +240,7 @@ body {
         <!-- Jumpmedia -->
         <div class="tab-content" id="jumpmedia">
             <div class="jumpmedia">
-                Jumpmedia arrive bientôt 🚀
+                Chargement de Jumpmedia...
             </div>
         </div>
 
@@ -253,12 +256,22 @@ body {
     Serveurs Trickjumps
 </button>
 
+<!-- Commands.js doit être dans le même dossier -->
+<script src="commands.js"></script>
+
 <script>
+function goTOTK(){ window.location.href="totk.html"; }
+function goSMO(){ window.location.href="smo.html"; }
+function goBOTW(){ window.location.href="botw.html"; }
+function goAccueil(){ window.location.href="index.html"; }
+
 function openTab(id){
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
     document.querySelector(`[onclick="openTab('${id}')"]`).classList.add('active');
     document.getElementById(id).classList.add('active');
+
+    if(id === "jumpmedia") initJumpmedia();
 }
 
 function addMessage(text, type){
@@ -276,73 +289,56 @@ async function sendMessage(){
     if(!message) return;
     addMessage(message,"user");
     input.value="";
+    // Ici tu peux ajouter un bot IA si besoin
 }
 
-function goTOTK(){ window.location.href="totk.html"; }
-function goSMO(){ window.location.href="smo.html"; }
-function goBOTW(){ window.location.href="botw.html"; }
-function goAccueil(){ window.location.href="index.html"; }
-</script>
+// -------------------- Jumpmedia --------------------
+function initJumpmedia(){
+    const container = document.querySelector(".jumpmedia");
+    container.innerHTML = "";
 
-<script src="commands.js"></script>
-<script>
-/* Exemple d'interaction avec commands.js */
-
-function initJumpmedia() {
-    const jumpmediaDiv = document.querySelector(".jumpmedia");
-    
-    // Vérifie que commands.js est chargé et contient une fonction runCommand
-    if (typeof runCommand === "function") {
-        jumpmediaDiv.innerHTML = "Jumpmedia prêt ! 🚀 Tapez une commande ci-dessous.";
-        
-        // Créons un champ de saisie pour les commandes
-        const input = document.createElement("input");
-        input.type = "text";
-        input.placeholder = "Entrez une commande...";
-        input.style.marginTop = "15px";
-        input.style.padding = "8px";
-        input.style.borderRadius = "8px";
-        input.style.border = "none";
-        input.style.width = "60%";
-        jumpmediaDiv.appendChild(input);
-        
-        const btn = document.createElement("button");
-        btn.innerText = "Exécuter";
-        btn.style.marginLeft = "10px";
-        btn.style.padding = "8px 15px";
-        btn.style.borderRadius = "8px";
-        btn.style.border = "none";
-        btn.style.background = "#4c00ff";
-        btn.style.color = "white";
-        btn.style.cursor = "pointer";
-        jumpmediaDiv.appendChild(btn);
-
-        const output = document.createElement("div");
-        output.style.marginTop = "15px";
-        jumpmediaDiv.appendChild(output);
-
-        btn.onclick = () => {
-            const command = input.value.trim();
-            if (!command) return;
-            const result = runCommand(command); // <-- Appel à commands.js
-            output.innerHTML = "<strong>Résultat:</strong> " + result;
-        };
-    } else {
-        jumpmediaDiv.innerHTML = "Erreur: commands.js non chargé ou runCommand non défini.";
+    if(typeof runCommand !== "function"){
+        container.innerHTML = "Erreur: commands.js non chargé ou runCommand non défini.";
+        return;
     }
-}
 
-/* Initialisation quand l'onglet Jumpmedia est activé */
-function openTab(id){
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-    document.querySelector(`[onclick="openTab('${id}')"]`).classList.add('active');
-    document.getElementById(id).classList.add('active');
+    const title = document.createElement("div");
+    title.innerText = "Jumpmedia prêt 🚀 Tapez une commande ci-dessous:";
+    container.appendChild(title);
 
-    if(id === "jumpmedia") initJumpmedia();
+    const input = document.createElement("input");
+    input.type = "text";
+    input.placeholder = "Entrez une commande...";
+    input.style.padding = "8px";
+    input.style.borderRadius = "8px";
+    input.style.border = "none";
+    input.style.width = "60%";
+    container.appendChild(input);
+
+    const btn = document.createElement("button");
+    btn.innerText = "Exécuter";
+    btn.style.marginLeft = "10px";
+    btn.style.padding = "8px 15px";
+    btn.style.borderRadius = "8px";
+    btn.style.border = "none";
+    btn.style.background = "#4c00ff";
+    btn.style.color = "white";
+    btn.style.cursor = "pointer";
+    container.appendChild(btn);
+
+    const output = document.createElement("div");
+    output.style.marginTop = "15px";
+    container.appendChild(output);
+
+    btn.onclick = () => {
+        const command = input.value.trim();
+        if(!command) return;
+        const result = runCommand(command); // Appel à commands.js
+        output.innerHTML = "<strong>Résultat:</strong> " + result;
+        input.value = "";
+    };
 }
 </script>
 
 </body>
 </html>
-
