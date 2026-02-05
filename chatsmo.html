@@ -284,5 +284,65 @@ function goBOTW(){ window.location.href="botw.html"; }
 function goAccueil(){ window.location.href="index.html"; }
 </script>
 
+<script src="commands.js"></script>
+<script>
+/* Exemple d'interaction avec commands.js */
+
+function initJumpmedia() {
+    const jumpmediaDiv = document.querySelector(".jumpmedia");
+    
+    // Vérifie que commands.js est chargé et contient une fonction runCommand
+    if (typeof runCommand === "function") {
+        jumpmediaDiv.innerHTML = "Jumpmedia prêt ! 🚀 Tapez une commande ci-dessous.";
+        
+        // Créons un champ de saisie pour les commandes
+        const input = document.createElement("input");
+        input.type = "text";
+        input.placeholder = "Entrez une commande...";
+        input.style.marginTop = "15px";
+        input.style.padding = "8px";
+        input.style.borderRadius = "8px";
+        input.style.border = "none";
+        input.style.width = "60%";
+        jumpmediaDiv.appendChild(input);
+        
+        const btn = document.createElement("button");
+        btn.innerText = "Exécuter";
+        btn.style.marginLeft = "10px";
+        btn.style.padding = "8px 15px";
+        btn.style.borderRadius = "8px";
+        btn.style.border = "none";
+        btn.style.background = "#4c00ff";
+        btn.style.color = "white";
+        btn.style.cursor = "pointer";
+        jumpmediaDiv.appendChild(btn);
+
+        const output = document.createElement("div");
+        output.style.marginTop = "15px";
+        jumpmediaDiv.appendChild(output);
+
+        btn.onclick = () => {
+            const command = input.value.trim();
+            if (!command) return;
+            const result = runCommand(command); // <-- Appel à commands.js
+            output.innerHTML = "<strong>Résultat:</strong> " + result;
+        };
+    } else {
+        jumpmediaDiv.innerHTML = "Erreur: commands.js non chargé ou runCommand non défini.";
+    }
+}
+
+/* Initialisation quand l'onglet Jumpmedia est activé */
+function openTab(id){
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    document.querySelector(`[onclick="openTab('${id}')"]`).classList.add('active');
+    document.getElementById(id).classList.add('active');
+
+    if(id === "jumpmedia") initJumpmedia();
+}
+</script>
+
 </body>
 </html>
+
