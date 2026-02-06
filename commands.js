@@ -33,7 +33,7 @@ function getJump(name) {
     return null;
 }
 
-// ----------------- COMMANDES DE BASE -----------------
+// ----------------- COMMANDES -----------------
 function infoCommand(jumpName) {
     const jump = getJump(jumpName);
     if (!jump) return `Jump "${jumpName}" not found.`;
@@ -109,11 +109,8 @@ function approveBatch(batchName, author) {
 
     const db = loadJson(JUMP_FILE);
 
-    // Remove jumps
     batch.rem.forEach(j => delete db[j.toLowerCase()]);
-    // Edit jumps
     Object.entries(batch.edit).forEach(([name, data]) => db[name.toLowerCase()] = data);
-    // Add jumps
     Object.entries(batch.add).forEach(([name, data]) => db[name.toLowerCase()] = data);
 
     saveJson(JUMP_FILE, db);
@@ -134,8 +131,8 @@ function finishBatch(batchName, author) {
     return `Batch "${batchName}" marked as finished.`;
 }
 
-// ----------------- RUN COMMANDES (pour chatsmo.html ou Node) -----------------
-async function runCommandFromHTML(input, author = "User") {
+// ----------------- FONCTION D’ENTRÉE UNIQUE -----------------
+function runCommandFromHTML(input, author = "User") {
     if (!input.startsWith(PREFIX)) return "Commands must start with !";
 
     let args;
@@ -148,7 +145,7 @@ async function runCommandFromHTML(input, author = "User") {
     const cmd = args[0].substring(PREFIX.length).toLowerCase();
     const rest = args.slice(1);
 
-    switch(cmd) {
+    switch (cmd) {
         case "info":
             if (!rest.length) return "Provide a jump name!";
             return infoCommand(rest.join(" "));
@@ -161,7 +158,7 @@ async function runCommandFromHTML(input, author = "User") {
             const op = rest[0].toLowerCase();
             const batchName = rest[1];
 
-            switch(op) {
+            switch (op) {
                 case "create": return createBatch(batchName, author);
                 case "add":
                     if (rest.length < 3) return "Usage: !batch add <batchName> <jumpName>";
