@@ -109,11 +109,8 @@ function approveBatch(batchName, author) {
 
     const db = loadJson(JUMP_FILE);
 
-    // Remove jumps
     batch.rem.forEach(j => delete db[j.toLowerCase()]);
-    // Edit jumps
     Object.entries(batch.edit).forEach(([name, data]) => db[name.toLowerCase()] = data);
-    // Add jumps
     Object.entries(batch.add).forEach(([name, data]) => db[name.toLowerCase()] = data);
 
     saveJson(JUMP_FILE, db);
@@ -134,16 +131,15 @@ function finishBatch(batchName, author) {
     return `Batch "${batchName}" marked as finished.`;
 }
 
-// ----------------- RUN COMMANDES -----------------
-async function runCommand(message, sendResponse) {
-    let content = message.content;
-    if (!content.startsWith(PREFIX)) return;
+// ----------------- RUN COMMANDES (pour chatsmo.html) -----------------
+function runCommandFromHTML(input, author = "User") {
+    if (!input.startsWith(PREFIX)) return "Commands must start with !";
 
     let args;
     try {
-        args = shlex.split(content);
+        args = shlex.split(input);
     } catch (e) {
-        return sendResponse("Failed to parse command. Wrap multi-word arguments in quotes.");
+        return "Failed to parse command. Wrap multi-word arguments in quotes.";
     }
 
     const cmd = args[0].substring(PREFIX.length).toLowerCase();
@@ -151,33 +147,32 @@ async function runCommand(message, sendResponse) {
 
     switch(cmd) {
         case "info":
-            if (!rest.length) return sendResponse("Provide a jump name!");
-            return sendResponse(infoCommand(rest.join(" ")));
+            if (!rest.length) return "Provide a jump name!";
+            return infoCommand(rest.join(" "));
 
         case "list":
-            return sendResponse(listCommand());
+            return listCommand();
 
         case "batch":
-            if (rest.length < 2) return sendResponse("Usage: !batch <operation> <batchName> [args]");
+            if (rest.length < 2) return "Usage: !batch <operation> <batchName> [args]";
             const op = rest[0].toLowerCase();
             const batchName = rest[1];
-            const author = message.author || "Unknown";
 
             switch(op) {
-                case "create": return sendResponse(createBatch(batchName, author));
+                case "create": return createBatch(batchName, author);
                 case "add":
-                    if (rest.length < 3) return sendResponse("Usage: !batch add <batchName> <jumpName>");
+                    if (rest.length < 3) return "Usage: !batch add <batchName> <jumpName>";
                     const jumpName = rest.slice(2).join(" ");
-                    return sendResponse(addJumpToBatch(batchName, jumpName, author));
-                case "finish": return sendResponse(finishBatch(batchName, author));
-                case "approve": return sendResponse(approveBatch(batchName, author));
-                default: return sendResponse("Unknown batch operation!");
+                    return addJumpToBatch(batchName, jumpName, author);
+                case "finish": return finishBatch(batchName, author);
+                case "approve": return approveBatch(batchName, author);
+                default: return "Unknown batch operation!";
             }
 
         default:
-            return sendResponse("Unknown command!");
+            return "Unknown command!";
     }
 }
 
 // ----------------- EXPORT -----------------
-module.exports = { runCommand, getJump };
+module.exports = { runCommandFromHTML, getJump };
