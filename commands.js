@@ -1,121 +1,154 @@
-// -------------------- COMMANDES.JS POUR NAVIGATEUR --------------------
-
-// --------- DONNÉES DES JUMPS (à remplacer par tes vrais données) ---------
-window.jumpDB = {
-    "superjump": { name: "Super Jump", height: "10m", difficulty: "hard", description: "Un super jump incroyable !" },
-    "megajump": { name: "Mega Jump", height: "15m", difficulty: "very hard", description: "Le jump ultime !" }
-};
-
-window.tricksDB = {
-    "fliptrick": { name: "Flip Trick", type: "trick", description: "Un trick retourné stylé." },
-    "spintrick": { name: "Spin Trick", type: "trick", description: "Un spin trick impressionnant." }
-};
-
-// --------- BATCHES EN MÉMOIRE ---------
-window.batches = {};
-
-// --------- CONSTANTES ---------
-const PREFIX = "!";
+// commands.js pour Jumpmedia (navigateur)
+let jumpDB = null;
+let tricksDB = null;
+const BATCHES = {}; // Stockage temporaire des batches en mémoire
 const MAX_BATCH_NAME = 50;
 
-// --------- UTILITAIRES ---------
-function getJump(name){
-    name = name.toLowerCase();
-    if(window.jumpDB[name]) return window.jumpDB[name];
-    if(window.tricksDB[name]) return window.tricksDB[name];
+// ----------------- UTILITAIRES -----------------
+async function loadDatabases() {
+    if (!jumpDB) {
+        const resp = await fetch('Jumps-database/jump_data.json');
+        jumpDB = await resp.json();
+    }
+    if (!tricksDB) {
+        const resp = await fetch('Jumps-database/tricks.json');
+        tricksDB = await resp.json();
+    }
+}
+
+function getJump(name) {
+    if (!jumpDB || !tricksDB) return null;
+    const lower = name.toLowerCase();
+    if (jumpDB[lower]) return jumpDB[lower];
+    if (tricksDB[lower]) return tricksDB[lower];
     return null;
 }
 
-function infoCommand(jumpName){
-    const jump = getJump(jumpName);
-    if(!jump) return `Jump "${jumpName}" not found.`;
-    let msg = `**Info for ${jump.name || jumpName}:**\n`;
-    for(const [key,val] of Object.entries(jump)){
-        if(key==="name") continue;
-        msg += `- ${key}: ${val}\n`;
+function formatJump(jump) {
+    let msg = `**Info for ${jump.name || "Unknown"}:**\n`;
+    for (const [k, v] of Object.entries(jump)) {
+        if (k === "name") continue;
+        if (Array.isArray(v)) msg += `- ${k}: ${v.join(", ")}\n`;
+        else msg += `- ${k}: ${v}\n`;
     }
     return msg;
 }
 
-function listCommand(){
-    const allJumps = {...window.jumpDB, ...window.tricksDB};
-    if(!Object.keys(allJumps).length) return "No jumps in database!";
-    return Object.keys(allJumps).join("\n");
+// ----------------- COMMANDES DE BASE -----------------
+function infoCommand(name) {
+    const jump = getJump(name);
+    if (!jump) return `Jump "${name}" not found.`;
+    return formatJump(jump);
 }
 
-// --------- COMMANDES BATCH ---------
-function getBatch(batchName){ return window.batches[batchName] || null; }
+function listCommand() {
+    if (!jumpDB) return "Database not loaded yet.";
+    return Object.keys(jumpDB).join("\n");
+}
 
-function createBatch(batchName, author){
-    if(batchName.length > MAX_BATCH_NAME) return "Batch name too long!";
-    if(window.batches[batchName]) return "Batch already exists!";
-    const batch = { name: batchName, created_by: author, status:"unfinished", add:{}, edit:{}, rem:[], log:[`${author} created batch.`] };
-    window.batches[batchName] = batch;
+// ----------------- COMMANDES BATCH -----------------
+function createBatch(batchName, author="Unknown") {
+    if (batchName.length > MAX_BATCH_NAME) return "Batch name too long!";
+    if (BATCHES[batchName]) return "Batch already exists!";
+    BATCHES[batchName] = {
+        name: batchName,
+        created_by: author,
+        status: "unfinished",
+        add: {},
+        edit: {},
+        rem: [],
+        log: [`${author} created batch.`]
+    };
     return `Batch "${batchName}" successfully created!`;
 }
 
-function addJumpToBatch(batchName, jumpName, author){
-    const batch = getBatch(batchName);
-    if(!batch) return `Batch "${batchName}" not found.`;
+function addJumpToBatch(batchName, jumpName, author="Unknown") {
+    const batch = BATCHES[batchName];
+    if (!batch) return `Batch "${batchName}" not found.`;
     const jump = getJump(jumpName);
-    if(!jump) return `Jump "${jumpName}" not found.`;
+    if (!jump) return `Jump "${jumpName}" not found.`;
     batch.add[jumpName.toLowerCase()] = jump;
     batch.log.push(`${author} added jump "${jumpName}".`);
     return `Jump "${jumpName}" added to batch "${batchName}".`;
 }
 
-function finishBatch(batchName, author){
-    const batch = getBatch(batchName);
-    if(!batch) return `Batch "${batchName}" not found.`;
+function finishBatch(batchName, author="Unknown") {
+    const batch = BATCHES[batchName];
+    if (!batch) return `Batch "${batchName}" not found.`;
     batch.status = "finished";
     batch.log.push(`${author} finished batch.`);
     return `Batch "${batchName}" marked as finished.`;
 }
 
-function approveBatch(batchName, author){
-    const batch = getBatch(batchName);
-    if(!batch) return `Batch "${batchName}" not found.`;
-    if(batch.status!=="finished") return "Batch must be finished before approval.";
-    Object.entries(batch.add).forEach(([name,data]) => window.jumpDB[name.toLowerCase()] = data);
-    Object.entries(batch.edit).forEach(([name,data]) => window.jumpDB[name.toLowerCase()] = data);
-    batch.rem.forEach(j => delete window.jumpDB[j.toLowerCase()]);
+function approveBatch(batchName, author="Unknown") {
+    const batch = BATCHES[batchName];
+    if (!batch) return `Batch "${batchName}" not found.`;
+    if (batch.status !== "finished") return "Batch must be finished before approval.";
+
+    // Implémentation directe dans jumpDB (attention: modifie uniquement en mémoire)
+    Object.entries(batch.add).forEach(([name, data]) => jumpDB[name.toLowerCase()] = data);
+    Object.entries(batch.edit).forEach(([name, data]) => jumpDB[name.toLowerCase()] = data);
+    batch.rem.forEach(name => delete jumpDB[name.toLowerCase()]);
+
     batch.status = "implemented";
     batch.log.push(`${author} approved batch.`);
     return `Batch "${batchName}" approved and implemented.`;
 }
 
-// --------- RUN COMMAND ---------
-window.runCommand = function(message, callback){
-    if(typeof message !== "string") return callback("Message invalide");
-    let args;
-    try{
-        // Découpe en mots, supporte les guillemets
-        args = message.match(/(?:[^\s"]+|"[^"]*")+/g).map(a=>a.replace(/"/g,""));
-    }catch(e){
-        return callback("Failed to parse command.");
-    }
+// ----------------- RUN COMMANDES -----------------
+async function runCommand(input, callback) {
+    await loadDatabases();
 
-    if(args.length === 0 || !args[0].startsWith(PREFIX)) return callback("Commande doit commencer par '!'");
-    const cmd = args[0].substring(PREFIX.length).toLowerCase();
+    if (!input.startsWith("!")) return callback("Commande doit commencer par '!'");
+    const args = input.match(/(?:[^\s"]+|"[^"]*")+/g).map(a => a.replace(/"/g, ""));
+    const cmd = args[0].substring(1).toLowerCase();
     const rest = args.slice(1);
-    let res = "";
 
-    switch(cmd){
-        case "info": res = rest.length ? infoCommand(rest.join(" ")) : "Provide a jump name!"; break;
-        case "list": res = listCommand(); break;
+    let res = "";
+    switch (cmd) {
+        case "info":
+            if (!rest.length) res = "Provide a jump name!";
+            else res = infoCommand(rest.join(" "));
+            break;
+        case "list":
+            res = listCommand();
+            break;
         case "batch":
-            if(rest.length<2){ res="Usage: !batch <operation> <batchName> [args]"; break; }
-            const op = rest[0].toLowerCase(), batchName = rest[1], author="User";
-            switch(op){
-                case "create": res=createBatch(batchName,author); break;
-                case "add": res=rest.length<3?"Usage: !batch add <batchName> <jumpName>":addJumpToBatch(batchName,rest.slice(2).join(" "),author); break;
-                case "finish": res=finishBatch(batchName,author); break;
-                case "approve": res=approveBatch(batchName,author); break;
-                default: res="Unknown batch operation!"; break;
+            if (rest.length < 2) {
+                res = "Usage: !batch <create|add|finish|approve> <batchName> [args]";
+                break;
+            }
+            const op = rest[0].toLowerCase();
+            const batchName = rest[1];
+            const author = "WebUser";
+            switch (op) {
+                case "create":
+                    res = createBatch(batchName, author);
+                    break;
+                case "add":
+                    if (rest.length < 3) { res = "Usage: !batch add <batchName> <jumpName>"; break; }
+                    const jumpName = rest.slice(2).join(" ");
+                    res = addJumpToBatch(batchName, jumpName, author);
+                    break;
+                case "finish":
+                    res = finishBatch(batchName, author);
+                    break;
+                case "approve":
+                    res = approveBatch(batchName, author);
+                    break;
+                default:
+                    res = "Unknown batch operation!";
+                    break;
             }
             break;
-        default: res="Unknown command!"; break;
+        default:
+            res = "Unknown command!";
+            break;
     }
-
     callback(res);
-};
+}
+
+// ----------------- EXPORT -----------------
+window.runCommand = runCommand;
+window.getJump = getJump;
+window.jumpDB = jumpDB;
