@@ -1,95 +1,162 @@
-// ===== Web Commands (GitHub Pages compatible) =====
+// ===============================
+// Jumpedia Web Commands (MAX)
+// GitHub Pages compatible
+// ===============================
 
-let jumpData = [];
-let tricksData = [];
+let jumps = [];
 let ready = false;
 
 /* ===== LOAD DATABASES ===== */
 async function loadDatabases() {
-    const j = await fetch("./Jumps-database/jump_data.json");
-    jumpData = await j.json();
+    const a = await fetch("./Jumps-database/jump_data.json");
+    const b = await fetch("./Jumps-database/tricks.json");
 
-    const t = await fetch("./Jumps-database/tricks.json");
-    tricksData = await t.json();
+    const j1 = await a.json();
+    const j2 = await b.json();
 
+    jumps = [...j1, ...j2];
     ready = true;
 }
 loadDatabases();
 
-/* ===== MAIN COMMAND ENTRY ===== */
+/* ===== ENTRY POINT ===== */
 async function runCommand(input) {
     if (!ready) return "Database loading…";
-
     if (!input.startsWith("!")) return "Commands must start with !";
 
-    const args = input.split(" ");
+    const args = input.trim().split(" ");
     const cmd = args[0].slice(1).toLowerCase();
-    const rest = args.slice(1).join(" ");
+    const rest = args.slice(1);
 
     switch (cmd) {
-        case "info":
         case "jump":
-            return info(rest);
-
-        case "list":
-            return listCmd(args.slice(1));
+        case "info":
+            return cmdInfo(rest.join(" "));
 
         case "random":
-            return randomCmd();
+            return cmdRandom();
+
+        case "list":
+            return cmdList(rest);
+
+        case "count":
+            return cmdCount();
+
+        case "search":
+            return cmdSearch(rest.join(" "));
+
+        case "ratings":
+            return cmdRatings();
+
+        case "top":
+            return cmdTop();
+
+        case "help":
+            return cmdHelp();
 
         default:
             return "That command doesn't exist!";
     }
 }
 
-/* ===== !info / !jump ===== */
-function info(name) {
+/* ===== COMMANDS ===== */
+
+function cmdInfo(name) {
     if (!name) return "Please specify a jump name.";
-
     const s = name.toLowerCase();
-    const found =
-        jumpData.find(j => j.name.toLowerCase().includes(s)) ||
-        tricksData.find(j => j.name.toLowerCase().includes(s));
 
-    if (!found) return "Jump not found.";
-
-    return formatChat(found);
+    const j = jumps.find(j => j.name.toLowerCase().includes(s));
+    return j ? formatChat(j) : "Jump not found.";
 }
 
-/* ===== !random ===== */
-function randomCmd() {
-    const all = [...jumpData, ...tricksData];
-    const j = all[Math.floor(Math.random() * all.length)];
-    return formatChat(j);
+function cmdRandom() {
+    return formatChat(jumps[Math.floor(Math.random() * jumps.length)]);
 }
 
-/* ===== !list ===== */
-function listCmd(args) {
-    let results = [];
+function cmdList(args) {
+    let result = [];
 
-    if (args[0] === "all") {
-        results = [...jumpData, ...tricksData];
-    } else if (args[0] === "kingdom") {
-        const k = args.slice(1).join(" ").toLowerCase();
-        results = [...jumpData, ...tricksData].filter(j =>
-            j.kingdom.toLowerCase().includes(k)
-        );
-    } else if (args[0] === "difficulty") {
-        const d = args[1]?.toLowerCase();
-        results = [...jumpData, ...tricksData].filter(j =>
-            j.difficulty.toLowerCase() === d
-        );
-    } else {
-        return "Usage: !list all | kingdom <name> | difficulty <level>";
+    switch (args[0]) {
+        case "all":
+            result = jumps;
+            break;
+
+        case "kingdom":
+            result = jumps.filter(j =>
+                j.kingdom.toLowerCase().includes(args.slice(1).join(" ").toLowerCase())
+            );
+            break;
+
+        case "difficulty":
+            result = jumps.filter(j =>
+                j.difficulty.toLowerCase() === args[1]?.toLowerCase()
+            );
+            break;
+
+        case "type":
+            result = jumps.filter(j =>
+                j.type.toLowerCase() === args[1]?.toLowerCase()
+            );
+            break;
+
+        default:
+            return "Usage: !list all | kingdom <name> | difficulty <level> | type <type>";
     }
 
-    if (!results.length) return "No jumps found.";
-
-    createPaste(results);
-    return `Paste created with ${results.length} jumps.`;
+    if (!result.length) return "No jumps found.";
+    createPaste(result);
+    return `Paste created with ${result.length} jumps.`;
 }
 
-/* ===== FORMAT CHAT ===== */
+function cmdCount() {
+    return `Database contains ${jumps.length} jumps.`;
+}
+
+function cmdSearch(term) {
+    if (!term) return "Please specify a keyword.";
+
+    const r = jumps.filter(j =>
+        JSON.stringify(j).toLowerCase().includes(term.toLowerCase())
+    );
+
+    if (!r.length) return "No results found.";
+    createPaste(r);
+    return `Search returned ${r.length} results.`;
+}
+
+function cmdRatings() {
+    const rated = jumps.filter(j => j.rating);
+    if (!rated.length) return "No ratings available.";
+
+    createPaste(rated);
+    return `Ratings list generated (${rated.length}).`;
+}
+
+function cmdTop() {
+    const rated = jumps.filter(j => j.rating);
+    rated.sort((a, b) => b.rating - a.rating);
+    createPaste(rated.slice(0, 50));
+    return "Top jumps generated.";
+}
+
+function cmdHelp() {
+    return `
+<b>Available commands</b><br>
+!jump &lt;name&gt;<br>
+!random<br>
+!list all<br>
+!list kingdom &lt;name&gt;<br>
+!list difficulty &lt;level&gt;<br>
+!list type &lt;type&gt;<br>
+!search &lt;keyword&gt;<br>
+!count<br>
+!ratings<br>
+!top
+`;
+}
+
+/* ===== FORMAT ===== */
+
 function formatChat(j) {
     return `
 <b>${j.name}</b> - ${j.kingdom}<br>
@@ -101,164 +168,34 @@ Found by ${j.found_by}, Proven by ${j.proven_by}<br>
 }
 
 /* ===== LOCAL PASTE ===== */
-function createPaste(jumps) {
-    let text = "";
-    jumps.forEach(j => {
-        text += `${j.name} - ${j.kingdom}\n`;
-        text += `Difficulty: ${j.difficulty}\n`;
-        text += `Type: ${j.type}\n`;
-        text += `Found by ${j.found_by}, Proven by ${j.proven_by}\n`;
-        text += `From the Database\n\n`;
+
+function createPaste(list) {
+    let txt = "";
+
+    list.forEach(j => {
+        txt += `${j.name} - ${j.kingdom}\n`;
+        txt += `Difficulty: ${j.difficulty}\n`;
+        txt += `Type: ${j.type}\n`;
+        txt += `Found by ${j.found_by}, Proven by ${j.proven_by}\n`;
+        txt += `From the Database\n\n`;
     });
 
-    const html = `
+    const blob = new Blob([`
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <title>Jumpedia Paste</title>
 <style>
-body { background:#0b0b0b; color:#00ffd0; font-family:monospace; padding:20px }
+body { background:#0d0d0d; color:#00ffd0; font-family:monospace; padding:20px }
 pre { white-space: pre-wrap }
 </style>
 </head>
 <body>
-<pre>${text}</pre>
+<pre>${txt}</pre>
 </body>
-</html>`;
+</html>
+`], { type: "text/html" });
 
-    const blob = new Blob([html], { type: "text/html" });
-    window.open(URL.createObjectURL(blob), "_blank");
-}
-// ===== Web Commands (GitHub Pages compatible) =====
-
-let jumpData = [];
-let tricksData = [];
-let ready = false;
-
-/* ===== LOAD DATABASES ===== */
-async function loadDatabases() {
-    const j = await fetch("./Jumps-database/jump_data.json");
-    jumpData = await j.json();
-
-    const t = await fetch("./Jumps-database/tricks.json");
-    tricksData = await t.json();
-
-    ready = true;
-}
-loadDatabases();
-
-/* ===== MAIN COMMAND ENTRY ===== */
-async function runCommand(input) {
-    if (!ready) return "Database loading…";
-
-    if (!input.startsWith("!")) return "Commands must start with !";
-
-    const args = input.split(" ");
-    const cmd = args[0].slice(1).toLowerCase();
-    const rest = args.slice(1).join(" ");
-
-    switch (cmd) {
-        case "info":
-        case "jump":
-            return info(rest);
-
-        case "list":
-            return listCmd(args.slice(1));
-
-        case "random":
-            return randomCmd();
-
-        default:
-            return "That command doesn't exist!";
-    }
-}
-
-/* ===== !info / !jump ===== */
-function info(name) {
-    if (!name) return "Please specify a jump name.";
-
-    const s = name.toLowerCase();
-    const found =
-        jumpData.find(j => j.name.toLowerCase().includes(s)) ||
-        tricksData.find(j => j.name.toLowerCase().includes(s));
-
-    if (!found) return "Jump not found.";
-
-    return formatChat(found);
-}
-
-/* ===== !random ===== */
-function randomCmd() {
-    const all = [...jumpData, ...tricksData];
-    const j = all[Math.floor(Math.random() * all.length)];
-    return formatChat(j);
-}
-
-/* ===== !list ===== */
-function listCmd(args) {
-    let results = [];
-
-    if (args[0] === "all") {
-        results = [...jumpData, ...tricksData];
-    } else if (args[0] === "kingdom") {
-        const k = args.slice(1).join(" ").toLowerCase();
-        results = [...jumpData, ...tricksData].filter(j =>
-            j.kingdom.toLowerCase().includes(k)
-        );
-    } else if (args[0] === "difficulty") {
-        const d = args[1]?.toLowerCase();
-        results = [...jumpData, ...tricksData].filter(j =>
-            j.difficulty.toLowerCase() === d
-        );
-    } else {
-        return "Usage: !list all | kingdom <name> | difficulty <level>";
-    }
-
-    if (!results.length) return "No jumps found.";
-
-    createPaste(results);
-    return `Paste created with ${results.length} jumps.`;
-}
-
-/* ===== FORMAT CHAT ===== */
-function formatChat(j) {
-    return `
-<b>${j.name}</b> - ${j.kingdom}<br>
-Difficulty: ${j.difficulty}<br>
-Type: ${j.type}<br>
-Found by ${j.found_by}, Proven by ${j.proven_by}<br>
-<i>From the Database</i>
-`;
-}
-
-/* ===== LOCAL PASTE ===== */
-function createPaste(jumps) {
-    let text = "";
-    jumps.forEach(j => {
-        text += `${j.name} - ${j.kingdom}\n`;
-        text += `Difficulty: ${j.difficulty}\n`;
-        text += `Type: ${j.type}\n`;
-        text += `Found by ${j.found_by}, Proven by ${j.proven_by}\n`;
-        text += `From the Database\n\n`;
-    });
-
-    const html = `
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Jumpedia Paste</title>
-<style>
-body { background:#0b0b0b; color:#00ffd0; font-family:monospace; padding:20px }
-pre { white-space: pre-wrap }
-</style>
-</head>
-<body>
-<pre>${text}</pre>
-</body>
-</html>`;
-
-    const blob = new Blob([html], { type: "text/html" });
     window.open(URL.createObjectURL(blob), "_blank");
 }
