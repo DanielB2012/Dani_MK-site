@@ -7,6 +7,7 @@
 <style>
 * { box-sizing: border-box; }
 
+/* Fond violet stylé et police */
 body {
     margin: 0;
     font-family:'Segoe UI', sans-serif;
@@ -15,6 +16,7 @@ body {
     min-height: 100vh;
 }
 
+/* Navbar */
 .navbar {
     position: fixed;
     top: 0;
@@ -51,6 +53,7 @@ body {
     box-shadow: 0 0 15px rgba(255,255,255,0.4);
 }
 
+/* Page container */
 .page {
     display: flex;
     flex-direction: column;
@@ -60,6 +63,7 @@ body {
     min-height: calc(100vh - 100px);
 }
 
+/* Chat container */
 .chat-card {
     width: 90%;
     max-width: 800px;
@@ -72,6 +76,7 @@ body {
     overflow: hidden;
 }
 
+/* Onglets */
 .tabs {
     display: flex;
     gap: 10px;
@@ -101,6 +106,7 @@ body {
     border: none;
 }
 
+/* Contenu onglets */
 .tab-content {
     flex: 1;
     display: none;
@@ -111,6 +117,7 @@ body {
     display: flex;
 }
 
+/* Chat */
 .chat-window {
     flex: 1;
     padding: 15px;
@@ -143,29 +150,30 @@ body {
     cursor: pointer;
 }
 
+/* Messages */
 .message {
     padding: 8px 12px;
     border-radius: 10px;
     max-width: 80%;
-    word-wrap: break-word;
 }
 
 .user { background: #333; align-self: flex-end; }
 .ia { background: #4c00ff; align-self: flex-start; }
 
+/* Jumpmedia */
 .jumpmedia {
     flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    opacity: 0.9;
+    opacity: 0.95;
     font-size: 20px;
     padding-top: 20px;
     gap: 10px;
-    width: 100%;
 }
 
+/* Boutons fixes */
 .shorts-btn {
     position: fixed;
     bottom: 25px;
@@ -200,6 +208,7 @@ body {
 
 <body>
 
+<!-- Navbar -->
 <div class="navbar">
     <button class="nav-btn totk" onclick="goTOTK()">TOTK</button>
     <button class="nav-btn smo" onclick="goSMO()">SMO</button>
@@ -208,13 +217,16 @@ body {
 </div>
 
 <div class="page">
+
     <div class="chat-card">
 
+        <!-- Onglets -->
         <div class="tabs">
             <div class="tab active" onclick="openTab('chat')">🤖 Chatbot</div>
             <div class="tab" onclick="openTab('jumpmedia')">🎬 Jumpmedia</div>
         </div>
 
+        <!-- Chat -->
         <div class="tab-content active" id="chat">
             <div class="chat-window" id="chat-window">
                 Tapez un message pour commencer...
@@ -225,11 +237,15 @@ body {
             </div>
         </div>
 
+        <!-- Jumpmedia -->
         <div class="tab-content" id="jumpmedia">
-            <div class="jumpmedia"></div>
+            <div class="jumpmedia" id="jumpmedia-container">
+                Chargement de Jumpmedia...
+            </div>
         </div>
 
     </div>
+
 </div>
 
 <a href="shorts.html">
@@ -240,7 +256,8 @@ body {
     Serveurs Trickjumps
 </button>
 
-<script src="commands1.js"></script>
+<!-- Commands.js doit être dans le même dossier -->
+<script src="commands.js"></script>
 
 <script>
 function goTOTK(){ window.location.href="totk.html"; }
@@ -257,87 +274,74 @@ function openTab(id){
     if(id === "jumpmedia") initJumpmedia();
 }
 
-function addMessage(container, text, type){
+function addMessage(text, type){
+    const chatWindow = document.getElementById("chat-window");
     const div = document.createElement("div");
     div.className = "message " + type;
     div.innerHTML = text.replace(/\n/g,"<br>");
-    container.appendChild(div);
-    container.scrollTop = container.scrollHeight;
+    chatWindow.appendChild(div);
+    chatWindow.scrollTop = chatWindow.scrollHeight;
 }
 
-function sendMessage(){
+async function sendMessage(){
     const input = document.getElementById("user-input");
     const message = input.value.trim();
     if(!message) return;
-    addMessage(document.getElementById("chat-window"), message, "user");
-    input.value = "";
+    addMessage(message,"user");
+    input.value="";
 }
 
-/* --- Jumpmedia fonctionnel --- */
-function initJumpmedia() {
-    const jumpmediaDiv = document.querySelector(".jumpmedia");
-    jumpmediaDiv.innerHTML = "";
+// --------- Jumpmedia ---------
+function initJumpmedia(){
+    const container = document.getElementById("jumpmedia-container");
+    container.innerHTML = "";
 
     if(typeof runCommand !== "function"){
-        jumpmediaDiv.innerHTML = "Erreur: commands.js non chargé ou runCommand non défini.";
+        container.innerHTML = "Erreur: commands.js non chargé ou runCommand non défini.";
         return;
     }
 
-    // Créer la fenêtre de chat Jumpmedia
-    const chatWindow = document.createElement("div");
-    chatWindow.className = "chat-window";
-    chatWindow.style.flex = "1";
-    chatWindow.style.height = "300px";
-    jumpmediaDiv.appendChild(chatWindow);
-
-    // Input et bouton
-    const inputDiv = document.createElement("div");
-    inputDiv.className = "chat-input";
+    const title = document.createElement("div");
+    title.innerText = "Jumpmedia prêt 🚀 Tapez une commande ci-dessous:";
+    container.appendChild(title);
 
     const input = document.createElement("input");
     input.type = "text";
     input.placeholder = "Entrez une commande...";
-    input.style.flex = "1";
-    input.style.borderRadius = "10px";
+    input.style.padding = "8px";
+    input.style.borderRadius = "8px";
     input.style.border = "none";
-    input.style.padding = "10px";
+    input.style.width = "60%";
+    container.appendChild(input);
 
     const btn = document.createElement("button");
-    btn.innerText = "Envoyer";
+    btn.innerText = "Exécuter";
     btn.style.marginLeft = "10px";
-    btn.style.borderRadius = "10px";
+    btn.style.padding = "8px 15px";
+    btn.style.borderRadius = "8px";
     btn.style.border = "none";
     btn.style.background = "#4c00ff";
     btn.style.color = "white";
     btn.style.cursor = "pointer";
+    container.appendChild(btn);
 
-    inputDiv.appendChild(input);
-    inputDiv.appendChild(btn);
-    jumpmediaDiv.appendChild(inputDiv);
+    const output = document.createElement("div");
+    output.style.marginTop = "15px";
+    container.appendChild(output);
 
-    // Fonction pour envoyer un message et exécuter la commande
-    const executeCommand = async ()=>{
+    btn.onclick = () => {
         const command = input.value.trim();
         if(!command) return;
-        addMessage(chatWindow, command, "user");
-
-        try {
-            const result = await runCommand(command, (res)=>res) || "Aucune réponse";
-            addMessage(chatWindow, result, "ia");
-        } catch(e){
-            addMessage(chatWindow, "Erreur lors de l'exécution de la commande.", "ia");
-        }
-
-        input.value = "";
+        runCommand(command, res => {
+            const p = document.createElement("div");
+            p.innerHTML = `<strong>Résultat:</strong> ${res.replace(/\n/g,"<br>")}`;
+            output.appendChild(p);
+            output.scrollTop = output.scrollHeight;
+            input.value = "";
+        });
     };
-
-    btn.onclick = executeCommand;
-    input.addEventListener("keypress", (e)=>{
-        if(e.key === "Enter") executeCommand();
-    });
 }
 </script>
 
 </body>
 </html>
-
