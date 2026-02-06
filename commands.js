@@ -109,8 +109,11 @@ function approveBatch(batchName, author) {
 
     const db = loadJson(JUMP_FILE);
 
+    // Remove jumps
     batch.rem.forEach(j => delete db[j.toLowerCase()]);
+    // Edit jumps
     Object.entries(batch.edit).forEach(([name, data]) => db[name.toLowerCase()] = data);
+    // Add jumps
     Object.entries(batch.add).forEach(([name, data]) => db[name.toLowerCase()] = data);
 
     saveJson(JUMP_FILE, db);
@@ -131,8 +134,8 @@ function finishBatch(batchName, author) {
     return `Batch "${batchName}" marked as finished.`;
 }
 
-// ----------------- RUN COMMANDES (pour chatsmo.html) -----------------
-function runCommandFromHTML(input, author = "User") {
+// ----------------- RUN COMMANDES (pour chatsmo.html ou Node) -----------------
+async function runCommandFromHTML(input, author = "User") {
     if (!input.startsWith(PREFIX)) return "Commands must start with !";
 
     let args;
