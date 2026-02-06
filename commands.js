@@ -1,201 +1,163 @@
-// ===============================
-// Jumpedia Web Commands (MAX)
-// GitHub Pages compatible
-// ===============================
+const fs = require('fs');
+const path = require('path');
+const Discord = require('discord.js');
 
-let jumps = [];
-let ready = false;
+const PREFIX = "!";
+let CLIENT; // sera assigné à ton client Discord.js
 
-/* ===== LOAD DATABASES ===== */
-async function loadDatabases() {
-    const a = await fetch("./Jumps-database/jump_data.json");
-    const b = await fetch("./Jumps-database/tricks.json");
+// === CONFIG / ROLES ===
+const BOT_ADMINS = [/* ids */];
+const BOT_MOD_ROLES = [/* ids */];
+const GOD_TIER_RATER_ROLES = [/* ids */];
 
-    const j1 = await a.json();
-    const j2 = await b.json();
+const MAX_BATCH_NAME = 50;
+const BATCHES_DIR = "./data/batches/";
+const DATABASE_DIR = "./data/jumps/";
+const MAX_DISCORD_FILE_SIZE = 10_000_000; // ex: 10MB
+const LOCATION_ORDER = [/* kingdom order */];
+const DIFF_ORDER = ["Easy", "Medium", "Hard", "Unproven"];
 
-    jumps = [...j1, ...j2];
-    ready = true;
+// === PERMISSIONS CHECKS ===
+function isAdmin(member) {
+    return BOT_ADMINS.includes(member.id);
 }
-loadDatabases();
 
-/* ===== ENTRY POINT ===== */
-async function runCommand(input) {
-    if (!ready) return "Database loading…";
-    if (!input.startsWith("!")) return "Commands must start with !";
+function isMod(member) {
+    return member.roles.cache.some(role => BOT_MOD_ROLES.includes(role.id)) || isAdmin(member);
+}
 
-    const args = input.trim().split(" ");
-    const cmd = args[0].slice(1).toLowerCase();
-    const rest = args.slice(1);
+function isGodTierRater(member) {
+    return member.roles.cache.some(role => GOD_TIER_RATER_ROLES.includes(role.id)) || isAdmin(member);
+}
 
-    switch (cmd) {
-        case "jump":
-        case "info":
-            return cmdInfo(rest.join(" "));
+// === UTILS ===
+function readJson(path) {
+    if (!fs.existsSync(path)) return null;
+    return JSON.parse(fs.readFileSync(path, 'utf-8'));
+}
 
-        case "random":
-            return cmdRandom();
+function writeJson(path, data) {
+    fs.writeFileSync(path, JSON.stringify(data, null, 2), 'utf-8');
+}
 
+function hashString(str) {
+    const crypto = require('crypto');
+    return crypto.createHash('sha256').update(str).digest('hex');
+}
+
+function strAuthor(member) {
+    return `'${member.displayName}' (${member.id})`;
+}
+
+function timeToStr() {
+    return new Date().toISOString();
+}
+
+// === BATCH FUNCTIONS ===
+async function batchCommand(channelId, args, message) {
+    const author = message.member;
+    const operation = args[1]?.toLowerCase();
+
+    if (!isMod(author)) return "You aren't authorized to use this command!";
+
+    if (!operation) return "Please provide a batch operation!";
+
+    // Switch-case operations
+    switch(operation) {
+        case "create":
+            return batchCreate(args, author);
         case "list":
-            return cmdList(rest);
-
-        case "count":
-            return cmdCount();
-
-        case "search":
-            return cmdSearch(rest.join(" "));
-
-        case "ratings":
-            return cmdRatings();
-
-        case "top":
-            return cmdTop();
-
-        case "help":
-            return cmdHelp();
-
+            return batchList();
+        case "approve":
+            return batchApprove(args, message);
+        // TODO: add other operations: add/edit/rem/forget/status/log/info/nuke
         default:
-            return "That command doesn't exist!";
+            return `Unknown batch command \`${operation}\``;
     }
 }
 
-/* ===== COMMANDS ===== */
+function batchCreate(args, author) {
+    const batchName = args.slice(2).join(" ");
+    const batchHash = hashString(batchName + Date.now());
+    const batchPath = path.join(BATCHES_DIR, batchHash + ".json");
 
-function cmdInfo(name) {
-    if (!name) return "Please specify a jump name.";
-    const s = name.toLowerCase();
+    if (fs.existsSync(batchPath)) return "Batch already exists!";
 
-    const j = jumps.find(j => j.name.toLowerCase().includes(s));
-    return j ? formatChat(j) : "Jump not found.";
+    const batchData = {
+        name: batchName,
+        hash: batchHash,
+        created_at: timeToStr(),
+        created_by: strAuthor(author),
+        status: "unfinished",
+        implemented_at: "TBD",
+        log: [],
+        add: {},
+        edit: {},
+        rem: []
+    };
+
+    batchData.log.push(`${strAuthor(author)} created batch`);
+    writeJson(batchPath, batchData);
+
+    return `**Batch "${batchName}" created!**`;
 }
 
-function cmdRandom() {
-    return formatChat(jumps[Math.floor(Math.random() * jumps.length)]);
+function batchList() {
+    const files = fs.readdirSync(BATCHES_DIR);
+    const batches = files.filter(f => f.endsWith(".json") && !f.endsWith("backup.json"))
+                         .map(f => readJson(path.join(BATCHES_DIR, f)));
+
+    if (!batches.length) return "No batches found!";
+
+    const listStr = batches.map(b => `${b.name} | ${b.status} | ${b.created_at}`).join("\n");
+    return "Batches:\n" + listStr;
 }
 
-function cmdList(args) {
-    let result = [];
+async function batchApprove(args, message) {
+    const author = message.member;
+    if (!isAdmin(author)) return "You must be a Jumpedia Admin to approve a batch!";
 
-    switch (args[0]) {
-        case "all":
-            result = jumps;
-            break;
+    const batchNameOrHash = args[2];
+    const batchPath = path.join(BATCHES_DIR, batchNameOrHash + ".json");
+    const batchData = readJson(batchPath);
+    if (!batchData) return "Batch not found!";
 
-        case "kingdom":
-            result = jumps.filter(j =>
-                j.kingdom.toLowerCase().includes(args.slice(1).join(" ").toLowerCase())
-            );
-            break;
+    if (batchData.status !== "finished") return "Batch must be finished before approval!";
 
-        case "difficulty":
-            result = jumps.filter(j =>
-                j.difficulty.toLowerCase() === args[1]?.toLowerCase()
-            );
-            break;
+    // === Copy database ===
+    const db = readJson(path.join(DATABASE_DIR, "jump_data.json")) || {};
+    writeJson(path.join(DATABASE_DIR, `jump_data_${Date.now()}.json`), db);
 
-        case "type":
-            result = jumps.filter(j =>
-                j.type.toLowerCase() === args[1]?.toLowerCase()
-            );
-            break;
+    // Remove jumps
+    batchData.rem.forEach(name => delete db[name]);
 
-        default:
-            return "Usage: !list all | kingdom <name> | difficulty <level> | type <type>";
+    // Edit jumps
+    for (const [name, edits] of Object.entries(batchData.edit)) {
+        if (!db[name]) continue;
+        Object.assign(db[name], edits);
     }
 
-    if (!result.length) return "No jumps found.";
-    createPaste(result);
-    return `Paste created with ${result.length} jumps.`;
+    // Add jumps
+    Object.assign(db, batchData.add);
+
+    // Save DB
+    writeJson(path.join(DATABASE_DIR, "jump_data.json"), db);
+
+    // Update batch
+    batchData.status = "implemented";
+    batchData.implemented_at = timeToStr();
+    writeJson(batchPath, batchData);
+
+    await message.channel.send(`# Batch approved!\nAll changes applied.`);
+    // Optionally: regenerate lists
 }
 
-function cmdCount() {
-    return `Database contains ${jumps.length} jumps.`;
-}
-
-function cmdSearch(term) {
-    if (!term) return "Please specify a keyword.";
-
-    const r = jumps.filter(j =>
-        JSON.stringify(j).toLowerCase().includes(term.toLowerCase())
-    );
-
-    if (!r.length) return "No results found.";
-    createPaste(r);
-    return `Search returned ${r.length} results.`;
-}
-
-function cmdRatings() {
-    const rated = jumps.filter(j => j.rating);
-    if (!rated.length) return "No ratings available.";
-
-    createPaste(rated);
-    return `Ratings list generated (${rated.length}).`;
-}
-
-function cmdTop() {
-    const rated = jumps.filter(j => j.rating);
-    rated.sort((a, b) => b.rating - a.rating);
-    createPaste(rated.slice(0, 50));
-    return "Top jumps generated.";
-}
-
-function cmdHelp() {
-    return `
-<b>Available commands</b><br>
-!jump &lt;name&gt;<br>
-!random<br>
-!list all<br>
-!list kingdom &lt;name&gt;<br>
-!list difficulty &lt;level&gt;<br>
-!list type &lt;type&gt;<br>
-!search &lt;keyword&gt;<br>
-!count<br>
-!ratings<br>
-!top
-`;
-}
-
-/* ===== FORMAT ===== */
-
-function formatChat(j) {
-    return `
-<b>${j.name}</b> - ${j.kingdom}<br>
-Difficulty: ${j.difficulty}<br>
-Type: ${j.type}<br>
-Found by ${j.found_by}, Proven by ${j.proven_by}<br>
-<i>From the Database</i>
-`;
-}
-
-/* ===== LOCAL PASTE ===== */
-
-function createPaste(list) {
-    let txt = "";
-
-    list.forEach(j => {
-        txt += `${j.name} - ${j.kingdom}\n`;
-        txt += `Difficulty: ${j.difficulty}\n`;
-        txt += `Type: ${j.type}\n`;
-        txt += `Found by ${j.found_by}, Proven by ${j.proven_by}\n`;
-        txt += `From the Database\n\n`;
-    });
-
-    const blob = new Blob([`
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Jumpedia Paste</title>
-<style>
-body { background:#0d0d0d; color:#00ffd0; font-family:monospace; padding:20px }
-pre { white-space: pre-wrap }
-</style>
-</head>
-<body>
-<pre>${txt}</pre>
-</body>
-</html>
-`], { type: "text/html" });
-
-    window.open(URL.createObjectURL(blob), "_blank");
-}
+// === EXPORTS ===
+module.exports = {
+    batchCommand,
+    isAdmin,
+    isMod,
+    isGodTierRater,
+    readJson,
+    writeJson
+};
