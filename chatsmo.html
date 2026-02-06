@@ -82,60 +82,78 @@ function openTab(id){
     if(id === "jumpmedia") initJumpmedia();
 }
 
-// Chat classique
-function addMessage(text,type){
-    const chatWindow = document.getElementById("chat-window");
+// Fonction pour afficher un message dans Jumpmedia
+function addJumpmediaMessage(container, text, type){
     const div = document.createElement("div");
     div.className = "message " + type;
     div.innerHTML = text.replace(/\n/g,"<br>");
-    chatWindow.appendChild(div);
-    chatWindow.scrollTop = chatWindow.scrollHeight;
+    container.appendChild(div);
+    container.scrollTop = container.scrollHeight;
 }
 
-async function sendMessage(){
-    const input = document.getElementById("user-input");
-    const message = input.value.trim();
-    if(!message) return;
-    addMessage(message,"user");
-    input.value="";
-    const result = await runCommandFromHTML(message,"User");
-    addMessage(result,"ia");
-}
-
-// Jumpmedia
+// Initialisation du chat Jumpmedia
 function initJumpmedia(){
     const container = document.getElementById("jumpmedia-container");
     container.innerHTML = "";
 
-    const title = document.createElement("div");
-    title.innerText = "Jumpmedia prêt 🚀 Tapez une commande ci-dessous:";
-    container.appendChild(title);
+    const chatWindow = document.createElement("div");
+    chatWindow.style.flex = "1";
+    chatWindow.style.width = "90%";
+    chatWindow.style.height = "300px";
+    chatWindow.style.overflowY = "auto";
+    chatWindow.style.display = "flex";
+    chatWindow.style.flexDirection = "column";
+    chatWindow.style.gap = "10px";
+    chatWindow.style.marginBottom = "10px";
+    chatWindow.style.padding = "10px";
+    chatWindow.style.background = "rgba(0,0,0,0.3)";
+    chatWindow.style.borderRadius = "10px";
+    container.appendChild(chatWindow);
+
+    const inputDiv = document.createElement("div");
+    inputDiv.style.display = "flex";
+    inputDiv.style.marginTop = "10px";
 
     const input = document.createElement("input");
     input.type = "text";
     input.placeholder = "Entrez une commande...";
-    input.style.padding="8px"; input.style.borderRadius="8px"; input.style.border="none"; input.style.width="60%";
-    container.appendChild(input);
+    input.style.flex = "1";
+    input.style.padding = "10px";
+    input.style.borderRadius = "8px";
+    input.style.border = "none";
 
     const btn = document.createElement("button");
-    btn.innerText="Exécuter";
-    btn.style.marginLeft="10px"; btn.style.padding="8px 15px"; btn.style.borderRadius="8px"; btn.style.border="none";
-    btn.style.background="#4c00ff"; btn.style.color="white"; btn.style.cursor="pointer";
-    container.appendChild(btn);
+    btn.innerText = "Exécuter";
+    btn.style.marginLeft = "10px";
+    btn.style.padding = "10px 20px";
+    btn.style.borderRadius = "8px";
+    btn.style.border = "none";
+    btn.style.background = "#4c00ff";
+    btn.style.color = "white";
+    btn.style.cursor = "pointer";
 
-    const output = document.createElement("div");
-    output.style.marginTop="15px";
-    container.appendChild(output);
+    inputDiv.appendChild(input);
+    inputDiv.appendChild(btn);
+    container.appendChild(inputDiv);
 
     btn.onclick = async ()=>{
         const command = input.value.trim();
         if(!command) return;
+        addJumpmediaMessage(chatWindow, command, "user");
         const result = await runCommandFromHTML(command,"User");
-        output.innerHTML = "<strong>Résultat:</strong><br>" + result.replace(/\n/g,"<br>");
-        input.value="";
+        addJumpmediaMessage(chatWindow, result, "ia");
+        input.value = "";
     };
+
+    // Permet d'envoyer avec Enter
+    input.addEventListener("keypress", async (e)=>{
+        if(e.key === "Enter"){
+            btn.click();
+        }
+    });
 }
 </script>
 
 </body>
 </html>
+
