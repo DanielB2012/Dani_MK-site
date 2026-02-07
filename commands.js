@@ -5,7 +5,7 @@ const BATCHES = {};
 const MAX_BATCH_NAME = 50;
 
 // ----------------- API Paste.ee -----------------
-const PASTEE_API_KEY = "aLFR1Zi3gkO91568g36WA7ZeGdi3ZUeIQ8KFDrW2s";
+const PASTEE_API_KEY = "u2Wb3I904XespqCYJ2bQCUbwhMuQR4qBvoWKxOOxD";
 const PASTEE_API_URL = "https://api.paste.ee/v1/pastes";
 
 // ----------------- UTILITAIRES -----------------
@@ -222,3 +222,4 @@ async function runCommand(input, callback) {
 // ----------------- EXPORT -----------------
 window.runCommand = runCommand;
 window.getJump = getJump;
+
