@@ -1,75 +1,136 @@
-// commands.js pour Jumpmedia (navigateur)
+// =====================================================
+// commands.js — Jumpmedia (Browser / GitHub Pages)
+// =====================================================
 
-// ================== DATABASES ==================
-let jumpDB = null;
-let tricksDB = null;
+// ----------------- DATABASES -----------------
+let jumpDB = null;      // objet { "jump name": {...} }
+let tricksDB = null;   // tableau [ { content, links, descriptions } ]
 
-// ================== BATCH SYSTEM ==================
 const BATCHES = {};
 const MAX_BATCH_NAME = 50;
 
-// ================== LOAD DATABASES ==================
+// ----------------- UTILS -----------------
+function normalize(str) {
+    return str
+        .toLowerCase()
+        .replace(/[^\w\s]/g, "")
+        .replace(/\s+/g, " ")
+        .trim();
+}
+
+// ----------------- LOAD DATABASES -----------------
 async function loadDatabases() {
     if (!jumpDB) {
-        const resp = await fetch("Jumps-database/jump_data.json");
-        if (!resp.ok) throw new Error("Failed to load jump_data.json");
-        jumpDB = await resp.json();
+        const r1 = await fetch("Jumps-database/jump_data.json");
+        jumpDB = await r1.json();
     }
 
     if (!tricksDB) {
-        const resp = await fetch("Jumps-database/tricks.json");
-        if (!resp.ok) throw new Error("Failed to load tricks.json");
-        tricksDB = await resp.json();
+        const r2 = await fetch("Jumps-database/tricks.json");
+        tricksDB = await r2.json();
     }
 }
 
-// ================== UTILITIES ==================
-function normalize(str) {
-    return str.toLowerCase().trim();
+// ----------------- TRICKS PARSER -----------------
+function parseTrick(trick) {
+    const lines = trick.content.split("\n");
+
+    // First line: "Name - Kingdom"
+    let name = "Unnamed";
+    let location = [];
+
+    if (lines[0].includes(" - ")) {
+        const [n, loc] = lines[0].split(" - ");
+        name = n.trim();
+        location = [loc.trim()];
+    } else {
+        name = lines[0].trim();
+    }
+
+    const jump = {
+        name,
+        location,
+        source: "Tricks Database"
+    };
+
+    for (const line of lines.slice(1)) {
+        if (line.startsWith("Difficulty:")) {
+            jump.diff = line.replace("Difficulty:", "").trim();
+        } 
+        else if (line.startsWith("Jump Type:") || line.startsWith("Type:")) {
+            jump.type = line.replace(/Jump Type:|Type:/, "").trim();
+        } 
+        else if (line.includes("Found")) {
+            jump.finder = [line.replace("From the Database", "").trim()];
+        }
+    }
+
+    if (trick.links) jump.links = trick.links;
+    if (trick.descriptions) jump.notes = trick.descriptions;
+
+    return jump;
 }
 
+// ----------------- GET JUMP -----------------
 function getJump(name) {
     if (!jumpDB || !tricksDB) return null;
-    const key = normalize(name);
 
-    if (jumpDB[key]) return jumpDB[key];
+    const search = normalize(name);
 
-    // tricks.json est un tableau, pas un objet
+    // 1️⃣ jump_data.json (clé exacte ou partielle)
+    for (const key in jumpDB) {
+        if (normalize(key).includes(search)) {
+            return jumpDB[key];
+        }
+    }
+
+    // 2️⃣ tricks.json (parser content)
     if (Array.isArray(tricksDB)) {
-        for (const t of tricksDB) {
-            if (!t.content) continue;
-            if (t.content.toLowerCase().includes(key)) return t;
+        for (const trick of tricksDB) {
+            if (!trick.content) continue;
+            const titleLine = normalize(trick.content.split("\n")[0]);
+            if (titleLine.includes(search)) {
+                return parseTrick(trick);
+            }
         }
     }
 
     return null;
 }
 
+// ----------------- FORMAT OUTPUT -----------------
 function formatJump(jump) {
-    let msg = `<strong>${jump.name || "Unnamed"}</strong><br>`;
+    let msg = `**${jump.name || "Unknown Jump"}**\n`;
 
     for (const [k, v] of Object.entries(jump)) {
         if (k === "name") continue;
 
         if (Array.isArray(v)) {
-            msg += `<b>${k}:</b> ${v.join(", ")}<br>`;
+            msg += `${k}: ${v.join(", ")}\n`;
         } else {
-            msg += `<b>${k}:</b> ${v}<br>`;
+            msg += `${k}: ${v}\n`;
         }
     }
 
-    return msg;
+    return msg.trim();
 }
 
-// ================== BASIC COMMANDS ==================
+// ----------------- COMMANDS -----------------
 function infoCommand(name) {
     const jump = getJump(name);
     if (!jump) return `Jump "${name}" not found.`;
     return formatJump(jump);
 }
 
-// ================== BATCH COMMANDS ==================
-function createBatch(batchName, author = "WebUser") {
+function listCommand() {
+    const list = Object.keys(jumpDB);
+    localStorage.setItem("jump_list", JSON.stringify(list));
+    window.open("list.html", "_blank");
+    return "Opening jump list...";
+}
+
+// ----------------- BATCH COMMANDS -----------------
+function createBatch(batchName, author="WebUser") {
     if (batchName.length > MAX_BATCH_NAME) return "Batch name too long!";
     if (BATCHES[batchName]) return "Batch already exists!";
 
@@ -83,10 +144,10 @@ function createBatch(batchName, author = "WebUser") {
         log: [`${author} created batch.`]
     };
 
-    return `Batch "${batchName}" successfully created!`;
+    return `Batch "${batchName}" created.`;
 }
 
-function addJumpToBatch(batchName, jumpName, author = "WebUser") {
+function addJumpToBatch(batchName, jumpName, author="WebUser") {
     const batch = BATCHES[batchName];
     if (!batch) return `Batch "${batchName}" not found.`;
 
@@ -94,120 +155,87 @@ function addJumpToBatch(batchName, jumpName, author = "WebUser") {
     if (!jump) return `Jump "${jumpName}" not found.`;
 
     batch.add[normalize(jumpName)] = jump;
-    batch.log.push(`${author} added jump "${jumpName}".`);
+    batch.log.push(`${author} added "${jumpName}".`);
 
-    return `Jump "${jumpName}" added to batch "${batchName}".`;
+    return `Jump added to batch "${batchName}".`;
 }
 
-function finishBatch(batchName, author = "WebUser") {
+function finishBatch(batchName, author="WebUser") {
     const batch = BATCHES[batchName];
     if (!batch) return `Batch "${batchName}" not found.`;
 
     batch.status = "finished";
     batch.log.push(`${author} finished batch.`);
 
-    return `Batch "${batchName}" marked as finished.`;
+    return `Batch "${batchName}" marked finished.`;
 }
 
-function approveBatch(batchName, author = "WebUser") {
+function approveBatch(batchName, author="WebUser") {
     const batch = BATCHES[batchName];
     if (!batch) return `Batch "${batchName}" not found.`;
-    if (batch.status !== "finished") return "Batch must be finished before approval.";
+    if (batch.status !== "finished") return "Batch must be finished first.";
 
-    Object.entries(batch.add).forEach(([name, data]) => {
-        jumpDB[name] = data;
-    });
-
-    batch.rem.forEach(name => delete jumpDB[name]);
+    for (const [k, v] of Object.entries(batch.add)) {
+        jumpDB[k] = v;
+    }
 
     batch.status = "implemented";
     batch.log.push(`${author} approved batch.`);
 
-    return `Batch "${batchName}" approved and implemented.`;
+    return `Batch "${batchName}" approved.`;
 }
 
-// ================== RUN COMMAND ==================
+// ----------------- RUN COMMAND -----------------
 async function runCommand(input, callback) {
-    try {
-        await loadDatabases();
-    } catch (e) {
-        console.error(e);
-        return callback("Failed to load databases.");
-    }
+    await loadDatabases();
 
     if (!input.startsWith("!")) {
-        return callback("Command must start with '!'");
+        callback("Commands must start with '!'");
+        return;
     }
 
-    const args = input
-        .match(/(?:[^\s"]+|"[^"]*")+/g)
+    const args = input.match(/(?:[^\s"]+|"[^"]*")+/g)
         .map(a => a.replace(/"/g, ""));
 
-    const cmd = args[0].substring(1).toLowerCase();
+    const cmd = args[0].slice(1).toLowerCase();
     const rest = args.slice(1);
 
     let res = "";
 
     switch (cmd) {
-
         case "info":
             if (!rest.length) res = "Usage: !info <jump name>";
             else res = infoCommand(rest.join(" "));
             break;
 
-        case "list": {
-            const list = Object.keys(jumpDB);
-            localStorage.setItem("jump_list", JSON.stringify(list));
-            window.open("list.html", "_blank");
-            res = "Opening jump list...";
+        case "list":
+            res = listCommand();
             break;
-        }
 
         case "batch":
             if (rest.length < 2) {
-                res = "Usage: !batch <create|add|finish|approve> <batchName> [args]";
+                res = "Usage: !batch <create|add|finish|approve> <batchName>";
                 break;
             }
 
-            const op = rest[0].toLowerCase();
+            const op = rest[0];
             const batchName = rest[1];
-            const author = "WebUser";
 
-            switch (op) {
-                case "create":
-                    res = createBatch(batchName, author);
-                    break;
+            if (op === "create") res = createBatch(batchName);
+            else if (op === "add") res = addJumpToBatch(batchName, rest.slice(2).join(" "));
+            else if (op === "finish") res = finishBatch(batchName);
+            else if (op === "approve") res = approveBatch(batchName);
+            else res = "Unknown batch operation.";
 
-                case "add":
-                    if (rest.length < 3) {
-                        res = "Usage: !batch add <batchName> <jumpName>";
-                        break;
-                    }
-                    res = addJumpToBatch(batchName, rest.slice(2).join(" "), author);
-                    break;
-
-                case "finish":
-                    res = finishBatch(batchName, author);
-                    break;
-
-                case "approve":
-                    res = approveBatch(batchName, author);
-                    break;
-
-                default:
-                    res = "Unknown batch operation!";
-                    break;
-            }
             break;
 
         default:
-            res = "Unknown command!";
-            break;
+            res = "Unknown command.";
     }
 
     callback(res);
 }
 
-// ================== EXPORT ==================
+// ----------------- EXPORT (GLOBAL) -----------------
 window.runCommand = runCommand;
 window.getJump = getJump;
