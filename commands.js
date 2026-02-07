@@ -1,8 +1,12 @@
-// commands.js pour Jumpmedia (Navigateur)
+// ----------------- DATABASES -----------------
 let jumpDB = null;
 let tricksDB = null;
 const BATCHES = {};
 const MAX_BATCH_NAME = 50;
+
+// ----------------- API Paste.ee -----------------
+const PASTEE_API_KEY = "aLFR1Zi3gkO91568g36WA7ZeGdi3ZUeIQ8KFDrW2s";
+const PASTEE_API_URL = "https://api.paste.ee/v1/pastes";
 
 // ----------------- UTILITAIRES -----------------
 async function loadDatabases() {
@@ -30,18 +34,20 @@ function getJump(name) {
     return null;
 }
 
-// ----------------- FORMATTEUR TEXTE -----------------
+// ----------------- FORMATTEUR -----------------
 function buildContent(jump) {
     if (jump.content) return jump.content.trim();
 
     let lines = [];
-    if (jump.name && jump.location?.length) lines.push(`${jump.name} - ${jump.location[0]}`);
-    else if (jump.name) lines.push(jump.name);
+
+    if (jump.name && jump.location?.length) {
+        lines.push(`${jump.name} - ${jump.location[0]}`);
+    } else if (jump.name) {
+        lines.push(jump.name);
+    }
 
     if (jump.diff) lines.push(`Difficulty: ${jump.diff}`);
     if (jump.type) lines.push(`Type: ${jump.type}`);
-    else lines.push("Type: Any");
-
     if (jump.finder && jump.prover) lines.push(`Found & Proven by ${jump.prover}`);
     else if (jump.finder) lines.push(`Found by ${jump.finder}`);
     else if (jump.prover) lines.push(`Proven by ${jump.prover}`);
@@ -56,37 +62,75 @@ function buildContent(jump) {
     return lines.join("\n");
 }
 
-// ----------------- PASTE.EE -----------------
-async function createPasteEE(content) {
-    const data = {
-        sections: [{ name: "Jumpedia List", syntax: "autodetect", contents: content }],
-        expire: "1week"
+// ----------------- BATCHS -----------------
+function createBatch(batchName, author="WebUser") {
+    if (batchName.length > MAX_BATCH_NAME) return "Batch name too long!";
+    if (BATCHES[batchName]) return "Batch already exists!";
+    BATCHES[batchName] = {
+        name: batchName,
+        created_by: author,
+        status: "unfinished",
+        add: {},
+        edit: {},
+        rem: [],
+        log: [`${author} created batch.`]
     };
-
-    try {
-        const resp = await fetch("https://api.paste.ee/v1/pastes", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-Auth-Token": "VOTRE_CLE_API_PASTEEE" // <-- Remplace par ta clé
-            },
-            body: JSON.stringify(data)
-        });
-
-        const json = await resp.json();
-        if (json && json.link) return json.link;
-        return "Erreur lors de la création du paste.";
-    } catch (e) {
-        return "Erreur réseau lors de la création du paste.";
-    }
+    return `Batch "${batchName}" successfully created!`;
 }
 
-// ----------------- LISTE ET MISSING -----------------
-function generateListText(args) {
-    // Ici on applique tous les filtres/rest de la commande !list ou !missing
-    // Pour simplifier exemple : on liste juste tous les noms
-    const filtered = Object.values(jumpDB || {}).map(j => `${j.name} | ${j.type || "Any"} | Diff: ${j.diff || "N/A"}`);
-    return filtered.join("\n");
+function addJumpToBatch(batchName, jumpName, author="WebUser") {
+    const batch = BATCHES[batchName];
+    if (!batch) return `Batch "${batchName}" not found.`;
+    const jump = getJump(jumpName);
+    if (!jump) return `Jump "${jumpName}" not found.`;
+    batch.add[jumpName.toLowerCase()] = jump;
+    batch.log.push(`${author} added jump "${jumpName}".`);
+    return `Jump "${jumpName}" added to batch "${batchName}".`;
+}
+
+function finishBatch(batchName, author="WebUser") {
+    const batch = BATCHES[batchName];
+    if (!batch) return `Batch "${batchName}" not found.`;
+    batch.status = "finished";
+    batch.log.push(`${author} finished batch.`);
+    return `Batch "${batchName}" marked as finished.`;
+}
+
+function approveBatch(batchName, author="WebUser") {
+    const batch = BATCHES[batchName];
+    if (!batch) return `Batch "${batchName}" not found.`;
+    if (batch.status !== "finished") return "Batch must be finished before approval.";
+
+    Object.entries(batch.add).forEach(([name, data]) => jumpDB[name.toLowerCase()] = data);
+    Object.entries(batch.edit).forEach(([name, data]) => jumpDB[name.toLowerCase()] = data);
+    batch.rem.forEach(name => delete jumpDB[name.toLowerCase()]);
+
+    batch.status = "implemented";
+    batch.log.push(`${author} approved batch.`);
+    return `Batch "${batchName}" approved and implemented.`;
+}
+
+// ----------------- PASTE.EE -----------------
+async function createPaste(title, content) {
+    try {
+        const resp = await fetch(PASTEE_API_URL, {
+            method: "POST",
+            headers: {
+                "X-Auth-Token": PASTEE_API_KEY,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                description: title,
+                sections: [{ name: title, syntax: "autodetect", contents: content }],
+                visibility: 1 // 1 = unlisted
+            })
+        });
+        const data = await resp.json();
+        if (data && data.link) return data.link;
+        return "Erreur: Impossible de créer le paste.";
+    } catch (err) {
+        return "Erreur: Impossible de créer le paste.";
+    }
 }
 
 // ----------------- COMMANDES -----------------
@@ -97,97 +141,82 @@ function infoCommand(name) {
 }
 
 function randomCommand() {
-    const allJumps = Object.values(jumpDB || {});
-    if (!allJumps.length) return "Database vide.";
-    const jump = allJumps[Math.floor(Math.random() * allJumps.length)];
-    return buildContent(jump);
+    if (!jumpDB) return "Database not loaded yet.";
+    const allJumps = Object.values(jumpDB);
+    const randJump = allJumps[Math.floor(Math.random() * allJumps.length)];
+    return buildContent(randJump);
 }
 
-// ----------------- BATCHS -----------------
-function createBatch(batchName, author="WebUser") {
-    if (batchName.length > MAX_BATCH_NAME) return "Batch name trop long !";
-    if (BATCHES[batchName]) return "Batch déjà existant !";
-    BATCHES[batchName] = { name: batchName, created_by: author, status:"unfinished", add:{}, edit:{}, rem:[], log:[`${author} created batch.`] };
-    return `Batch "${batchName}" créé !`;
+async function listCommand(filters = "") {
+    if (!jumpDB) return "Database not loaded yet.";
+
+    let output = Object.values(jumpDB).map(j => buildContent(j)).join("\n\n");
+    if (filters) output = output.split("\n\n").filter(l => l.toLowerCase().includes(filters.toLowerCase())).join("\n\n");
+
+    const link = await createPaste("Jump List", output);
+    return `Liste créée: ${link}`;
 }
 
-function addJumpToBatch(batchName, jumpName, author="WebUser") {
-    const batch = BATCHES[batchName];
-    if (!batch) return `Batch "${batchName}" non trouvé.`;
-    const jump = getJump(jumpName);
-    if (!jump) return `Jump "${jumpName}" non trouvé.`;
-    batch.add[jumpName.toLowerCase()] = jump;
-    batch.log.push(`${author} added jump "${jumpName}".`);
-    return `Jump "${jumpName}" ajouté au batch "${batchName}".`;
-}
-
-function finishBatch(batchName, author="WebUser") {
-    const batch = BATCHES[batchName];
-    if (!batch) return `Batch "${batchName}" non trouvé.`;
-    batch.status = "finished";
-    batch.log.push(`${author} finished batch.`);
-    return `Batch "${batchName}" marqué comme terminé.`;
-}
-
-function approveBatch(batchName, author="WebUser") {
-    const batch = BATCHES[batchName];
-    if (!batch) return `Batch "${batchName}" non trouvé.`;
-    if (batch.status !== "finished") return "Batch doit être terminé avant approbation.";
-
-    Object.entries(batch.add).forEach(([name, data]) => jumpDB[name.toLowerCase()] = data);
-    Object.entries(batch.edit).forEach(([name, data]) => jumpDB[name.toLowerCase()] = data);
-    batch.rem.forEach(name => delete jumpDB[name.toLowerCase()]);
-
-    batch.status = "implemented";
-    batch.log.push(`${author} approved batch.`);
-    return `Batch "${batchName}" approuvé et appliqué.`;
-}
-
-// ----------------- RUN COMMANDES -----------------
+// ----------------- RUN COMMAND -----------------
 async function runCommand(input, callback) {
     await loadDatabases();
     if (!input.startsWith("!")) return callback("Commande doit commencer par '!'");
+
     const args = input.match(/(?:[^\s"]+|"[^"]*")+/g).map(a => a.replace(/"/g, ""));
     const cmd = args[0].substring(1).toLowerCase();
     const rest = args.slice(1);
 
-    switch(cmd) {
-        case "help": callback("Voir la documentation: https://github.com/JoniKauf/JumpediaOld/blob/main/README.md"); break;
-        case "info": callback(rest.length ? infoCommand(rest.join(" ")) : "Donnez un nom de jump !"); break;
-        case "random": callback(randomCommand()); break;
+    let res = "";
+
+    switch (cmd) {
+        case "info":
+            if (!rest.length) res = "Provide a jump name!";
+            else res = infoCommand(rest.join(" "));
+            break;
+
+        case "random":
+            res = randomCommand();
+            break;
 
         case "list":
         case "missing":
-            {
-                const listText = generateListText(rest);
-                createPasteEE(listText).then(link => callback(`Liste créée: <a href="${link}" target="_blank">${link}</a>`));
-            }
+            res = await listCommand(rest.join(" "));
             break;
-
-        case "give": callback("Commande give non implémentée dans l'exemple"); break;
-        case "proof": callback("Commande proof non implémentée dans l'exemple"); break;
-        case "rate": callback("Commande rate non implémentée dans l'exemple"); break;
-        case "ratings": callback("Commande ratings non implémentée dans l'exemple"); break;
-        case "top100": callback("Commande top100 non implémentée dans l'exemple"); break;
-        case "donate": callback("Faire un don: https://www.paypal.com/donate/example"); break;
 
         case "batch":
-            if(rest.length < 2) return callback("Usage: !batch <create|add|finish|approve> <batchName> [args]");
-            const op = rest[0].toLowerCase(), batchName = rest[1], author="WebUser";
-            switch(op){
-                case "create": callback(createBatch(batchName, author)); break;
-                case "add":
-                    if(rest.length < 3) return callback("Usage: !batch add <batchName> <jumpName>");
-                    callback(addJumpToBatch(batchName, rest.slice(2).join(" "), author));
+            if (rest.length < 2) {
+                res = "Usage: !batch <create|add|finish|approve> <batchName> [args]";
+                break;
+            }
+            const op = rest[0].toLowerCase();
+            const batchName = rest[1];
+            const author = "WebUser";
+
+            switch(op) {
+                case "create":
+                    res = createBatch(batchName, author);
                     break;
-                case "finish": callback(finishBatch(batchName, author)); break;
-                case "approve": callback(approveBatch(batchName, author)); break;
-                default: callback("Opération batch inconnue !"); break;
+                case "add":
+                    if (rest.length < 3) { res = "Usage: !batch add <batchName> <jumpName>"; break; }
+                    const jumpName = rest.slice(2).join(" ");
+                    res = addJumpToBatch(batchName, jumpName, author);
+                    break;
+                case "finish":
+                    res = finishBatch(batchName, author);
+                    break;
+                case "approve":
+                    res = approveBatch(batchName, author);
+                    break;
+                default:
+                    res = "Unknown batch operation!";
             }
             break;
 
-        default: callback("Commande inconnue !");
+        default:
+            res = "Unknown command!";
     }
+
+    callback(res);
 }
 
 // ----------------- EXPORT -----------------
