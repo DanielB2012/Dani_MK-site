@@ -1,7 +1,7 @@
 // commands.js pour Jumpmedia (navigateur)
 let jumpDB = null;
 let tricksDB = null;
-const BATCHES = {};
+const BATCHES = {}; // Stockage temporaire des batches en mémoire
 const MAX_BATCH_NAME = 50;
 
 // ----------------- UTILITAIRES -----------------
@@ -19,133 +19,99 @@ async function loadDatabases() {
 function getJump(name) {
     if (!jumpDB || !tricksDB) return null;
     const lower = name.toLowerCase();
+
+    // Recherche dans jump_data.json
     if (jumpDB[lower]) return jumpDB[lower];
+
+    // Recherche dans tricks.json
     for (const trick of tricksDB) {
-        if (trick.content && trick.content.toLowerCase().includes(lower)) return trick;
+        if (trick.content && trick.content.toLowerCase().includes(lower)) {
+            return trick;
+        }
     }
+
     return null;
 }
 
-// ----------------- COMMANDES -----------------
-function helpCommand() {
-    return "Available commands: help, info, list, missing, give, del/rem, proof, rate, ratings, donate, typedyno, batch, genlists, top100, random, backup, channelconf";
+// ----------------- FORMATTEUR TEXTE -----------------
+function buildContent(jump) {
+    // Si c'est un trick (tricks.json)
+    if (jump.content) return jump.content.trim();
+
+    let lines = [];
+
+    // Titre
+    if (jump.name && jump.location?.length) {
+        lines.push(`${jump.name} - ${jump.location[0]}`);
+    } else if (jump.name) {
+        lines.push(jump.name);
+    }
+
+    // Difficulty
+    if (jump.diff) lines.push(`Difficulty: ${jump.diff}`);
+
+    // Type uniquement (tier supprimé)
+    if (jump.type) lines.push(`Type: ${jump.type}`);
+    else lines.push("Type: Any");
+
+    // Found / Proven
+    if (jump.finder && jump.prover) {
+        lines.push(`Found & Proven by ${jump.prover}`);
+    } else if (jump.finder) {
+        lines.push(`Found by ${jump.finder}`);
+    } else if (jump.prover) {
+        lines.push(`Proven by ${jump.prover}`);
+    }
+
+    // Database
+    lines.push("From the Database");
+
+    // Links
+    if (jump.links) {
+        if (Array.isArray(jump.links)) jump.links.forEach(l => lines.push(l));
+        else lines.push(jump.links);
+    }
+
+    return lines.join("\n");
 }
 
+// ----------------- COMMANDES -----------------
 function infoCommand(name) {
     const jump = getJump(name);
     if (!jump) return `Jump "${name}" not found.`;
-    let lines = [];
-    if (jump.name) lines.push(jump.name);
-    if (jump.diff) lines.push(`Difficulty: ${jump.diff}`);
-    if (jump.tier) lines.push(`Tier: ${jump.tier}`);
-    if (jump.finder) lines.push(`Found by ${jump.finder}`);
-    if (jump.prover) lines.push(`Proven by ${jump.prover}`);
-    return lines.join("\n");
+    return buildContent(jump);
 }
 
 function listCommand() {
     if (!jumpDB) return "Database not loaded yet.";
+
+    // Noms des jumps uniquement depuis jump_data.json
     const jumpList = Object.values(jumpDB).map(j => j.name);
-    return jumpList.join("\n");
+
+    localStorage.setItem("jump_list", JSON.stringify(jumpList));
+    window.open("list.html", "_blank");
+
+    return "Opening list...";
 }
 
-function missingCommand() {
-    return "Missing command executed (logic TBD)";
+// ----------------- BATCHS -----------------
+function createBatch(batchName, author="WebUser") {
+    if (batchName.length > MAX_BATCH_NAME) return "Batch name too long!";
+    if (BATCHES[batchName]) return "Batch already exists!";
+    BATCHES[batchName] = {
+        name: batchName,
+        created_by: author,
+        status: "unfinished",
+        add: {},
+        edit: {},
+        rem: [],
+        log: [`${author} created batch.`]
+    };
+    return `Batch "${batchName}" successfully created!`;
 }
 
-function giveCommand() {
-    return "Give command executed (logic TBD)";
-}
-
-function delCommand() {
-    return "Del/Rem command executed (logic TBD)";
-}
-
-function proofCommand() {
-    return "Proof command executed (logic TBD)";
-}
-
-function rateCommand() {
-    return "Rate command executed (logic TBD)";
-}
-
-function ratingsCommand() {
-    return "Ratings command executed (logic TBD)";
-}
-
-function donateCommand() {
-    return "**To the donation page:**\nhttps://paypal.me/JumpediaBot";
-}
-
-function typedynoCommand() {
-    return "Typedyno command executed (logic TBD)";
-}
-
-function batchCommand() {
-    return "Batch command executed (logic TBD)";
-}
-
-function genlistsCommand() {
-    return "Genlists command executed (logic TBD)";
-}
-
-function top100Command() {
-    return "Top100 command executed (logic TBD)";
-}
-
-function randomCommand() {
-    return "Random command executed (logic TBD)";
-}
-
-function backupCommand() {
-    return "Backup command executed (logic TBD)";
-}
-
-function channelconfCommand() {
-    return "Channelconf command executed (logic TBD)";
-}
-
-function subrateCommand() {
-    return "Subrate command executed (logic TBD)";
-}
-
-// ----------------- RUN COMMANDES -----------------
-async function runCommand(input, callback) {
-    await loadDatabases();
-    if (!input.startsWith("!")) return callback("Commande doit commencer par '!'");
-
-    const args = input.match(/(?:[^\s"]+|"[^"]*")+/g).map(a => a.replace(/"/g, ""));
-    const cmd = args[0].substring(1).toLowerCase();
-    const rest = args.slice(1);
-
-    let res = "";
-    switch(cmd) {
-        case "help": res = helpCommand(); break;
-        case "info": res = rest.length ? infoCommand(rest.join(" ")) : "Provide a jump name!"; break;
-        case "list": res = listCommand(); break;
-        case "missing": res = missingCommand(); break;
-        case "give": res = giveCommand(); break;
-        case "del":
-        case "rem": res = delCommand(); break;
-        case "proof": res = proofCommand(); break;
-        case "rate": res = rateCommand(); break;
-        case "ratings": res = ratingsCommand(); break;
-        case "donate": res = donateCommand(); break;
-        case "typedyno": res = typedynoCommand(); break;
-        case "batch": res = batchCommand(); break;
-        case "genlist":
-        case "genlists": res = genlistsCommand(); break;
-        case "top100": res = top100Command(); break;
-        case "random": res = randomCommand(); break;
-        case "backup": res = backupCommand(); break;
-        case "channelconf": res = channelconfCommand(); break;
-        case "subrate": res = subrateCommand(); break;
-        default: res = "Unknown command!";
-    }
-
-    callback(res);
-}
-
-// ----------------- EXPORT -----------------
-window.runCommand = runCommand;
-window.getJump = getJump;
+function addJumpToBatch(batchName, jumpName, author="WebUser") {
+    const batch = BATCHES[batchName];
+    if (!batch) return `Batch "${batchName}" not found.`;
+    const jump = getJump(jumpName);
+    if (!jump) return `Jump
