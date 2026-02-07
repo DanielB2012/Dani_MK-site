@@ -34,6 +34,34 @@ function getJump(name) {
     return null;
 }
 
+// ----------------- FORMATTEUR -----------------
+function buildContent(jump) {
+    if (jump.content) return jump.content.trim();
+
+    let lines = [];
+
+    if (jump.name && jump.location?.length) {
+        lines.push(`${jump.name} - ${jump.location[0]}`);
+    } else if (jump.name) {
+        lines.push(jump.name);
+    }
+
+    if (jump.diff) lines.push(`Difficulty: ${jump.diff}`);
+    if (jump.type) lines.push(`Type: ${jump.type}`);
+    if (jump.finder && jump.prover) lines.push(`Found & Proven by ${jump.prover}`);
+    else if (jump.finder) lines.push(`Found by ${jump.finder}`);
+    else if (jump.prover) lines.push(`Proven by ${jump.prover}`);
+
+    lines.push("From the Database");
+
+    if (jump.links) {
+        if (Array.isArray(jump.links)) jump.links.forEach(l => lines.push(l));
+        else lines.push(jump.links);
+    }
+
+    return lines.join("\n");
+}
+
 // ----------------- BATCHS -----------------
 function createBatch(batchName, author="WebUser") {
     if (batchName.length > MAX_BATCH_NAME) return "Batch name too long!";
@@ -92,13 +120,13 @@ async function createPaste(title, content) {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                description: title + " (expire dans 1 an)",
+                description: title,
                 sections: [{ name: title, syntax: "autodetect", contents: content }],
-                visibility: 1 // unlisted
+                visibility: 1 // 1 = unlisted
             })
         });
         const data = await resp.json();
-        if (data && data.link) return `<a href="${data.link}" target="_blank">${data.link}</a>`;
+        if (data && data.link) return data.link;
         return "Erreur: Impossible de créer le paste.";
     } catch (err) {
         return "Erreur: Impossible de créer le paste.";
@@ -109,28 +137,24 @@ async function createPaste(title, content) {
 function infoCommand(name) {
     const jump = getJump(name);
     if (!jump) return `Jump "${name}" not found.`;
-    return jump.name || "Unknown jump";
+    return buildContent(jump);
 }
 
 function randomCommand() {
     if (!jumpDB) return "Database not loaded yet.";
     const allJumps = Object.values(jumpDB);
     const randJump = allJumps[Math.floor(Math.random() * allJumps.length)];
-    return randJump.name || "Unknown jump";
+    return buildContent(randJump);
 }
 
 async function listCommand(filters = "") {
     if (!jumpDB) return "Database not loaded yet.";
 
-    let jumps = Object.values(jumpDB).map(j => j.name);
-    if (filters) {
-        const f = filters.toLowerCase();
-        jumps = jumps.filter(n => n.toLowerCase().includes(f));
-    }
+    let output = Object.values(jumpDB).map(j => buildContent(j)).join("\n\n");
+    if (filters) output = output.split("\n\n").filter(l => l.toLowerCase().includes(filters.toLowerCase())).join("\n\n");
 
-    const output = jumps.join("\n");
-    const link = await createPaste("Liste des jumps", output);
-    return `Résultat: Liste créée: ${link}`;
+    const link = await createPaste("Jump List", output);
+    return `Liste créée: ${link}`;
 }
 
 // ----------------- RUN COMMAND -----------------
