@@ -152,19 +152,19 @@ async function listCommand(filters = "") {
 
     // Prendre uniquement les noms des jumps
     let output = Object.values(jumpDB)
-        .map(j => j.name) // <-- juste le nom
-        .filter(name => name) // filtre les entrées sans nom
-        .join("\n");
+        .map(j => j.name)        // juste le nom
+        .filter(name => name)    // supprimer les entrées vides
+        .sort((a, b) => a.localeCompare(b)); // optionnel : tri alphabétique
 
-    // Appliquer un filtre si nécessaire
+    // appliquer un filtre si nécessaire
     if (filters) {
-        output = output
-            .split("\n")
-            .filter(name => name.toLowerCase().includes(filters.toLowerCase()))
-            .join("\n");
+        output = output.filter(name => name.toLowerCase().includes(filters.toLowerCase()));
     }
 
-    const link = await createPaste("Jump List", output);
+    // joindre en string pour le paste
+    const pasteContent = output.join("\n");
+
+    const link = await createPaste("Jump List", pasteContent);
     return `Liste créée: ${link}`;
 }
 
@@ -233,5 +233,6 @@ async function runCommand(input, callback) {
 // ----------------- EXPORT -----------------
 window.runCommand = runCommand;
 window.getJump = getJump;
+
 
 
