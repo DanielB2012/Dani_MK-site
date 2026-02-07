@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <title>ChatSmo - Dani_MK</title>
-
 <style>
 * { box-sizing: border-box; }
 
@@ -31,7 +30,6 @@ body {
     box-shadow: 0 5px 20px rgba(0,0,0,0.6);
     z-index: 1000;
 }
-
 .nav-btn {
     padding: 12px 26px;
     border-radius: 20px;
@@ -42,12 +40,10 @@ body {
     cursor: pointer;
     transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
 }
-
 .nav-btn.totk { background: #ff0000; }
 .nav-btn.smo { background: #00cc44; }
 .nav-btn.botw { background: #0066ff; }
 .nav-btn.accueil { background: linear-gradient(135deg, #ff0000, #6a00ff); }
-
 .nav-btn:hover {
     transform: scale(1.1);
     box-shadow: 0 0 15px rgba(255,255,255,0.4);
@@ -83,7 +79,6 @@ body {
     padding: 12px;
     background: rgba(0,0,0,0.6);
 }
-
 .tab {
     flex: 1;
     text-align: center;
@@ -95,11 +90,7 @@ body {
     border: 1px solid rgba(255,255,255,0.15);
     transition: all 0.25s ease;
 }
-
-.tab:hover {
-    background: rgba(255,255,255,0.15);
-}
-
+.tab:hover { background: rgba(255,255,255,0.15); }
 .tab.active {
     background: linear-gradient(135deg, #5f00ff, #9b00ff);
     box-shadow: 0 0 18px rgba(140,0,255,0.9);
@@ -112,10 +103,7 @@ body {
     display: none;
     flex-direction: column;
 }
-
-.tab-content.active {
-    display: flex;
-}
+.tab-content.active { display: flex; }
 
 /* Chat */
 .chat-window {
@@ -126,20 +114,17 @@ body {
     flex-direction: column;
     gap: 10px;
 }
-
 .chat-input {
     display: flex;
     padding: 10px;
     border-top: 1px solid #333;
 }
-
 .chat-input input {
     flex: 1;
     padding: 10px;
     border-radius: 10px;
     border: none;
 }
-
 .chat-input button {
     margin-left: 10px;
     padding: 0 20px;
@@ -156,7 +141,6 @@ body {
     border-radius: 10px;
     max-width: 80%;
 }
-
 .user { background: #333; align-self: flex-end; }
 .ia { background: #4c00ff; align-self: flex-start; }
 
@@ -188,7 +172,6 @@ body {
     color: white;
     z-index: 2000;
 }
-
 .jumps-btn {
     position: fixed;
     bottom: 25px;
@@ -217,9 +200,7 @@ body {
 </div>
 
 <div class="page">
-
     <div class="chat-card">
-
         <!-- Onglets -->
         <div class="tabs">
             <div class="tab active" onclick="openTab('chat')">🤖 Chatbot</div>
@@ -243,28 +224,24 @@ body {
                 Chargement de Jumpmedia...
             </div>
         </div>
-
     </div>
-
 </div>
 
-<a href="shorts.html">
-    <button class="shorts-btn">Mes Shorts</button>
-</a>
-
+<a href="shorts.html"><button class="shorts-btn">Mes Shorts</button></a>
 <button class="jumps-btn" onclick="window.location.href='https://danielb2012.github.io/Dani_MK-site/jumps.html'">
     Serveurs Trickjumps
 </button>
 
-<!-- Commands.js doit être dans le même dossier -->
 <script src="commands.js"></script>
 
 <script>
+// Navigation
 function goTOTK(){ window.location.href="totk.html"; }
 function goSMO(){ window.location.href="smo.html"; }
 function goBOTW(){ window.location.href="botw.html"; }
 function goAccueil(){ window.location.href="index.html"; }
 
+// Onglets
 function openTab(id){
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
@@ -274,6 +251,7 @@ function openTab(id){
     if(id === "jumpmedia") initJumpmedia();
 }
 
+// Chat
 function addMessage(text, type){
     const chatWindow = document.getElementById("chat-window");
     const div = document.createElement("div");
@@ -332,16 +310,22 @@ function initJumpmedia(){
     btn.onclick = () => {
         const command = input.value.trim();
         if(!command) return;
+
+        // Nouvelle logique: !list ouvre list.html
         runCommand(command, res => {
-            const p = document.createElement("div");
-            p.innerHTML = `<strong>Résultat:</strong> ${res.replace(/\n/g,"<br>")}`;
-            output.appendChild(p);
-            output.scrollTop = output.scrollHeight;
+            if(command.toLowerCase().startsWith("!list")){
+                // Les résultats sont déjà stockés dans localStorage par commands.js
+                window.open("list.html","_blank");
+            } else {
+                const p = document.createElement("div");
+                p.innerHTML = `<strong>Résultat:</strong> ${res.replace(/\n/g,"<br>")}`;
+                output.appendChild(p);
+                output.scrollTop = output.scrollHeight;
+            }
             input.value = "";
         });
     };
 }
 </script>
-
 </body>
 </html>
