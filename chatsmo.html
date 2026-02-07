@@ -245,7 +245,7 @@ function goAccueil(){ window.location.href="index.html"; }
 function openTab(id){
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-    document.querySelector([onclick="openTab('${id}')"]).classList.add('active');
+    document.querySelector(`[onclick="openTab('${id}')"]`).classList.add('active');
     document.getElementById(id).classList.add('active');
 
     if(id === "jumpmedia") initJumpmedia();
@@ -307,18 +307,24 @@ function initJumpmedia(){
     output.style.marginTop = "15px";
     container.appendChild(output);
 
+    // Variable pour stocker la fenêtre list.html ouverte
+    window.listWindow = null;
+
     btn.onclick = () => {
         const command = input.value.trim();
         if(!command) return;
 
-        // Nouvelle logique: !list ouvre list.html
         runCommand(command, res => {
             if(command.toLowerCase().startsWith("!list")){
-                // Les résultats sont déjà stockés dans localStorage par commands.js
-                window.open("list.html","_blank");
+                // Ouvre list.html une seule fois
+                if(!window.listWindow || window.listWindow.closed){
+                    window.listWindow = window.open("list.html","_blank");
+                } else {
+                    window.listWindow.focus();
+                }
             } else {
                 const p = document.createElement("div");
-                p.innerHTML = <strong>Résultat:</strong> ${res.replace(/\n/g,"<br>")};
+                p.innerHTML = `<strong>Résultat:</strong> ${res.replace(/\n/g,"<br>")}`;
                 output.appendChild(p);
                 output.scrollTop = output.scrollHeight;
             }
