@@ -148,23 +148,26 @@ function randomCommand() {
 }
 
 async function listCommand(filters = "") {
-    if (!jumpDB) return "Database not loaded yet.";
+    if (!jumpDB || !tricksDB) return "Database not loaded yet.";
 
-    // On prend uniquement les noms
-    let names = Object.values(jumpDB)
-        .map(j => j.name)       // juste le nom
-        .filter(Boolean);       // supprimer les entrées vides
+    // Récupérer les noms des jumps
+    let names = Object.values(jumpDB).map(j => j.name).filter(Boolean);
 
-    // Appliquer filtre si demandé
+    // Récupérer les "noms" des tricks (ici j’utilise 'content' comme nom si 'name' n'existe pas)
+    let trickNames = tricksDB.map(t => t.name || t.content).filter(Boolean);
+
+    // Combiner les deux
+    let allNames = [...names, ...trickNames];
+
+    // Appliquer filtre si nécessaire
     if (filters) {
         const lowerFilter = filters.toLowerCase();
-        names = names.filter(n => n.toLowerCase().includes(lowerFilter));
+        allNames = allNames.filter(n => n.toLowerCase().includes(lowerFilter));
     }
 
-    // Joindre les noms en une seule chaîne
-    const pasteContent = names.join("\n");
+    // Joindre en une chaîne pour le paste
+    const pasteContent = allNames.join("\n");
 
-    // Créer le paste
     const link = await createPaste("Jump List", pasteContent);
     return `Liste créée: ${link}`;
 }
@@ -234,6 +237,7 @@ async function runCommand(input, callback) {
 // ----------------- EXPORT -----------------
 window.runCommand = runCommand;
 window.getJump = getJump;
+
 
 
 
