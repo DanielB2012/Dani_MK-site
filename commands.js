@@ -150,8 +150,19 @@ function randomCommand() {
 async function listCommand(filters = "") {
     if (!jumpDB) return "Database not loaded yet.";
 
-    let output = Object.values(jumpDB).map(j => buildContent(j)).join("\n\n");
-    if (filters) output = output.split("\n\n").filter(l => l.toLowerCase().includes(filters.toLowerCase())).join("\n\n");
+    // Prendre uniquement les noms des jumps
+    let output = Object.values(jumpDB)
+        .map(j => j.name) // <-- juste le nom
+        .filter(name => name) // filtre les entrées sans nom
+        .join("\n");
+
+    // Appliquer un filtre si nécessaire
+    if (filters) {
+        output = output
+            .split("\n")
+            .filter(name => name.toLowerCase().includes(filters.toLowerCase()))
+            .join("\n");
+    }
 
     const link = await createPaste("Jump List", output);
     return `Liste créée: ${link}`;
@@ -222,4 +233,5 @@ async function runCommand(input, callback) {
 // ----------------- EXPORT -----------------
 window.runCommand = runCommand;
 window.getJump = getJump;
+
 
