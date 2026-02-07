@@ -1,12 +1,6 @@
-// commands.js pour Jumpmedia (navigateur)
+// ----------------- DATABASES -----------------
 let jumpDB = null;
 let tricksDB = null;
-const BATCHES = {}; // Stockage temporaire des batches en mémoire
-const MAX_BATCH_NAME = 50;
-
-// ----------------- CONFIG PASTEE -----------------
-const PASTEE_API_KEY = "aLFR1Zi3gkO91568g36WA7ZeGdi3ZUeIQ8KFDrW2s";
-const PASTEE_API_URL = "https://paste.ee/api";
 
 // ----------------- UTILITAIRES -----------------
 async function loadDatabases() {
@@ -24,10 +18,8 @@ function getJump(name) {
     if (!jumpDB || !tricksDB) return null;
     const lower = name.toLowerCase();
 
-    // Recherche dans jump_data.json
     if (jumpDB[lower]) return jumpDB[lower];
 
-    // Recherche dans tricks.json
     for (const trick of tricksDB) {
         if (trick.content && trick.content.toLowerCase().includes(lower)) {
             return trick;
@@ -37,40 +29,22 @@ function getJump(name) {
     return null;
 }
 
-// ----------------- FORMATTEUR TEXTE -----------------
+// ----------------- FORMATTEUR -----------------
 function buildContent(jump) {
-    // Si c'est un trick (tricks.json)
     if (jump.content) return jump.content.trim();
 
     let lines = [];
+    if (jump.name && jump.location?.length) lines.push(`${jump.name} - ${jump.location[0]}`);
+    else if (jump.name) lines.push(jump.name);
 
-    // Titre
-    if (jump.name && jump.location?.length) {
-        lines.push(`${jump.name} - ${jump.location[0]}`);
-    } else if (jump.name) {
-        lines.push(jump.name);
-    }
-
-    // Difficulty
     if (jump.diff) lines.push(`Difficulty: ${jump.diff}`);
-
-    // Type
     if (jump.type) lines.push(`Type: ${jump.type}`);
-    else lines.push("Type: Any");
+    if (jump.finder && jump.prover) lines.push(`Found & Proven by ${jump.prover}`);
+    else if (jump.finder) lines.push(`Found by ${jump.finder}`);
+    else if (jump.prover) lines.push(`Proven by ${jump.prover}`);
 
-    // Found / Proven
-    if (jump.finder && jump.prover) {
-        lines.push(`Found & Proven by ${jump.prover}`);
-    } else if (jump.finder) {
-        lines.push(`Found by ${jump.finder}`);
-    } else if (jump.prover) {
-        lines.push(`Proven by ${jump.prover}`);
-    }
-
-    // Database
     lines.push("From the Database");
 
-    // Links
     if (jump.links) {
         if (Array.isArray(jump.links)) jump.links.forEach(l => lines.push(l));
         else lines.push(jump.links);
@@ -86,111 +60,59 @@ function infoCommand(name) {
     return buildContent(jump);
 }
 
-function randomCommand() {
-    if (!jumpDB) return "Database not loaded yet.";
-    const jumps = Object.values(jumpDB);
-    if (!jumps.length) return "No jumps available.";
-    const jump = jumps[Math.floor(Math.random() * jumps.length)];
-    return buildContent(jump);
-}
-
-// ----------------- BATCHS -----------------
-function createBatch(batchName, author="WebUser") {
-    if (batchName.length > MAX_BATCH_NAME) return "Batch name too long!";
-    if (BATCHES[batchName]) return "Batch already exists!";
-    BATCHES[batchName] = {
-        name: batchName,
-        created_by: author,
-        status: "unfinished",
-        add: {},
-        edit: {},
-        rem: [],
-        log: [`${author} created batch.`]
-    };
-    return `Batch "${batchName}" successfully created!`;
-}
-
-function addJumpToBatch(batchName, jumpName, author="WebUser") {
-    const batch = BATCHES[batchName];
-    if (!batch) return `Batch "${batchName}" not found.`;
-    const jump = getJump(jumpName);
-    if (!jump) return `Jump "${jumpName}" not found.`;
-    batch.add[jumpName.toLowerCase()] = jump;
-    batch.log.push(`${author} added jump "${jumpName}".`);
-    return `Jump "${jumpName}" added to batch "${batchName}".`;
-}
-
-function finishBatch(batchName, author="WebUser") {
-    const batch = BATCHES[batchName];
-    if (!batch) return `Batch "${batchName}" not found.`;
-    batch.status = "finished";
-    batch.log.push(`${author} finished batch.`);
-    return `Batch "${batchName}" marked as finished.`;
-}
-
-function approveBatch(batchName, author="WebUser") {
-    const batch = BATCHES[batchName];
-    if (!batch) return `Batch "${batchName}" not found.`;
-    if (batch.status !== "finished") return "Batch must be finished before approval.";
-
-    // Implémente les ajouts/modifs
-    Object.entries(batch.add).forEach(([name, data]) => jumpDB[name.toLowerCase()] = data);
-    Object.entries(batch.edit).forEach(([name, data]) => jumpDB[name.toLowerCase()] = data);
-    batch.rem.forEach(name => delete jumpDB[name.toLowerCase()]);
-
-    batch.status = "implemented";
-    batch.log.push(`${author} approved batch.`);
-    return `Batch "${batchName}" approved and implemented.`;
-}
-
-// ----------------- LISTE VERS PASTEE -----------------
-async function listCommand(filters = {}) {
+function listCommand(args) {
     if (!jumpDB) return "Database not loaded yet.";
 
-    // Filtrer et ne garder que les noms
-    let output = Object.values(jumpDB)
-        .filter(j => {
-            let ok = true;
-            if (filters.diff) ok = ok && j.diff && j.diff.toLowerCase() === filters.diff.toLowerCase();
-            if (filters.type) ok = ok && j.type && j.type.toLowerCase() === filters.type.toLowerCase();
-            return ok;
-        })
-        .map(j => j.name)
-        .join("\n");
+    // Extraction des filtres (ex: diff low, type triple)
+    const filtered = Object.values(jumpDB).filter(j => {
+        let ok = true;
+        for (let i = 0; i < args.length; i += 2) {
+            const key = args[i].toLowerCase();
+            const val = args[i + 1]?.toLowerCase();
+            if (!val) continue;
+            if (key === "diff" && j.diff?.toLowerCase() !== val) ok = false;
+            if (key === "type" && j.type?.toLowerCase() !== val) ok = false;
+        }
+        return ok;
+    });
 
-    if (!output) return "Aucun jump trouvé pour ces critères.";
+    // On garde juste les noms
+    const jumpNames = filtered.map(j => j.name).filter(Boolean);
 
-    // Expiration 1 an
-    const expiresDate = new Date();
-    expiresDate.setFullYear(expiresDate.getFullYear() + 1);
-    const expiresStr = expiresDate.toISOString();
+    if (!jumpNames.length) return "Aucun jump ne correspond aux critères.";
 
+    return createPaste(jumpNames.join("\n"));
+}
+
+// ----------------- PASTE.EE -----------------
+const PASTE_API_KEY = "aLFR1Zi3gkO91568g36WA7ZeGdi3ZUeIQ8KFDrW2s";
+async function createPaste(content) {
     try {
-        const resp = await fetch(PASTEE_API_URL, {
+        const resp = await fetch("https://api.paste.ee/v1/pastes", {
             method: "POST",
             headers: {
-                "X-Auth-Token": PASTEE_API_KEY,
+                "X-Auth-Token": PASTE_API_KEY,
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                description: "Liste des jumps",
-                sections: [{ name: "Jumps", syntax: "autodetect", contents: output }],
-                visibility: 1,      // non listé
-                expires: expiresStr
+                description: "Liste de jumps",
+                sections: [{ name: "jumps", syntax: "text", contents: content }],
+                expire: "1y"
             })
         });
-
         const data = await resp.json();
         if (data && data.link) {
             return `Résultat: Liste créée: <a href="${data.link}" target="_blank">${data.link}</a>`;
+        } else {
+            return "Résultat: Liste créée: Erreur: Impossible de créer le paste.";
         }
-        return "Résultat: Erreur: Impossible de créer le paste.";
-    } catch (err) {
-        return "Résultat: Erreur: Impossible de créer le paste.";
+    } catch (e) {
+        console.error(e);
+        return "Résultat: Liste créée: Erreur: Impossible de créer le paste.";
     }
 }
 
-// ----------------- RUN COMMANDES -----------------
+// ----------------- RUN COMMAND -----------------
 async function runCommand(input, callback) {
     await loadDatabases();
 
@@ -202,57 +124,19 @@ async function runCommand(input, callback) {
 
     let res = "";
 
-    switch(cmd) {
+    switch (cmd) {
         case "info":
             if (!rest.length) res = "Provide a jump name!";
             else res = infoCommand(rest.join(" "));
             break;
 
-        case "random":
-            res = randomCommand();
-            break;
-
         case "list":
-            // Analyse des filtres
-            let filters = {};
-            for (let i = 0; i < rest.length; i++) {
-                if (rest[i].toLowerCase() === "only") {
-                    const key = rest[i+1]?.toLowerCase();
-                    const value = rest[i+2]?.toLowerCase();
-                    if (key === "diff") filters.diff = value;
-                    if (key === "ty" || key === "type") filters.type = value;
-                    i += 2;
-                }
-            }
-            res = await listCommand(filters);
-            break;
-
-        case "batch":
-            if (rest.length < 2) {
-                res = "Usage: !batch <create|add|finish|approve> <batchName> [args]";
-                break;
-            }
-            const op = rest[0].toLowerCase();
-            const batchName = rest[1];
-            const author = "WebUser";
-
-            switch(op) {
-                case "create":
-                    res = createBatch(batchName, author);
-                    break;
-                case "add":
-                    if (rest.length < 3) { res = "Usage: !batch add <batchName> <jumpName>"; break; }
-                    const jumpName = rest.slice(2).join(" ");
-                    res = addJumpToBatch(batchName, jumpName, author);
-                    break;
-                case "finish":
-                    res = finishBatch(batchName, author);
-                    break;
-                case "approve":
-                    res = approveBatch(batchName, author);
-                    break;
-                default:
-                    res = "Unknown batch operation!";
+            if (!rest.length) {
+                // sans filtres
+                const allNames = Object.values(jumpDB).map(j => j.name).filter(Boolean);
+                res = await createPaste(allNames.join("\n"));
+            } else {
+                res = await listCommand(rest);
             }
             break;
 
