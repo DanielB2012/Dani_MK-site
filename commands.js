@@ -85,13 +85,16 @@ function infoCommand(name) {
 function listCommand() {
     if (!jumpDB || !tricksDB) return "Database not loaded yet.";
 
-    // Récupère les noms des jumps
-    const jumpList = Object.keys(jumpDB);
+    // --- Traiter jump_data.json ---
+    const jumpList = Object.keys(jumpDB); // noms de jumps
 
-    // Récupère les contenus des tricks
-    const trickList = tricksDB.map(trick => trick.content || "Unnamed trick");
+    // --- Traiter tricks.json ---
+    const trickList = tricksDB.map(trick => {
+        if (trick.content) return trick.content.trim();
+        return "Unnamed trick";
+    });
 
-    // Prépare une liste claire avec sections
+    // --- Combine pour l'affichage ---
     const fullList = [
         "--- Jumps ---",
         ...jumpList,
@@ -99,10 +102,9 @@ function listCommand() {
         ...trickList
     ];
 
-    // Stocke et ouvre la page
+    // Stockage et ouverture dans list.html
     localStorage.setItem("jump_list", JSON.stringify(fullList));
     window.open("list.html", "_blank");
-
     return "Opening list...";
 }
 
