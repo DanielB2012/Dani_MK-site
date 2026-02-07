@@ -150,20 +150,21 @@ function randomCommand() {
 async function listCommand(filters = "") {
     if (!jumpDB) return "Database not loaded yet.";
 
-    // Prendre uniquement les noms des jumps
-    let output = Object.values(jumpDB)
-        .map(j => j.name)        // juste le nom
-        .filter(name => name)    // supprimer les entrées vides
-        .sort((a, b) => a.localeCompare(b)); // optionnel : tri alphabétique
+    // On prend uniquement les noms
+    let names = Object.values(jumpDB)
+        .map(j => j.name)       // juste le nom
+        .filter(Boolean);       // supprimer les entrées vides
 
-    // appliquer un filtre si nécessaire
+    // Appliquer filtre si demandé
     if (filters) {
-        output = output.filter(name => name.toLowerCase().includes(filters.toLowerCase()));
+        const lowerFilter = filters.toLowerCase();
+        names = names.filter(n => n.toLowerCase().includes(lowerFilter));
     }
 
-    // joindre en string pour le paste
-    const pasteContent = output.join("\n");
+    // Joindre les noms en une seule chaîne
+    const pasteContent = names.join("\n");
 
+    // Créer le paste
     const link = await createPaste("Jump List", pasteContent);
     return `Liste créée: ${link}`;
 }
@@ -233,6 +234,7 @@ async function runCommand(input, callback) {
 // ----------------- EXPORT -----------------
 window.runCommand = runCommand;
 window.getJump = getJump;
+
 
 
 
