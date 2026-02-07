@@ -50,9 +50,10 @@ function buildContent(jump) {
     // Difficulty
     if (jump.diff) lines.push(`Difficulty: ${jump.diff}`);
 
-    // Type
+    // Tier / Type
     if (jump.type) lines.push(`Type: ${jump.type}`);
-    else lines.push(`Type: Any`);
+    else if (jump.tier) lines.push(`Tier: ${jump.tier}`);
+    else lines.push("Type: Any");
 
     // Found / Proven
     if (jump.finder && jump.prover) {
@@ -86,7 +87,7 @@ function listCommand() {
     if (!jumpDB) return "Database not loaded yet.";
 
     // --- Noms des jumps uniquement depuis jump_data.json ---
-    const jumpList = Object.values(jumpDB).map(j => j.name || "Unnamed jump");
+    const jumpList = Object.values(jumpDB).map(j => j.name);
 
     // Stockage et ouverture
     localStorage.setItem("jump_list", JSON.stringify(jumpList));
