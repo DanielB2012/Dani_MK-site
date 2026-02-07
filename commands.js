@@ -83,10 +83,26 @@ function infoCommand(name) {
 }
 
 function listCommand() {
-    if (!jumpDB) return "Database not loaded yet.";
-    const list = Object.keys(jumpDB);
-    localStorage.setItem("jump_list", JSON.stringify(list));
+    if (!jumpDB || !tricksDB) return "Database not loaded yet.";
+
+    // Récupère les noms des jumps
+    const jumpList = Object.keys(jumpDB);
+
+    // Récupère les contenus des tricks
+    const trickList = tricksDB.map(trick => trick.content || "Unnamed trick");
+
+    // Prépare une liste claire avec sections
+    const fullList = [
+        "--- Jumps ---",
+        ...jumpList,
+        "--- Tricks ---",
+        ...trickList
+    ];
+
+    // Stocke et ouvre la page
+    localStorage.setItem("jump_list", JSON.stringify(fullList));
     window.open("list.html", "_blank");
+
     return "Opening list...";
 }
 
@@ -144,19 +160,23 @@ async function runCommand(input, callback) {
     await loadDatabases();
 
     if (!input.startsWith("!")) return callback("Commande doit commencer par '!'");
+
     const args = input.match(/(?:[^\s"]+|"[^"]*")+/g).map(a => a.replace(/"/g, ""));
     const cmd = args[0].substring(1).toLowerCase();
     const rest = args.slice(1);
 
     let res = "";
+
     switch(cmd) {
         case "info":
             if (!rest.length) res = "Provide a jump name!";
             else res = infoCommand(rest.join(" "));
             break;
+
         case "list":
             res = listCommand();
             break;
+
         case "batch":
             if (rest.length < 2) {
                 res = "Usage: !batch <create|add|finish|approve> <batchName> [args]";
@@ -165,6 +185,7 @@ async function runCommand(input, callback) {
             const op = rest[0].toLowerCase();
             const batchName = rest[1];
             const author = "WebUser";
+
             switch(op) {
                 case "create":
                     res = createBatch(batchName, author);
@@ -184,6 +205,7 @@ async function runCommand(input, callback) {
                     res = "Unknown batch operation!";
             }
             break;
+
         default:
             res = "Unknown command!";
     }
