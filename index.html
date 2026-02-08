@@ -4,19 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dani_MK - Créateur YouTube</title>
-
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
 * { box-sizing: border-box; }
-
-html, body {
-    margin: 0;
-    font-family: 'Roboto', Arial, sans-serif;
-    color: white;
-    background: linear-gradient(135deg, #ff0000, #6a00ff);
-    background-attachment: fixed;
-}
+html, body { margin: 0; font-family: 'Roboto', Arial, sans-serif; color: white; background: linear-gradient(135deg, #ff0000, #6a00ff); background-attachment: fixed; }
 
 /* ================= NAVBAR ================= */
 .navbar {
@@ -33,17 +25,17 @@ html, body {
     box-shadow: 0 5px 20px rgba(0,0,0,0.6);
 }
 
-/* Hamburger container */
+/* Hamburger bouton (mobile seulement) */
 .menu-btn {
+    display: none;
     width: 30px;
     height: 22px;
-    display: flex;
     flex-direction: column;
     justify-content: space-between;
     cursor: pointer;
-    transition: transform 0.3s ease;
+    position: relative;
+    z-index: 2001;
 }
-
 .menu-btn span {
     display: block;
     height: 4px;
@@ -51,9 +43,10 @@ html, body {
     background: white;
     border-radius: 2px;
     transition: all 0.3s ease;
+    transform-origin: center;
 }
 
-/* ================= MENU LATERAL ================= */
+/* Menu mobile */
 .menu {
     position: fixed;
     top: 0;
@@ -68,11 +61,7 @@ html, body {
     transition: left 0.3s ease;
     z-index: 1500;
 }
-
-.menu.open {
-    left: 0;
-}
-
+.menu.open { left: 0; }
 .menu button {
     width: 100%;
     padding: 14px;
@@ -84,38 +73,42 @@ html, body {
     cursor: pointer;
     transition: transform 0.2s, box-shadow 0.2s;
 }
-
-.menu button:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 15px rgba(255,255,255,0.4);
-}
-
-/* Couleurs boutons */
+.menu button:hover { transform: scale(1.05); box-shadow: 0 0 15px rgba(255,255,255,0.4); }
 .menu .totk { background: #ff0000; }
 .menu .smo { background: #00cc44; }
 .menu .botw { background: #0066ff; }
-.menu .chatsmo { background:#4c00ff; }
+.menu .chatsmo { background: #4c00ff; }
 .menu .shorts { background: linear-gradient(135deg, #2600ff, #00ffc8); }
 .menu .jumps { background: #666; }
 
-/* Animation du hamburger -> flèche */
-.menu-btn.open span:nth-child(1) {
-    transform: rotate(45deg) translate(5px, 5px);
-}
-.menu-btn.open span:nth-child(2) {
-    opacity: 0;
-}
-.menu-btn.open span:nth-child(3) {
-    transform: rotate(-45deg) translate(5px, -5px);
-}
+/* Animation hamburger -> < */
+.menu-btn.open span:nth-child(1) { transform: rotate(45deg) translate(6px, 6px); }
+.menu-btn.open span:nth-child(2) { transform: translateX(50px); opacity: 0.2; }
+.menu-btn.open span:nth-child(3) { transform: rotate(-45deg) translate(6px, -6px); }
 
-/* ================= PAGE ================= */
+/* ================= BOUTONS FIXES ================= */
+.jumps-btn,
+.shorts-btn {
+    position: fixed;
+    bottom: 20px;
+    padding: 14px 24px;
+    border-radius: 30px;
+    border: none;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    color: white;
+    z-index: 2000;
+}
+.jumps-btn { right: 20px; background: #666; }
+.shorts-btn { left: 20px; background: linear-gradient(135deg, #2600ff, #00ffc8); }
+
+/* ================= CONTENU ================= */
 .page {
     display: flex;
     justify-content: center;
     padding: 110px 15px 40px;
 }
-
 .card {
     background: rgba(0,0,0,0.88);
     border-radius: 26px;
@@ -125,7 +118,6 @@ html, body {
     text-align: center;
     box-shadow: 0 0 45px rgba(0,0,0,0.9);
 }
-
 .profile-img {
     width: 170px;
     height: 170px;
@@ -135,10 +127,8 @@ html, body {
     box-shadow: 0 0 30px rgba(255,0,0,0.6);
     margin-bottom: 30px;
 }
-
 h1 { font-size: 32px; margin: 10px 0; }
 .subtitle { font-size: 15px; color: #ccc; margin-bottom: 35px; }
-
 .main-btn {
     width: 100%;
     padding: 20px;
@@ -153,17 +143,18 @@ h1 { font-size: 32px; margin: 10px 0; }
     gap: 16px;
     transition: transform 0.2s, box-shadow 0.2s;
 }
-
 .subscribe { background: linear-gradient(135deg, #ff2d2d, #ff0000); margin-bottom: 22px; }
 .subscribe img { width: 46px; height: 46px; border-radius: 10px; }
 .later { background: linear-gradient(135deg, #444, #222); color: #ddd; }
-
 .main-btn:hover { transform: scale(1.05); box-shadow: 0 0 28px rgba(255,255,255,0.35); }
-
 footer { margin-top: 35px; font-size: 13px; color: #aaa; }
+
+/* ================= MOBILE ================= */
+@media (max-width: 768px) {
+    .menu-btn { display: flex; }
+}
 </style>
 </head>
-
 <body>
 
 <!-- NAVBAR -->
@@ -175,7 +166,7 @@ footer { margin-top: 35px; font-size: 13px; color: #aaa; }
     </div>
 </div>
 
-<!-- MENU LATERAL -->
+<!-- MENU LATERAL MOBILE -->
 <div class="menu" id="menu">
     <button class="totk" onclick="goTOTK()">TOTK</button>
     <button class="smo" onclick="goSMO()">SMO</button>
@@ -185,10 +176,14 @@ footer { margin-top: 35px; font-size: 13px; color: #aaa; }
     <button class="jumps" onclick="goJumps()">Serveurs Trickjumps</button>
 </div>
 
+<!-- BOUTONS FIXES -->
+<button class="jumps-btn" onclick="goJumps()">Serveurs Trickjumps</button>
+<button class="shorts-btn" onclick="goShorts()">Mes Shorts</button>
+
+<!-- CONTENU -->
 <div class="page">
     <div class="card">
         <img class="profile-img" src="https://yt3.ggpht.com/0DVAPHQYW8br9AR2vJF0rCaXFP2HR0yBjGZ3OKTFq0hE7-VapkyXWpT8-9ORIjT2gxoNa0kpub0=s600-c-k-c0x00ffffff-no-rj-rp-mo">
-
         <h1>Dani_MK</h1>
         <div class="subtitle">YouTube • Gaming • Fun 🎮🔥</div>
 
@@ -214,9 +209,12 @@ function toggleMenu() {
     menuBtn.classList.toggle("open");
 }
 
-function abonner() { window.open("https://www.youtube.com/channel/UCw3v5XVphqVzScmTXs-8Yrw?sub_confirmation=1", "_blank"); }
-function rejoindreDiscord() { window.open("https://discord.gg/wySG6ykZ62", "_blank"); }
-
+function abonner() {
+    window.open("https://www.youtube.com/channel/UCw3v5XVphqVzScmTXs-8Yrw?sub_confirmation=1", "_blank");
+}
+function rejoindreDiscord() {
+    window.open("https://discord.gg/wySG6ykZ62", "_blank");
+}
 function goTOTK(){ location.href="totk.html"; }
 function goSMO(){ location.href="smo.html"; }
 function goBOTW(){ location.href="botw.html"; }
