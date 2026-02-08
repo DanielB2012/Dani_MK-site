@@ -2,6 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BOTW Downloads - Dani_MK</title>
 
 <style>
@@ -15,7 +16,7 @@ body {
     color: white;
 }
 
-/* Navbar */
+/* ================= NAVBAR ================= */
 .navbar {
     position: fixed;
     top: 0;
@@ -26,139 +27,154 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 25px;
+    gap: 18px;
+    padding: 0 10px;
     box-shadow: 0 5px 20px rgba(0,0,0,0.6);
     z-index: 1000;
+    flex-wrap: wrap;
 }
 
 .nav-btn {
-    padding: 12px 26px;
+    padding: 10px 22px;
     border-radius: 20px;
     border: none;
-    font-size: 16px;
+    font-size: 15px;
     font-weight: bold;
     cursor: pointer;
     color: white;
     transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
 }
 
-/* Boutons navbar */
 .nav-btn.totk { background: #ff0000; }
 .nav-btn.accueil { background: linear-gradient(135deg, #ff0000, #6a00ff); }
 .nav-btn.smo { background: #00cc44; }
 .nav-btn.chatsmo { background:#4c00ff; }
 
 .nav-btn:hover {
-    transform: scale(1.1);
+    transform: scale(1.08);
     box-shadow: 0 0 15px rgba(255,255,255,0.4);
 }
 
-.nav-btn.totk:hover { background: #ff3333; }
-.nav-btn.accueil:hover { background: linear-gradient(135deg, #ff3333, #8a2bff); }
-.nav-btn.smo:hover { background: #33dd66; }
-.nav-btn.chatsmo:hover { background: #7439ff; }
-
-/* Bouton Trickjumps */
-.jumps-btn {
-    position: fixed;
-    bottom: 25px;
-    right: 25px;
-    padding: 16px 28px;
-    border-radius: 30px;
-    border: none;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    background: #666;
-    color: white;
-    z-index: 2000;
-    transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
-}
-
-.jumps-btn:hover {
-    background: #888;
-    transform: scale(1.12);
-    box-shadow: 0 0 20px rgba(255,255,255,0.4);
-}
-
-/* Bouton Shorts */
+/* ================= BOUTONS FIXES ================= */
+.jumps-btn,
 .shorts-btn {
     position: fixed;
-    bottom: 25px;
-    left: 25px;
-    padding: 16px 30px;
+    padding: 14px 24px;
     border-radius: 30px;
     border: none;
-    font-size: 16px;
+    font-size: 15px;
     font-weight: bold;
     cursor: pointer;
-    background: linear-gradient(135deg, #2600ff, #00ffc8);
     color: white;
     z-index: 2000;
     transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.shorts-btn:hover {
-    transform: scale(1.12);
-    box-shadow: 0 0 25px rgba(0,255,200,0.7);
+.jumps-btn {
+    bottom: 20px;
+    right: 20px;
+    background: #666;
 }
 
-/* Contenu */
+.shorts-btn {
+    bottom: 20px;
+    left: 20px;
+    background: linear-gradient(135deg, #2600ff, #00ffc8);
+}
+
+.jumps-btn:hover,
+.shorts-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 20px rgba(255,255,255,0.4);
+}
+
+/* ================= CONTENU ================= */
 .page {
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding-top: 90px;
+    padding: 100px 15px 40px;
 }
 
 .card {
-    background: rgba(0,0,0,0.85);
-    border-radius: 30px;
-    padding: 50px 40px;
+    background: rgba(0,0,0,0.88);
+    border-radius: 26px;
+    padding: 40px 30px;
     width: 100%;
     max-width: 520px;
     text-align: center;
-    box-shadow: 0 0 50px rgba(0,0,0,0.9);
+    box-shadow: 0 0 45px rgba(0,0,0,0.9);
 }
 
 h1 {
-    font-size: 38px;
-    margin: 10px 0;
-    text-shadow: 0 0 15px rgba(255,255,255,0.3);
+    font-size: 34px;
+    margin-bottom: 10px;
 }
 
 .subtitle {
-    font-size: 16px;
+    font-size: 15px;
     color: #ccc;
-    margin-bottom: 40px;
+    margin-bottom: 35px;
 }
 
-button.download-btn {
+.download-btn {
     width: 100%;
-    padding: 22px;
-    font-size: 24px;
+    padding: 20px;
+    font-size: 22px;
     border: none;
     border-radius: 16px;
     cursor: pointer;
     font-weight: bold;
-    margin-bottom: 20px;
+    margin-bottom: 18px;
     color: white;
     background: linear-gradient(135deg, #3399ff, #0066ff);
     transition: transform 0.2s, box-shadow 0.2s;
 }
 
-button.download-btn:hover {
-    background: linear-gradient(135deg, #66b3ff, #3399ff);
-    transform: scale(1.06);
-    box-shadow: 0 0 30px rgba(255,255,255,0.35);
+.download-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 25px rgba(255,255,255,0.35);
 }
 
 footer {
-    margin-top: 35px;
-    font-size: 14px;
+    margin-top: 30px;
+    font-size: 13px;
     color: #aaa;
-    opacity: 0.85;
+}
+
+/* ================= MODE TÉLÉPHONE ================= */
+@media (max-width: 768px) {
+
+    .navbar {
+        height: auto;
+        padding: 10px;
+        gap: 10px;
+    }
+
+    .nav-btn {
+        font-size: 14px;
+        padding: 10px 18px;
+    }
+
+    h1 {
+        font-size: 28px;
+    }
+
+    .subtitle {
+        font-size: 14px;
+    }
+
+    .download-btn {
+        font-size: 18px;
+        padding: 18px;
+    }
+
+    .jumps-btn,
+    .shorts-btn {
+        font-size: 14px;
+        padding: 12px 20px;
+    }
 }
 </style>
 </head>
