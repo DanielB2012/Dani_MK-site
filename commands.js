@@ -113,15 +113,13 @@ function approveBatch(batchName, author="WebUser") {
 // ----------------- PASTE.TC -----------------
 async function createPaste(title, content) {
     try {
+        const formData = new FormData();
+        formData.append("title", title);
+        formData.append("content", content);
+
         const resp = await fetch("https://paste.tc/api/paste", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                title: title,
-                content: content
-            })
+            body: formData
         });
 
         const data = await resp.json();
@@ -130,8 +128,10 @@ async function createPaste(title, content) {
             return data.url;
         }
 
+        console.error("paste.tc error:", data);
         return "Erreur: Impossible de créer le paste.";
     } catch (err) {
+        console.error("paste.tc exception:", err);
         return "Erreur: Impossible de créer le paste.";
     }
 }
@@ -240,6 +240,7 @@ async function runCommand(input, callback) {
 // ----------------- EXPORT -----------------
 window.runCommand = runCommand;
 window.getJump = getJump;
+
 
 
 
