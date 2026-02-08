@@ -1,9 +1,11 @@
-// ----------------- CONFIGURATION -----------------
+// ----------------- COMMANDES.JS -----------------
+
+// Appelle le Worker Cloudflare
 const WORKER_URL = "https://my-worker-simple.daniel-a-bernard.workers.dev/";
 
-// ----------------- UTILITAIRES -----------------
-async function runCommand(command) {
-  if (!command || !command.trim()) return "Commande vide.";
+// Exécute une commande et récupère le résultat JSON
+async function runCommand(command, callback) {
+  if (!command || !command.trim()) return callback("Commande vide.");
 
   try {
     const resp = await fetch(WORKER_URL, {
@@ -14,66 +16,64 @@ async function runCommand(command) {
 
     const data = await resp.json();
 
-    // Renvoie le résultat ou l'erreur
-    if (data.result) return data.result;
-    if (data.error) return `Erreur Worker: ${data.error}`;
-    return "Erreur inconnue du Worker.";
-
+    if (data.result) {
+      callback(data.result);
+    } else if (data.error) {
+      callback(`Erreur Worker: ${data.error}`);
+    } else {
+      callback("Erreur inconnue du Worker.");
+    }
   } catch (err) {
-    return `Worker exception: ${err.message || err}`;
+    callback(`Worker exception: ${err.message || err}`);
   }
 }
 
-// ----------------- COMMANDES SPÉCIALES -----------------
-async function infoCommand(name) {
-  if (!name) return "Veuillez fournir un nom de jump !";
-  return runCommand(`!info ${name}`);
+// Commande info
+async function infoCommand(name, callback) {
+  if (!name) return callback("Veuillez fournir un nom de jump !");
+  runCommand(`!info ${name}`, callback);
 }
 
-async function randomCommand() {
-  return runCommand("!random");
+// Commande random
+async function randomCommand(callback) {
+  runCommand("!random", callback);
 }
 
-async function listCommand(filters = "") {
-  let output = await runCommand("!list");
-  if (filters) {
-    const filtered = output.split("\n")
-      .filter(line => line.toLowerCase().includes(filters.toLowerCase()))
-      .join("\n");
-    output = filtered;
-  }
-
-  return output;
+// Commande liste / missing
+async function listCommand(filters = "", callback) {
+  runCommand("!list", res => {
+    let output = res;
+    if (filters) {
+      const filtered = output.split("\n")
+        .filter(line => line.toLowerCase().includes(filters.toLowerCase()))
+        .join("\n");
+      output = filtered;
+    }
+    callback(output);
+  });
 }
 
-// ----------------- RUN COMMAND INTERFACE -----------------
+// ----------------- HANDLER POUR CHAT -----------------
 async function runCommandHandler(input, callback) {
   if (!input.startsWith("!")) return callback("Commande doit commencer par '!'");
   const args = input.match(/(?:[^\s"]+|"[^"]*")+/g).map(a => a.replace(/"/g, ""));
   const cmd = args[0].substring(1).toLowerCase();
   const rest = args.slice(1);
 
-  let res = "";
-
-  switch (cmd) {
+  switch(cmd) {
     case "info":
-      res = await infoCommand(rest.join(" "));
+      infoCommand(rest.join(" "), callback);
       break;
-
     case "random":
-      res = await randomCommand();
+      randomCommand(callback);
       break;
-
     case "list":
     case "missing":
-      res = await listCommand(rest.join(" "));
+      listCommand(rest.join(" "), callback);
       break;
-
     default:
-      res = `Commande inconnue: ${cmd}`;
+      callback(`Commande inconnue: ${cmd}`);
   }
-
-  callback(res);
 }
 
 // ----------------- EXPORT -----------------
