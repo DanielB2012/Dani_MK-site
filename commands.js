@@ -15,27 +15,14 @@ async function loadDatabases() {
 }
 
 function normalize(s) {
-  if (s === null || s === undefined) return "";
-  return String(s).trim().toLowerCase();
+  return s ? String(s).trim().toLowerCase() : "";
 }
 
 function getTypeFromTricks(jumpName) {
   if (!tricksDB || !Array.isArray(tricksDB)) return null;
   const target = normalize(jumpName);
-
   for (const t of tricksDB) {
-    if (!t?.content) continue;
-    const content = t.content;
-    const firstLine = content.split("\n")[0] || "";
-    const leftPart = firstLine.split("-")[0].trim().toLowerCase();
-    if (leftPart === target) {
-      const match = content.match(/Jump Type\s*:\s*([^\n\r]+)/i) || content.match(/Junp Type\s*:\s*([^\n\r]+)/i);
-      if (match) return match[1].trim();
-    }
-  }
-  // fallback: inclusion
-  for (const t of tricksDB) {
-    if (!t?.content) continue;
+    if (!t.content) continue;
     const content = t.content.toLowerCase();
     if (content.includes(target)) {
       const match = t.content.match(/Jump Type\s*:\s*([^\n\r]+)/i) || t.content.match(/Junp Type\s*:\s*([^\n\r]+)/i);
@@ -125,13 +112,14 @@ function parseListArguments(tokens) {
     i+=2;
   }
   if(currentGroup.length) groups.push(currentGroup);
+  const filterGroups = groups.length ? groups : [];
 
-  return {target, filterGroups:groups, sorts:sortsSection, yieldType};
+  return {target, filterGroups, sorts:sortsSection, yieldType};
 }
 
 // ----------------- FILTRAGE -----------------
 function matchDiffAttribute(attrRaw, filterValue){
-  if(attrRaw===null||attrRaw===undefined) return false;
+  if(!attrRaw) return false;
   const attr=String(attrRaw).trim();
   const fv=String(filterValue).trim().toLowerCase();
   if(/elite/i.test(attr)){
@@ -143,7 +131,7 @@ function matchDiffAttribute(attrRaw, filterValue){
 }
 
 function matchGenericAttribute(attrRaw, filterValue){
-  if(attrRaw===null||attrRaw===undefined) return false;
+  if(!attrRaw) return false;
   const fv=String(filterValue).trim().toLowerCase(); if(fv==="") return false;
   if(Array.isArray(attrRaw)) return attrRaw.some(a=>String(a).toLowerCase().includes(fv));
   return String(attrRaw).toLowerCase().includes(fv);
@@ -153,13 +141,13 @@ function matchConditionForJump(jump,cond){
   const key=cond.key, value=cond.value;
   if(!key || value===undefined || value===null) return false;
   let attr = jump[key];
-  if((attr===undefined||attr===null||attr==="") && key==="type") attr=getTypeFromTricks(jump.name)||"";
+  if((!attr || attr==="") && key==="type") attr=getTypeFromTricks(jump.name)||"";
   if(key==="diff") return Array.isArray(attr)?attr.some(a=>matchDiffAttribute(a,value)):matchDiffAttribute(attr,value);
   return matchGenericAttribute(attr,value);
 }
 
 function passesFilters(jump, filterGroups){
-  if(!filterGroups || filterGroups.length===0) return true;
+  if(!filterGroups || filterGroups.length===0) return true; // important
   for(const group of filterGroups){
     let allTrue=true;
     for(const cond of group){
@@ -193,12 +181,12 @@ async function listCommandFromTokens(tokens){
     if(yieldType==="-") return j.name||"(nom manquant)";
     const parts=[];
     for(const k of usedFilterKeys){
-      let val=j[k]; if((val===undefined||val===null||val==="")&&k==="type") val=getTypeFromTricks(j.name)||"";
+      let val=j[k]; if((!val||val==="")&&k==="type") val=getTypeFromTricks(j.name)||"";
       if(Array.isArray(val)) val=val.join("; "); parts.push(`${k}: ${val??""}`);
     }
     for(const s of sorts){
-      let val=j[s]; if((val===undefined||val===null||val==="")&&s==="type") val=getTypeFromTricks(j.name)||"";
-      if(Array.isArray(val)) val=val.join("; "); if(!usedFilterKeys.includes(s)) parts.push(`${s}: ${val??""}`);
+      let val=j[s]; if((!val||val==="")&&s==="type") val=getTypeFromTricks(j.name)||"";
+      if(Array.isArray(val)) val=Array.isArray(val)?val.join("; "):val; if(!usedFilterKeys.includes(s)) parts.push(`${s}: ${val??""}`);
     }
     return parts.length?`${j.name} [${parts.join(", ")}]`:j.name;
   });
