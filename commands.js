@@ -41,12 +41,83 @@ function randomCommand() {
 }
 
 // ----------------- LISTE / PASTE -----------------
-async function listCommand(filters = "") {
+function parseListArguments(args) {
+  // Gère filters et sorts
+  let filters = [];
+  let sorts = [];
+  let yieldType = "";
+
+  let mode = "filters"; // filters / sorts / yield
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i].toLowerCase();
+
+    if (arg === "only") {
+      mode = "filters";
+      continue;
+    } else if (arg === "by") {
+      mode = "sorts";
+      continue;
+    } else if (arg === "+" || arg === "-") {
+      yieldType = arg;
+      continue;
+    }
+
+    if (mode === "filters") {
+      // filtre = paire attribut valeur
+      const key = args[i];
+      const value = args[i + 1] || "";
+      filters.push({ key: key.toLowerCase(), value: value.toLowerCase() });
+      i++; // skip value
+    } else if (mode === "sorts") {
+      sorts.push(arg);
+    }
+  }
+
+  return { filters, sorts, yieldType };
+}
+
+async function listCommand(argsStr = "") {
   if (!jumpDB) return "Database not loaded yet.";
 
-  const output = Object.values(jumpDB)
-    .map(j => j.name)
-    .filter(name => !filters || name.toLowerCase().includes(filters.toLowerCase()))
+  const args = argsStr.match(/(?:[^\s"]+|"[^"]*")+/g)?.map(a => a.replace(/"/g, "")) || [];
+  const { filters, sorts, yieldType } = parseListArguments(args);
+
+  let jumps = Object.values(jumpDB);
+
+  // Appliquer les filtres
+  for (const f of filters) {
+    jumps = jumps.filter(j => {
+      const attr = j[f.key];
+      if (!attr) return false;
+      if (Array.isArray(attr)) {
+        return attr.some(v => v.toLowerCase().includes(f.value));
+      }
+      return attr.toLowerCase().includes(f.value);
+    });
+  }
+
+  // Appliquer les sorts
+  for (let s of sorts.reverse()) {
+    jumps.sort((a, b) => {
+      const av = (a[s] || "").toString().toLowerCase();
+      const bv = (b[s] || "").toString().toLowerCase();
+      if (av < bv) return -1;
+      if (av > bv) return 1;
+      return 0;
+    });
+  }
+
+  // Formater le output selon yield
+  let output = jumps
+    .map(j => {
+      if (yieldType === "+") return JSON.stringify(j);
+      if (yieldType === "-") return j.name;
+      // default: name + filter/sort attributes
+      const extraAttrs = filters.concat(sorts.map(k => ({ key: k, value: j[k] || "" })))
+        .map(f => `${f.key}: ${f.value}`)
+        .join(", ");
+      return extraAttrs ? `${j.name} [${extraAttrs}]` : j.name;
+    })
     .join("\n");
 
   try {
