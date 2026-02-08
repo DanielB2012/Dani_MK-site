@@ -88,7 +88,13 @@ function parseListArguments(args) {
 
     if (mode === "filters") {
       const key = attrMap[arg] || arg;
-      const value = args[i + 1] || "";
+      let value = args[i + 1] || "";
+
+      // Si diff contient "Elite", ne garder que le premier mot
+      if (key === "diff" && /Elite/i.test(value)) {
+        value = value.split(" ")[0];
+      }
+
       filters.push({ key, value });
       i += 2;
     } else if (mode === "sorts") {
@@ -118,24 +124,35 @@ async function listCommand(argsStr = "") {
     jumps = jumps.filter(j => {
       let attr = j[f.key];
 
-      // Si le type n'existe pas, chercher dans tricksDB
+      // Si type absent, chercher dans tricksDB
       if ((!attr || attr === "") && f.key === "type") {
-        const trick = tricksDB.find(t => t.content.toLowerCase().includes(j.name.toLowerCase()));
+        const trick = tricksDB.find(t => {
+          if (!t.content) return false;
+          const namePart = t.content.split("-")[0].trim().toLowerCase();
+          return namePart === j.name.toLowerCase();
+        });
         if (trick) {
-          const match = trick.content.match(/Jump Type: ([^\n]+)/i);
+          const match = trick.content.match(/Jump Type: ([^\n]+)/i) || trick.content.match(/Junp Type: ([^\n]+)/i);
           if (match) attr = match[1];
         }
       }
 
       if (!attr) return false;
-      if (Array.isArray(attr)) {
-        return attr.some(v => v.toLowerCase().includes(f.value.toLowerCase()));
+
+      // Pour diff, ne garder que le premier mot si c'est "Low Elite", "High Elite", etc.
+      let valToCompare = attr;
+      if (f.key === "diff" && /Elite/i.test(attr)) {
+        valToCompare = attr.split(" ")[0];
       }
-      return attr.toLowerCase().includes(f.value.toLowerCase());
+
+      if (Array.isArray(valToCompare)) {
+        return valToCompare.some(v => v.toLowerCase().includes(f.value.toLowerCase()));
+      }
+      return valToCompare.toLowerCase().includes(f.value.toLowerCase());
     });
   }
 
-  // Appliquer les sorts (inverse pour priorité multiple)
+  // Appliquer les sorts
   for (let s of sorts.reverse()) {
     jumps.sort((a, b) => {
       const av = (a[s] || "").toString().toLowerCase();
@@ -146,7 +163,7 @@ async function listCommand(argsStr = "") {
     });
   }
 
-  // Formater le output selon yield
+  // Formater le output
   let output = jumps
     .map(j => {
       if (yieldType === "+") return JSON.stringify(j);
