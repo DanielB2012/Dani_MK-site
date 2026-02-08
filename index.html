@@ -24,40 +24,63 @@ html, body {
     top: 0;
     left: 0;
     width: 100%;
-    min-height: 70px;
-    background: rgba(0,0,0,0.85);
+    height: 70px;
+    background: rgba(0,0,0,0.9);
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 12px;
-    padding: 10px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.6);
+    padding-left: 15px;
     z-index: 1000;
-    flex-wrap: wrap;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.6);
 }
 
-.nav-btn {
-    flex: 1;
-    min-width: 90px;
-    height: 44px;
+/* Bouton hamburger */
+.menu-btn {
+    font-size: 30px;
+    cursor: pointer;
+    user-select: none;
+}
+
+/* ================= MENU LATERAL ================= */
+.menu {
+    position: fixed;
+    top: 0;
+    left: -260px;
+    width: 260px;
+    height: 100vh;
+    background: rgba(0,0,0,0.95);
+    padding: 90px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    transition: left 0.3s ease;
+    z-index: 1500;
+}
+
+.menu.open {
+    left: 0;
+}
+
+.menu button {
+    width: 100%;
+    padding: 14px;
     border-radius: 18px;
     border: none;
-    color: white;
-    font-size: 15px;
+    font-size: 16px;
     font-weight: bold;
+    color: white;
     cursor: pointer;
     transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.nav-btn.totk { background: #ff0000; }
-.nav-btn.smo { background: #00cc44; }
-.nav-btn.botw { background: #0066ff; }
-.nav-btn.chatsmo { background:#4c00ff; }
-
-.nav-btn:hover {
+.menu button:hover {
     transform: scale(1.05);
     box-shadow: 0 0 15px rgba(255,255,255,0.4);
 }
+
+.menu .totk { background: #ff0000; }
+.menu .smo { background: #00cc44; }
+.menu .botw { background: #0066ff; }
+.menu .chatsmo { background: #4c00ff; }
 
 /* ================= BOUTONS FIXES ================= */
 .jumps-btn,
@@ -88,10 +111,9 @@ html, body {
 .page {
     display: flex;
     justify-content: center;
-    padding: 100px 15px 40px;
+    padding: 110px 15px 40px;
 }
 
-/* ================= CARD ================= */
 .card {
     background: rgba(0,0,0,0.88);
     border-radius: 26px;
@@ -102,10 +124,9 @@ html, body {
     box-shadow: 0 0 45px rgba(0,0,0,0.9);
 }
 
-/* ================= PROFIL ================= */
 .profile-img {
-    width: 180px;
-    height: 180px;
+    width: 170px;
+    height: 170px;
     border-radius: 50%;
     object-fit: cover;
     border: 5px solid #ff2d2d;
@@ -114,7 +135,7 @@ html, body {
 }
 
 h1 {
-    font-size: 34px;
+    font-size: 32px;
     margin: 10px 0;
 }
 
@@ -124,7 +145,6 @@ h1 {
     margin-bottom: 35px;
 }
 
-/* ================= BOUTONS PRINCIPAUX ================= */
 .main-btn {
     width: 100%;
     padding: 20px;
@@ -143,19 +163,12 @@ h1 {
 .subscribe {
     background: linear-gradient(135deg, #ff2d2d, #ff0000);
     margin-bottom: 22px;
-    color: white;
 }
 
 .subscribe img {
-    width: 48px;
-    height: 48px;
+    width: 46px;
+    height: 46px;
     border-radius: 10px;
-}
-
-.subscribe:hover,
-.later:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 28px rgba(255,255,255,0.35);
 }
 
 .later {
@@ -163,50 +176,32 @@ h1 {
     color: #ddd;
 }
 
-/* ================= FOOTER ================= */
+.main-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 28px rgba(255,255,255,0.35);
+}
+
 footer {
     margin-top: 35px;
     font-size: 13px;
     color: #aaa;
-}
-
-/* ================= MOBILE ================= */
-@media (max-width: 768px) {
-
-    .profile-img {
-        width: 140px;
-        height: 140px;
-    }
-
-    h1 {
-        font-size: 28px;
-    }
-
-    .subtitle {
-        font-size: 14px;
-    }
-
-    .main-btn {
-        font-size: 18px;
-        padding: 18px;
-    }
-
-    .jumps-btn,
-    .shorts-btn {
-        font-size: 14px;
-        padding: 12px 20px;
-    }
 }
 </style>
 </head>
 
 <body>
 
+<!-- NAVBAR -->
 <div class="navbar">
-    <button class="nav-btn totk" onclick="goTOTK()">TOTK</button>
-    <button class="nav-btn smo" onclick="goSMO()">SMO</button>
-    <button class="nav-btn botw" onclick="goBOTW()">BOTW</button>
-    <button class="nav-btn chatsmo" onclick="goChatSMO()">ChatSmo</button>
+    <div class="menu-btn" onclick="toggleMenu()">☰</div>
+</div>
+
+<!-- MENU LATERAL -->
+<div class="menu" id="menu">
+    <button class="totk" onclick="goTOTK()">TOTK</button>
+    <button class="smo" onclick="goSMO()">SMO</button>
+    <button class="botw" onclick="goBOTW()">BOTW</button>
+    <button class="chatsmo" onclick="goChatSMO()">ChatSmo</button>
 </div>
 
 <button class="jumps-btn" onclick="goJumps()">Serveurs Trickjumps</button>
@@ -233,18 +228,22 @@ footer {
 </div>
 
 <script>
+function toggleMenu() {
+    document.getElementById("menu").classList.toggle("open");
+}
+
 function abonner() {
     window.open("https://www.youtube.com/channel/UCw3v5XVphqVzScmTXs-8Yrw?sub_confirmation=1", "_blank");
 }
 function rejoindreDiscord() {
     window.open("https://discord.gg/wySG6ykZ62", "_blank");
 }
-function goTOTK(){ window.location.href="totk.html"; }
-function goSMO(){ window.location.href="smo.html"; }
-function goBOTW(){ window.location.href="botw.html"; }
-function goChatSMO(){ window.location.href="chatsmo.html"; }
-function goJumps(){ window.location.href="jumps.html"; }
-function goShorts(){ window.location.href="shorts.html"; }
+function goTOTK(){ location.href="totk.html"; }
+function goSMO(){ location.href="smo.html"; }
+function goBOTW(){ location.href="botw.html"; }
+function goChatSMO(){ location.href="chatsmo.html"; }
+function goJumps(){ location.href="jumps.html"; }
+function goShorts(){ location.href="shorts.html"; }
 </script>
 
 </body>
