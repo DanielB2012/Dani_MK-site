@@ -26,7 +26,7 @@ function getJump(name) {
   if (jumpDB[lower]) return jumpDB[lower];
 
   for (const trick of tricksDB) {
-    if (trick.content && trick.content.toLowerCase().includes(lower)) {
+    if (trick.name && trick.name.toLowerCase().includes(lower)) {
       return trick;
     }
   }
@@ -35,7 +35,7 @@ function getJump(name) {
 
 // ----------------- FORMATTEUR -----------------
 function buildContent(jump) {
-  // Ne retourne que le nom du jump
+  // Retourne juste le nom du jump
   return jump.name || "Unnamed jump";
 }
 
@@ -96,12 +96,10 @@ async function createPaste(content) {
       body: JSON.stringify({ content })
     });
 
-    if (!resp.ok) {
-      console.error("Worker error:", await resp.text());
-      return "Erreur: Impossible de créer le Gist.";
-    }
-
-    return await resp.text(); // le Worker renvoie le lien du Gist
+    const data = await resp.json();
+    if (data.url) return data.url;
+    console.error("Worker error:", data);
+    return "Erreur: Impossible de créer le Gist.";
   } catch (err) {
     console.error("Worker exception:", err);
     return "Erreur: Impossible de créer le Gist.";
@@ -117,17 +115,27 @@ function infoCommand(name) {
 
 function randomCommand() {
   if (!jumpDB) return "Database not loaded yet.";
-  const allJumps = Object.values(jumpDB);
+  const allJumps = [...Object.values(jumpDB), ...tricksDB];
   const randJump = allJumps[Math.floor(Math.random() * allJumps.length)];
   return buildContent(randJump);
 }
 
 async function listCommand(filters = "") {
-  if (!jumpDB) return "Database not loaded yet.";
+  if (!jumpDB || !tricksDB) return "Database not loaded yet.";
 
-  let output = Object.values(jumpDB).map(j => buildContent(j)).join("\n");
-  if (filters) output = output.split("\n").filter(l => l.toLowerCase().includes(filters.toLowerCase())).join("\n");
+  // Combine jumps + tricks
+  let all = [...Object.values(jumpDB), ...tricksDB];
 
+  // Filtrer si besoin
+  if (filters) {
+    const f = filters.toLowerCase();
+    all = all.filter(j => (j.name || "").toLowerCase().includes(f));
+  }
+
+  // Liste des noms seulement
+  const output = all.map(j => j.name).join("\n");
+
+  // Envoie au Worker pour créer le Gist
   const link = await createPaste(output);
   return `Liste créée: ${link}`;
 }
