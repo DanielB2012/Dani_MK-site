@@ -2,10 +2,12 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ChatSmo - Dani_MK</title>
+
 <style>
 * { box-sizing: border-box; }
-/* Fond violet stylé et police */
+
 body {
     margin: 0;
     font-family:'Segoe UI', sans-serif;
@@ -13,55 +15,233 @@ body {
     color: white;
     min-height: 100vh;
 }
-/* Navbar */
+
+/* ================= NAVBAR ================= */
 .navbar {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    height: 70px;
+    min-height: 70px;
     background: rgba(0,0,0,0.85);
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 25px;
+    gap: 18px;
+    padding: 10px;
     box-shadow: 0 5px 20px rgba(0,0,0,0.6);
     z-index: 1000;
+    flex-wrap: wrap;
 }
-.nav-btn { padding: 12px 26px; border-radius: 20px; border: none; color: white; font-size: 16px; font-weight: bold; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s, background 0.2s; }
+
+.nav-btn {
+    padding: 10px 22px;
+    border-radius: 20px;
+    border: none;
+    color: white;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
 .nav-btn.totk { background: #ff0000; }
 .nav-btn.smo { background: #00cc44; }
 .nav-btn.botw { background: #0066ff; }
 .nav-btn.accueil { background: linear-gradient(135deg, #ff0000, #6a00ff); }
-.nav-btn:hover { transform: scale(1.1); box-shadow: 0 0 15px rgba(255,255,255,0.4); }
-/* Page container */
-.page { display: flex; flex-direction: column; justify-content: center; align-items: center; padding-top: 100px; min-height: calc(100vh - 100px); }
-/* Chat container */
-.chat-card { width: 90%; max-width: 800px; height: 600px; background: rgba(0,0,0,0.85); border-radius: 20px; display: flex; flex-direction: column; box-shadow: 0 0 30px rgba(0,0,0,0.6); overflow: hidden; }
-/* Onglets */
-.tabs { display:flex; gap:10px; padding:12px; background:rgba(0,0,0,0.6); }
-.tab { flex:1; text-align:center; padding:10px 0; border-radius:18px; cursor:pointer; font-weight:bold; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); transition:all 0.25s ease; }
-.tab:hover { background: rgba(255,255,255,0.15); }
-.tab.active { background:linear-gradient(135deg,#5f00ff,#9b00ff); box-shadow:0 0 18px rgba(140,0,255,0.9); border:none; }
-/* Contenu onglets */
-.tab-content { flex:1; display:none; flex-direction:column; }
-.tab-content.active { display:flex; }
-/* Chat */
-.chat-window { flex:1; padding:15px; overflow-y:auto; display:flex; flex-direction:column; gap:10px; }
-.chat-input { display:flex; padding:10px; border-top:1px solid #333; }
-.chat-input input { flex:1; padding:10px; border-radius:10px; border:none; }
-.chat-input button { margin-left:10px; padding:0 20px; border-radius:10px; border:none; background:#4c00ff; color:white; cursor:pointer; }
-/* Messages */
-.message { padding:8px 12px; border-radius:10px; max-width:80%; }
-.user { background:#333; align-self:flex-end; }
-.ia { background:#4c00ff; align-self:flex-start; }
-/* Jumpedia */
-.jumpedia { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; opacity:0.95; font-size:20px; padding-top:20px; gap:10px; }
-/* Boutons fixes */
-.shorts-btn { position:fixed; bottom:25px; left:25px; padding:16px 30px; border-radius:30px; border:none; font-size:16px; font-weight:bold; cursor:pointer; background:linear-gradient(135deg, #2600ff, #00ffc8); color:white; z-index:2000; }
-.jumps-btn { position:fixed; bottom:25px; right:25px; padding:16px 28px; border-radius:30px; border:none; font-size:16px; font-weight:bold; cursor:pointer; background:#666; color:white; z-index:2000; }
+
+.nav-btn:hover {
+    transform: scale(1.08);
+    box-shadow: 0 0 15px rgba(255,255,255,0.4);
+}
+
+/* ================= PAGE ================= */
+.page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 100px 15px 40px;
+    min-height: 100vh;
+}
+
+/* ================= CHAT CARD ================= */
+.chat-card {
+    width: 100%;
+    max-width: 850px;
+    height: 650px;
+    background: rgba(0,0,0,0.88);
+    border-radius: 22px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 0 35px rgba(0,0,0,0.7);
+    overflow: hidden;
+}
+
+/* ================= TABS ================= */
+.tabs {
+    display:flex;
+    gap:10px;
+    padding:12px;
+    background:rgba(0,0,0,0.65);
+}
+
+.tab {
+    flex:1;
+    text-align:center;
+    padding:12px 0;
+    border-radius:18px;
+    cursor:pointer;
+    font-weight:bold;
+    background:rgba(255,255,255,0.08);
+    border:1px solid rgba(255,255,255,0.15);
+    transition:all 0.25s ease;
+}
+
+.tab:hover {
+    background: rgba(255,255,255,0.18);
+}
+
+.tab.active {
+    background:linear-gradient(135deg,#5f00ff,#9b00ff);
+    box-shadow:0 0 18px rgba(140,0,255,0.9);
+    border:none;
+}
+
+/* ================= TAB CONTENT ================= */
+.tab-content {
+    flex:1;
+    display:none;
+    flex-direction:column;
+}
+
+.tab-content.active {
+    display:flex;
+}
+
+/* ================= CHAT ================= */
+.chat-window {
+    flex:1;
+    padding:15px;
+    overflow-y:auto;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+.chat-input {
+    display:flex;
+    padding:12px;
+    border-top:1px solid #333;
+    gap:10px;
+}
+
+.chat-input input {
+    flex:1;
+    padding:12px;
+    border-radius:10px;
+    border:none;
+    font-size:15px;
+}
+
+.chat-input button {
+    padding:0 22px;
+    border-radius:10px;
+    border:none;
+    background:#4c00ff;
+    color:white;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+/* ================= MESSAGES ================= */
+.message {
+    padding:10px 14px;
+    border-radius:12px;
+    max-width:85%;
+    word-wrap: break-word;
+}
+
+.user {
+    background:#333;
+    align-self:flex-end;
+}
+
+.ia {
+    background:#4c00ff;
+    align-self:flex-start;
+}
+
+/* ================= JUMPEDIA ================= */
+.jumpedia {
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding-top:20px;
+    gap:12px;
+    font-size:18px;
+}
+
+/* ================= BOUTONS FIXES ================= */
+.shorts-btn,
+.jumps-btn {
+    position:fixed;
+    bottom:20px;
+    padding:14px 24px;
+    border-radius:30px;
+    border:none;
+    font-size:15px;
+    font-weight:bold;
+    cursor:pointer;
+    color:white;
+    z-index:2000;
+}
+
+.shorts-btn {
+    left:20px;
+    background:linear-gradient(135deg, #2600ff, #00ffc8);
+}
+
+.jumps-btn {
+    right:20px;
+    background:#666;
+}
+
+/* ================= MOBILE ================= */
+@media (max-width: 768px) {
+
+    .chat-card {
+        height: calc(100vh - 140px);
+        border-radius: 18px;
+    }
+
+    .tab {
+        font-size:14px;
+        padding:10px 0;
+    }
+
+    .chat-input input {
+        font-size:14px;
+    }
+
+    .chat-input button {
+        padding:0 18px;
+        font-size:14px;
+    }
+
+    .jumpedia {
+        font-size:16px;
+    }
+
+    .shorts-btn,
+    .jumps-btn {
+        font-size:14px;
+        padding:12px 20px;
+    }
+}
 </style>
 </head>
+
 <body>
 
 <!-- Navbar -->
@@ -74,13 +254,12 @@ body {
 
 <div class="page">
     <div class="chat-card">
-        <!-- Onglets -->
+
         <div class="tabs">
             <div class="tab active" onclick="openTab('chat')">🤖 Chatbot</div>
             <div class="tab" onclick="openTab('jumpedia')">🎬 Jumpedia</div>
         </div>
 
-        <!-- Chat -->
         <div class="tab-content active" id="chat">
             <div class="chat-window" id="chat-window">
                 Tapez un message pour commencer...
@@ -91,12 +270,12 @@ body {
             </div>
         </div>
 
-        <!-- Jumpedia -->
         <div class="tab-content" id="jumpedia">
             <div class="jumpedia" id="jumpedia-container">
                 Chargement de Jumpedia...
             </div>
         </div>
+
     </div>
 </div>
 
@@ -107,13 +286,11 @@ body {
 
 <script src="commands.js"></script>
 <script>
-// --------- Navigation ---------
 function goTOTK(){ window.location.href="totk.html"; }
 function goSMO(){ window.location.href="smo.html"; }
 function goBOTW(){ window.location.href="botw.html"; }
 function goAccueil(){ window.location.href="index.html"; }
 
-// --------- Onglets ---------
 function openTab(id){
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
@@ -121,88 +298,7 @@ function openTab(id){
     document.getElementById(id).classList.add('active');
     if(id === "jumpedia") initJumpedia();
 }
-
-// --------- Chat ---------
-function addMessage(text, type){
-    const chatWindow = document.getElementById("chat-window");
-    const div = document.createElement("div");
-    div.className = "message " + type;
-    div.innerHTML = text.replace(/\n/g,"<br>");
-    chatWindow.appendChild(div);
-    chatWindow.scrollTop = chatWindow.scrollHeight;
-}
-
-async function sendMessage(){
-    const input = document.getElementById("user-input");
-    const message = input.value.trim();
-    if(!message) return;
-    addMessage(message,"user");
-    input.value="";
-    runCommand(message,res=>{
-        addMessage(res,"ia");
-        // Si commande !list ou !missing, ouvrir le lien paste.ee automatiquement
-        if(message.toLowerCase().startsWith("!list") || message.toLowerCase().startsWith("!missing")){
-            const urlMatch = res.match(/https?:\/\/paste\.ee\/[^\s"]+/);
-            if(urlMatch) window.open(urlMatch[0],"_blank");
-        }
-    });
-}
-
-// --------- Jumpedia ---------
-function initJumpedia(){
-    const container = document.getElementById("jumpedia-container");
-    container.innerHTML = "";
-    if(typeof runCommand !== "function"){
-        container.innerHTML = "Erreur: commands.js non chargé ou runCommand non défini.";
-        return;
-    }
-
-    const title = document.createElement("div");
-    title.innerText = "Jumpedia prêt 🚀 Tapez une commande ci-dessous:";
-    container.appendChild(title);
-
-    const input = document.createElement("input");
-    input.type = "text";
-    input.placeholder = "Entrez une commande...";
-    input.style.padding = "8px";
-    input.style.borderRadius = "8px";
-    input.style.border = "none";
-    input.style.width = "60%";
-    container.appendChild(input);
-
-    const btn = document.createElement("button");
-    btn.innerText = "Exécuter";
-    btn.style.marginLeft = "10px";
-    btn.style.padding = "8px 15px";
-    btn.style.borderRadius = "8px";
-    btn.style.border = "none";
-    btn.style.background = "#4c00ff";
-    btn.style.color = "white";
-    btn.style.cursor = "pointer";
-    container.appendChild(btn);
-
-    const output = document.createElement("div");
-    output.style.marginTop = "15px";
-    container.appendChild(output);
-
-    btn.onclick = () => {
-        const command = input.value.trim();
-        if(!command) return;
-        runCommand(command,res=>{
-            const p = document.createElement("div");
-            p.innerHTML = `<strong>Résultat:</strong> ${res.replace(/\n/g,"<br>")}`;
-            output.appendChild(p);
-            output.scrollTop = output.scrollHeight;
-            // Ouverture automatique pour paste.ee
-            if(command.toLowerCase().startsWith("!list") || command.toLowerCase().startsWith("!missing")){
-                const urlMatch = res.match(/https?:\/\/paste\.ee\/[^\s"]+/);
-                if(urlMatch) window.open(urlMatch[0],"_blank");
-            }
-            input.value = "";
-        });
-    };
-}
 </script>
+
 </body>
 </html>
-
