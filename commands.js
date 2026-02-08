@@ -90,7 +90,7 @@ function parseListArguments(args) {
       const key = attrMap[arg] || arg;
       let value = args[i + 1] || "";
 
-      // Si diff contient "Elite", ne garder que le premier mot
+      // Normaliser diff : garder le premier mot si Elite
       if (key === "diff" && /Elite/i.test(value)) {
         value = value.split(" ")[0];
       }
@@ -116,7 +116,7 @@ async function listCommand(argsStr = "") {
 
   let jumps = Object.values(jumpDB);
 
-  // Appliquer les filtres
+  // ----------------- Appliquer les filtres -----------------
   for (let i = 0; i < filters.length; i++) {
     const f = filters[i];
     if (f.op) continue; // ignorer "and"/"or" pour l'instant
@@ -139,20 +139,27 @@ async function listCommand(argsStr = "") {
 
       if (!attr) return false;
 
-      // Pour diff, ne garder que le premier mot si c'est "Low Elite", "High Elite", etc.
       let valToCompare = attr;
-      if (f.key === "diff" && /Elite/i.test(attr)) {
-        valToCompare = attr.split(" ")[0];
+
+      // Normaliser diff : si Elite, ne garder que le premier mot, sinon pour x/10, garder juste le nombre
+      if (f.key === "diff") {
+        if (/Elite/i.test(attr)) {
+          valToCompare = attr.split(" ")[0]; // Low, Mid, High
+        } else {
+          const numMatch = attr.match(/^(\d+(\.\d+)?)/);
+          if (numMatch) valToCompare = numMatch[1];
+        }
       }
 
+      // Comparaison insensible à la casse
       if (Array.isArray(valToCompare)) {
-        return valToCompare.some(v => v.toLowerCase().includes(f.value.toLowerCase()));
+        return valToCompare.some(v => v.toLowerCase() === f.value.toLowerCase());
       }
-      return valToCompare.toLowerCase().includes(f.value.toLowerCase());
+      return valToCompare.toLowerCase() === f.value.toLowerCase();
     });
   }
 
-  // Appliquer les sorts
+  // ----------------- Appliquer les sorts -----------------
   for (let s of sorts.reverse()) {
     jumps.sort((a, b) => {
       const av = (a[s] || "").toString().toLowerCase();
@@ -163,7 +170,7 @@ async function listCommand(argsStr = "") {
     });
   }
 
-  // Formater le output
+  // ----------------- Formater le output -----------------
   let output = jumps
     .map(j => {
       if (yieldType === "+") return JSON.stringify(j);
