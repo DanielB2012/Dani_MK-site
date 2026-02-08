@@ -110,23 +110,26 @@ function approveBatch(batchName, author="WebUser") {
     return `Batch "${batchName}" approved and implemented.`;
 }
 
-// ----------------- PASTE.EE -----------------
+// ----------------- PASTE.TC -----------------
 async function createPaste(title, content) {
     try {
-        const resp = await fetch(PASTEE_API_URL, {
+        const resp = await fetch("https://paste.tc/api/paste", {
             method: "POST",
             headers: {
-                "X-Auth-Token": PASTEE_API_KEY,
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                description: title,
-                sections: [{ name: title, syntax: "autodetect", contents: content }],
-                visibility: 1 // 1 = unlisted
+                title: title,
+                content: content
             })
         });
+
         const data = await resp.json();
-        if (data && data.link) return data.link;
+
+        if (data && data.url) {
+            return data.url;
+        }
+
         return "Erreur: Impossible de créer le paste.";
     } catch (err) {
         return "Erreur: Impossible de créer le paste.";
@@ -237,6 +240,7 @@ async function runCommand(input, callback) {
 // ----------------- EXPORT -----------------
 window.runCommand = runCommand;
 window.getJump = getJump;
+
 
 
 
