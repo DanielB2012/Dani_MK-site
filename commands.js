@@ -42,7 +42,6 @@ function randomCommand() {
 
 // ----------------- LISTE / PASTE -----------------
 function parseListArguments(args) {
-  // Mapping des alias d'attributs
   const attrMap = {
     diff: "diff",
     d: "diff",
@@ -63,7 +62,7 @@ function parseListArguments(args) {
   let sorts = [];
   let yieldType = "";
 
-  let mode = "filters"; // filters / sorts / yield
+  let mode = "filters";
   let i = 0;
 
   while (i < args.length) {
@@ -82,7 +81,7 @@ function parseListArguments(args) {
       i++;
       continue;
     } else if (arg === "and" || arg === "or") {
-      filters.push({ op: arg }); // conserver opérateur pour extension future
+      filters.push({ op: arg });
       i++;
       continue;
     }
@@ -115,8 +114,19 @@ async function listCommand(argsStr = "") {
   for (let i = 0; i < filters.length; i++) {
     const f = filters[i];
     if (f.op) continue; // ignorer "and"/"or" pour l'instant
+
     jumps = jumps.filter(j => {
-      const attr = j[f.key];
+      let attr = j[f.key];
+
+      // Si le type n'existe pas, chercher dans tricksDB
+      if ((!attr || attr === "") && f.key === "type") {
+        const trick = tricksDB.find(t => t.content.toLowerCase().includes(j.name.toLowerCase()));
+        if (trick) {
+          const match = trick.content.match(/Jump Type: ([^\n]+)/i);
+          if (match) attr = match[1];
+        }
+      }
+
       if (!attr) return false;
       if (Array.isArray(attr)) {
         return attr.some(v => v.toLowerCase().includes(f.value.toLowerCase()));
@@ -125,7 +135,7 @@ async function listCommand(argsStr = "") {
     });
   }
 
-  // Appliquer les sorts (ordre inverse pour priorité multiple)
+  // Appliquer les sorts (inverse pour priorité multiple)
   for (let s of sorts.reverse()) {
     jumps.sort((a, b) => {
       const av = (a[s] || "").toString().toLowerCase();
