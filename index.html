@@ -33,11 +33,24 @@ html, body {
     box-shadow: 0 5px 20px rgba(0,0,0,0.6);
 }
 
-/* Bouton hamburger */
+/* Hamburger container */
 .menu-btn {
-    font-size: 30px;
+    width: 30px;
+    height: 22px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     cursor: pointer;
-    user-select: none;
+    transition: transform 0.3s ease;
+}
+
+.menu-btn span {
+    display: block;
+    height: 4px;
+    width: 100%;
+    background: white;
+    border-radius: 2px;
+    transition: all 0.3s ease;
 }
 
 /* ================= MENU LATERAL ================= */
@@ -77,37 +90,26 @@ html, body {
     box-shadow: 0 0 15px rgba(255,255,255,0.4);
 }
 
+/* Couleurs boutons */
 .menu .totk { background: #ff0000; }
 .menu .smo { background: #00cc44; }
 .menu .botw { background: #0066ff; }
-.menu .chatsmo { background: #4c00ff; }
+.menu .chatsmo { background:#4c00ff; }
+.menu .shorts { background: linear-gradient(135deg, #2600ff, #00ffc8); }
+.menu .jumps { background: #666; }
 
-/* ================= BOUTONS FIXES ================= */
-.jumps-btn,
-.shorts-btn {
-    position: fixed;
-    bottom: 20px;
-    padding: 14px 24px;
-    border-radius: 30px;
-    border: none;
-    font-size: 15px;
-    font-weight: bold;
-    cursor: pointer;
-    color: white;
-    z-index: 2000;
+/* Animation du hamburger -> flèche */
+.menu-btn.open span:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+}
+.menu-btn.open span:nth-child(2) {
+    opacity: 0;
+}
+.menu-btn.open span:nth-child(3) {
+    transform: rotate(-45deg) translate(5px, -5px);
 }
 
-.jumps-btn {
-    right: 20px;
-    background: #666;
-}
-
-.shorts-btn {
-    left: 20px;
-    background: linear-gradient(135deg, #2600ff, #00ffc8);
-}
-
-/* ================= CONTENU ================= */
+/* ================= PAGE ================= */
 .page {
     display: flex;
     justify-content: center;
@@ -134,16 +136,8 @@ html, body {
     margin-bottom: 30px;
 }
 
-h1 {
-    font-size: 32px;
-    margin: 10px 0;
-}
-
-.subtitle {
-    font-size: 15px;
-    color: #ccc;
-    margin-bottom: 35px;
-}
+h1 { font-size: 32px; margin: 10px 0; }
+.subtitle { font-size: 15px; color: #ccc; margin-bottom: 35px; }
 
 .main-btn {
     width: 100%;
@@ -160,32 +154,13 @@ h1 {
     transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.subscribe {
-    background: linear-gradient(135deg, #ff2d2d, #ff0000);
-    margin-bottom: 22px;
-}
+.subscribe { background: linear-gradient(135deg, #ff2d2d, #ff0000); margin-bottom: 22px; }
+.subscribe img { width: 46px; height: 46px; border-radius: 10px; }
+.later { background: linear-gradient(135deg, #444, #222); color: #ddd; }
 
-.subscribe img {
-    width: 46px;
-    height: 46px;
-    border-radius: 10px;
-}
+.main-btn:hover { transform: scale(1.05); box-shadow: 0 0 28px rgba(255,255,255,0.35); }
 
-.later {
-    background: linear-gradient(135deg, #444, #222);
-    color: #ddd;
-}
-
-.main-btn:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 28px rgba(255,255,255,0.35);
-}
-
-footer {
-    margin-top: 35px;
-    font-size: 13px;
-    color: #aaa;
-}
+footer { margin-top: 35px; font-size: 13px; color: #aaa; }
 </style>
 </head>
 
@@ -193,7 +168,11 @@ footer {
 
 <!-- NAVBAR -->
 <div class="navbar">
-    <div class="menu-btn" onclick="toggleMenu()">☰</div>
+    <div class="menu-btn" id="menu-btn" onclick="toggleMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
 </div>
 
 <!-- MENU LATERAL -->
@@ -202,10 +181,9 @@ footer {
     <button class="smo" onclick="goSMO()">SMO</button>
     <button class="botw" onclick="goBOTW()">BOTW</button>
     <button class="chatsmo" onclick="goChatSMO()">ChatSmo</button>
+    <button class="shorts" onclick="goShorts()">Mes Shorts</button>
+    <button class="jumps" onclick="goJumps()">Serveurs Trickjumps</button>
 </div>
-
-<button class="jumps-btn" onclick="goJumps()">Serveurs Trickjumps</button>
-<button class="shorts-btn" onclick="goShorts()">Mes Shorts</button>
 
 <div class="page">
     <div class="card">
@@ -228,16 +206,17 @@ footer {
 </div>
 
 <script>
+const menuBtn = document.getElementById("menu-btn");
+const menu = document.getElementById("menu");
+
 function toggleMenu() {
-    document.getElementById("menu").classList.toggle("open");
+    menu.classList.toggle("open");
+    menuBtn.classList.toggle("open");
 }
 
-function abonner() {
-    window.open("https://www.youtube.com/channel/UCw3v5XVphqVzScmTXs-8Yrw?sub_confirmation=1", "_blank");
-}
-function rejoindreDiscord() {
-    window.open("https://discord.gg/wySG6ykZ62", "_blank");
-}
+function abonner() { window.open("https://www.youtube.com/channel/UCw3v5XVphqVzScmTXs-8Yrw?sub_confirmation=1", "_blank"); }
+function rejoindreDiscord() { window.open("https://discord.gg/wySG6ykZ62", "_blank"); }
+
 function goTOTK(){ location.href="totk.html"; }
 function goSMO(){ location.href="smo.html"; }
 function goBOTW(){ location.href="botw.html"; }
