@@ -42,34 +42,61 @@ function randomCommand() {
 
 // ----------------- LISTE / PASTE -----------------
 function parseListArguments(args) {
-  // Gère filters et sorts
+  // Mapping des alias d'attributs
+  const attrMap = {
+    diff: "diff",
+    d: "diff",
+    ty: "type",
+    type: "type",
+    k: "location",
+    kingdom: "location",
+    loc: "location",
+    s: "server",
+    server: "server",
+    f: "finder",
+    finder: "finder",
+    p: "prover",
+    prover: "prover",
+  };
+
   let filters = [];
   let sorts = [];
   let yieldType = "";
 
   let mode = "filters"; // filters / sorts / yield
-  for (let i = 0; i < args.length; i++) {
+  let i = 0;
+
+  while (i < args.length) {
     const arg = args[i].toLowerCase();
 
     if (arg === "only") {
       mode = "filters";
+      i++;
       continue;
     } else if (arg === "by") {
       mode = "sorts";
+      i++;
       continue;
     } else if (arg === "+" || arg === "-") {
       yieldType = arg;
+      i++;
+      continue;
+    } else if (arg === "and" || arg === "or") {
+      filters.push({ op: arg }); // conserver opérateur pour extension future
+      i++;
       continue;
     }
 
     if (mode === "filters") {
-      // filtre = paire attribut valeur
-      const key = args[i];
+      const key = attrMap[arg] || arg;
       const value = args[i + 1] || "";
-      filters.push({ key: key.toLowerCase(), value: value.toLowerCase() });
-      i++; // skip value
+      filters.push({ key, value });
+      i += 2;
     } else if (mode === "sorts") {
       sorts.push(arg);
+      i++;
+    } else {
+      i++;
     }
   }
 
@@ -85,18 +112,20 @@ async function listCommand(argsStr = "") {
   let jumps = Object.values(jumpDB);
 
   // Appliquer les filtres
-  for (const f of filters) {
+  for (let i = 0; i < filters.length; i++) {
+    const f = filters[i];
+    if (f.op) continue; // ignorer "and"/"or" pour l'instant
     jumps = jumps.filter(j => {
       const attr = j[f.key];
       if (!attr) return false;
       if (Array.isArray(attr)) {
-        return attr.some(v => v.toLowerCase().includes(f.value));
+        return attr.some(v => v.toLowerCase().includes(f.value.toLowerCase()));
       }
-      return attr.toLowerCase().includes(f.value);
+      return attr.toLowerCase().includes(f.value.toLowerCase());
     });
   }
 
-  // Appliquer les sorts
+  // Appliquer les sorts (ordre inverse pour priorité multiple)
   for (let s of sorts.reverse()) {
     jumps.sort((a, b) => {
       const av = (a[s] || "").toString().toLowerCase();
@@ -112,13 +141,16 @@ async function listCommand(argsStr = "") {
     .map(j => {
       if (yieldType === "+") return JSON.stringify(j);
       if (yieldType === "-") return j.name;
-      // default: name + filter/sort attributes
-      const extraAttrs = filters.concat(sorts.map(k => ({ key: k, value: j[k] || "" })))
-        .map(f => `${f.key}: ${f.value}`)
+      const extraAttrs = filters
+        .filter(f => !f.op)
+        .map(f => `${f.key}: ${j[f.key] || ""}`)
+        .concat(sorts.map(s => `${s}: ${j[s] || ""}`))
         .join(", ");
       return extraAttrs ? `${j.name} [${extraAttrs}]` : j.name;
     })
     .join("\n");
+
+  if (!output) return "Aucun jump trouvé avec ces filtres.";
 
   try {
     const res = await fetch("https://my-worker-simple.daniel-a-bernard.workers.dev/", {
