@@ -40,18 +40,29 @@ async function randomCommand(callback) {
 }
 
 // Commande liste / missing
-async function listCommand(filters = "", callback) {
-  runCommand("!list", res => {
-    let output = res;
+async function listCommand(filters = "") {
+    if (!jumpDB) return "Database not loaded yet.";
+
+    // Crée juste le texte de la liste
+    let output = Object.values(jumpDB).map(j => j.name).join("\n"); // seulement les noms
+
     if (filters) {
-      const filtered = output.split("\n")
-        .filter(line => line.toLowerCase().includes(filters.toLowerCase()))
-        .join("\n");
-      output = filtered;
+        output = output
+            .split("\n")
+            .filter(l => l.toLowerCase().includes(filters.toLowerCase()))
+            .join("\n");
     }
-    callback(output);
-  });
+
+    try {
+        const res = await createGist(output); // ton Worker GitHub
+        if (!res.url) return "Erreur: Gist non créé.";
+        return `Liste créée: ${res.url}`;
+    } catch (err) {
+        console.error("Worker error:", err);
+        return "Erreur lors de la création du Gist.";
+    }
 }
+
 
 // ----------------- HANDLER POUR CHAT -----------------
 async function runCommandHandler(input, callback) {
@@ -78,3 +89,4 @@ async function runCommandHandler(input, callback) {
 
 // ----------------- EXPORT -----------------
 window.runCommand = runCommandHandler;
+
