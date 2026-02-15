@@ -1,208 +1,202 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TOTK Downloads - Dani_MK</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TOTK Downloads — Dani_MK</title>
 
 <style>
-* { box-sizing: border-box; }
-
-body {
-    margin: 0;
-    min-height: 100vh;
-    background: #ff0000;
-    font-family: 'Segoe UI', Arial, sans-serif;
-    color: white;
+:root{
+  --bg:#07070c;
+  --glass:rgba(255,255,255,0.06);
+  --border:rgba(255,255,255,0.08);
+  --accent1:#7f5cff;
+  --accent2:#00ffd5;
+  --text:#f5f7fa;
+  --muted:#b8bfd4;
 }
 
-/* ================= NAVBAR ================= */
-.navbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    min-height: 70px;
-    background: rgba(0,0,0,0.85);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 14px;
-    padding: 10px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.6);
-    z-index: 1000;
-    flex-wrap: wrap;
+*{box-sizing:border-box;margin:0;padding:0;}
+
+body{
+  font-family:system-ui,Segoe UI,Arial,sans-serif;
+  background:
+    radial-gradient(600px 400px at 10% 10%, rgba(127,92,255,.15), transparent),
+    radial-gradient(600px 400px at 90% 90%, rgba(0,255,213,.12), transparent),
+    linear-gradient(180deg,#050509,#0b0b16);
+  color:var(--text);
+  min-height:100vh;
 }
 
-.nav-btn {
-    padding: 10px 22px;
-    border-radius: 20px;
-    border: none;
-    font-size: 15px;
-    font-weight: bold;
-    cursor: pointer;
-    color: white;
-    transition: transform 0.2s, box-shadow 0.2s;
+/* ===== CONTAINER ===== */
+.container{
+  max-width:1200px;
+  margin:auto;
+  padding:40px 30px;
 }
 
-.nav-btn.smo { background: #00cc44; }
-.nav-btn.accueil { background: linear-gradient(135deg, #ff0000, #6a00ff); }
-.nav-btn.botw { background: #0066ff; }
-.nav-btn.chatsmo { background: #4c00ff; }
-
-.nav-btn:hover {
-    transform: scale(1.08);
-    box-shadow: 0 0 15px rgba(255,255,255,0.4);
+/* ===== CARD ===== */
+.card{
+  background:var(--glass);
+  border:1px solid var(--border);
+  border-radius:26px;
+  padding:60px 50px;
+  backdrop-filter:blur(14px);
+  box-shadow:0 20px 60px rgba(0,0,0,.6);
+  text-align:center;
+  max-width:700px;
+  margin:auto;
 }
 
-/* ================= BOUTONS FIXES ================= */
-.jumps-btn,
-.shorts-btn {
-    position: fixed;
-    bottom: 20px;
-    padding: 14px 24px;
-    border-radius: 30px;
-    border: none;
-    font-size: 15px;
-    font-weight: bold;
-    cursor: pointer;
-    color: white;
-    z-index: 2000;
+.card h1{
+  font-size:36px;
 }
 
-.jumps-btn {
-    right: 20px;
-    background: #666;
+.card h1 span{
+  background:linear-gradient(90deg,var(--accent1),var(--accent2));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
 }
 
-.shorts-btn {
-    left: 20px;
-    background: linear-gradient(135deg, #2600ff, #00ffc8);
+.subtitle{
+  margin-top:10px;
+  color:var(--muted);
+  margin-bottom:40px;
 }
 
-/* ================= CONTENU ================= */
-.page {
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 100px 15px 40px;
+/* ===== DOWNLOAD BUTTONS ===== */
+.downloads{
+  display:flex;
+  flex-direction:column;
+  gap:18px;
 }
 
-/* ================= CARD ================= */
-.card {
-    background: rgba(0,0,0,0.88);
-    border-radius: 26px;
-    padding: 45px 25px;
-    width: 100%;
-    max-width: 520px;
-    text-align: center;
-    box-shadow: 0 0 45px rgba(0,0,0,0.9);
+.download-btn{
+  padding:20px;
+  font-size:18px;
+  font-weight:700;
+  border:none;
+  border-radius:18px;
+  cursor:pointer;
+  background:linear-gradient(90deg,var(--accent1),var(--accent2));
+  color:#050509;
+  transition:transform .2s, box-shadow .2s;
+  box-shadow:0 10px 30px rgba(0,0,0,.4);
 }
 
-h1 {
-    font-size: 34px;
-    margin: 10px 0;
+.download-btn:hover{
+  transform:scale(1.06);
+  box-shadow:0 18px 50px rgba(0,0,0,.6);
 }
 
-.subtitle {
-    font-size: 15px;
-    color: #ccc;
-    margin-bottom: 35px;
+.download-btn.ghost{
+  background:var(--glass);
+  color:var(--text);
+  border:1px solid var(--border);
 }
 
-/* ================= DOWNLOAD BUTTONS ================= */
-.download-btn {
-    width: 100%;
-    padding: 20px;
-    font-size: 20px;
-    border: none;
-    border-radius: 16px;
-    cursor: pointer;
-    font-weight: bold;
-    margin-bottom: 18px;
-    color: white;
-    background: linear-gradient(135deg, #ff2d2d, #ff0000);
-    transition: transform 0.2s, box-shadow 0.2s;
+.download-btn.ghost:hover{
+  background:rgba(255,255,255,0.1);
 }
 
-.download-btn:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 28px rgba(255,255,255,0.35);
+/* ===== FOOTER ===== */
+footer{
+  margin-top:40px;
+  font-size:13px;
+  color:var(--muted);
 }
 
-/* ================= FOOTER ================= */
-footer {
-    margin-top: 30px;
-    font-size: 13px;
-    color: #aaa;
+/* ===== BOTTOM NAV ===== */
+.bottom-nav{
+  position:fixed;
+  bottom:18px;
+  left:50%;
+  transform:translateX(-50%);
+  display:flex;
+  gap:10px;
+  padding:10px;
+  background:rgba(0,0,0,.6);
+  border:1px solid var(--border);
+  border-radius:999px;
+  backdrop-filter:blur(10px);
+  z-index:1000;
 }
 
-/* ================= MOBILE ================= */
-@media (max-width: 768px) {
+.bottom-nav button{
+  padding:10px 16px;
+  border-radius:14px;
+  border:none;
+  background:transparent;
+  color:var(--muted);
+  font-weight:700;
+  cursor:pointer;
+  transition:transform 0.2s ease, background 0.2s ease;
+}
 
-    h1 {
-        font-size: 28px;
-    }
+.bottom-nav button:hover{
+  transform:scale(1.08);
+  background:linear-gradient(90deg,var(--accent1),var(--accent2));
+  color:#050509;
+}
 
-    .subtitle {
-        font-size: 14px;
-    }
-
-    .download-btn {
-        font-size: 18px;
-        padding: 18px;
-    }
-
-    .jumps-btn,
-    .shorts-btn {
-        font-size: 14px;
-        padding: 12px 20px;
-    }
+/* ===== RESPONSIVE ===== */
+@media(max-width:600px){
+  .card{
+    padding:30px 20px;
+  }
+  .card h1{
+    font-size:30px;
+  }
 }
 </style>
 </head>
 
 <body>
 
-<!-- Navbar -->
-<div class="navbar">
-    <button class="nav-btn smo" onclick="goSMO()">SMO</button>
-    <button class="nav-btn accueil" onclick="goAccueil()">Accueil</button>
-    <button class="nav-btn botw" onclick="goBOTW()">BOTW</button>
-    <button class="nav-btn chatsmo" onclick="goChatSMO()">Chatsmo</button>
-</div>
+<div class="container">
 
-<button class="jumps-btn" onclick="goJumps()">Serveurs Trickjumps</button>
-<a href="shorts.html"><button class="shorts-btn">Mes Shorts</button></a>
+  <div class="card">
+    <h1>TOTK <span>Downloads</span></h1>
+    <div class="subtitle">Télécharge les fichiers The Legend of Zelda: TOTK</div>
 
-<div class="page">
-    <div class="card">
-        <h1>TOTK Downloads</h1>
-        <div class="subtitle">Téléchargez les fichiers TOTK :</div>
+    <div class="downloads">
+      <button class="download-btn"
+        onclick="openLink('https://github.com/MaxLastBreath/nx-optimizer/archive/refs/heads/main.zip')">
+        Télécharger • NXOptimizer
+      </button>
 
-        <button class="download-btn" onclick="window.open('https://github.com/MaxLastBreath/nx-optimizer/archive/refs/heads/main.zip', '_blank')">
-            Télécharger "NXOptimizer"
-        </button>
+      <button class="download-btn ghost"
+        onclick="alert('Pas encore disponible')">
+        Télécharger le fichier 2
+      </button>
 
-        <button class="download-btn" onclick="alert('Pas encore disponible')">
-            Télécharger le fichier 2
-        </button>
-
-        <button class="download-btn" onclick="alert('Pas encore disponible')">
-            Télécharger le fichier 3
-        </button>
-
-        <footer>© 2026 • Dani_MK</footer>
+      <button class="download-btn ghost"
+        onclick="alert('Pas encore disponible')">
+        Télécharger le fichier 3
+      </button>
     </div>
+
+    <footer>
+      © 2026 — Dani_MK
+    </footer>
+  </div>
+
 </div>
+
+<nav class="bottom-nav">
+  <button onclick="go('index.html')">Accueil</button>
+  <button onclick="go('smo.html')">SMO</button>
+  <button onclick="go('botw.html')">BOTW</button>
+  <button onclick="go('chatsmo.html')">ChatSmo</button>
+</nav>
 
 <script>
-function goSMO(){ window.location.href = "smo.html"; }
-function goBOTW(){ window.location.href = "botw.html"; }
-function goAccueil(){ window.location.href = "index.html"; }
-function goChatSMO(){ window.location.href = "chatsmo.html"; }
-function goJumps(){ window.location.href = "jumps.html"; }
+function openLink(url){
+  window.open(url,'_blank');
+}
+function go(page){
+  window.location.href = page;
+}
 </script>
 
 </body>
