@@ -1,307 +1,435 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<title>Dani_MK - Créateur YouTube</title>
-
-<!-- Google Fonts pour remplacer Segoe UI -->
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dani_MK</title>
 
 <style>
-/* RESET */
-* {
-    box-sizing: border-box;
+
+.section-title{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
 }
 
-html, body {
-    height: 100%;
-    margin: 0;
-    font-family: 'Roboto', Arial, sans-serif;
-    color: white;
-    background: linear-gradient(135deg, #ff0000, #6a00ff);
-    background-attachment: fixed; /* le dégradé reste fixe */
-    overflow-y: auto;
+.section-link{
+  font-size:14px;
+  font-weight:500;
+  color:var(--muted);
+  cursor:pointer;
+  text-decoration:none;
+  transition:color .2s ease;
 }
 
-/* BARRE DU HAUT */
-.navbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 70px;
-    background: rgba(0,0,0,0.85);
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 0 15px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.6);
-    z-index: 1000;
+.section-link:hover{
+  text-decoration:underline;
+  color:var(--text);
 }
 
-.nav-btn {
-    flex: 1;
-    height: 46px;
-    border-radius: 18px;
-    border: none;
-    color: white;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+
+:root{
+  --bg:#07070c;
+  --glass:rgba(255,255,255,0.06);
+  --border:rgba(255,255,255,0.08);
+  --accent1:#7f5cff;
+  --accent2:#00ffd5;
+  --text:#f5f7fa;
+  --muted:#b8bfd4;
 }
 
-.nav-btn.totk { background: #ff0000; }
-.nav-btn.smo { background: #00cc44; }
-.nav-btn.botw { background: #0066ff; }
-.nav-btn.chatsmo { background:#4c00ff; }
-
-.nav-btn:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 15px rgba(255,255,255,0.4);
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
 }
 
-/* BOUTONS FIXES BAS */
-.jumps-btn {
-    position: fixed;
-    bottom: 25px;
-    right: 25px;
-    padding: 16px 30px;
-    border-radius: 30px;
-    border: none;
-    background: #666;
-    color: white;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    z-index: 2000;
-    transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+body{
+  font-family:system-ui,Segoe UI,Arial,sans-serif;
+  background:
+    radial-gradient(600px 400px at 10% 10%, rgba(127,92,255,.15), transparent),
+    radial-gradient(600px 400px at 90% 90%, rgba(0,255,213,.12), transparent),
+    linear-gradient(180deg,#050509,#0b0b16);
+  color:var(--text);
+  min-height:100vh;
 }
 
-.jumps-btn:hover {
-    background: #888;
-    transform: scale(1.12);
-    box-shadow: 0 0 20px rgba(255,255,255,0.4);
+/* ===== CONTAINER ===== */
+.container{
+  max-width:1200px;
+  margin:auto;
+  padding:30px;
 }
 
-.shorts-btn {
-    position: fixed;
-    bottom: 25px;
-    left: 25px;
-    padding: 16px 30px;
-    border-radius: 30px;
-    border: none;
-    background: linear-gradient(135deg, #2600ff, #00ffc8);
-    color: white;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    z-index: 2000;
-    transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+/* ===== HERO ===== */
+.hero{
+  display:flex;
+  gap:30px;
+  align-items:center;
+  background:var(--glass);
+  border:1px solid var(--border);
+  border-radius:24px;
+  padding:30px;
+  backdrop-filter:blur(14px);
+  box-shadow:0 20px 60px rgba(0,0,0,.6);
 }
 
-.shorts-btn:hover {
-    transform: scale(1.12);
-    box-shadow: 0 0 20px rgba(255,255,255,0.4);
+.avatar{
+  width:150px;
+  height:150px;
+  border-radius:20px;
+  overflow:hidden;
+  flex-shrink:0;
 }
 
-/* CONTENU */
-.page {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    padding-top: 90px;
-    width: 100%;
+.avatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
 }
 
-/* CARD */
-.card {
-    background: rgba(0,0,0,0.85);
-    border-radius: 30px;
-    padding: 60px 30px;
-    width: 90%;
-    max-width: 550px;
-    min-height: 700px;
-    text-align: center;
-    box-shadow: 0 0 50px rgba(0,0,0,0.9);
-    margin-bottom: 60px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+.hero h1{
+  font-size:42px;
 }
 
-/* IMAGE DE PROFIL */
-.profile-img {
-    width: 193px;
-    height: 193px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 5px solid #ff2d2d;
-    box-shadow: 0 0 35px rgba(255,0,0,0.6);
-    margin-bottom: 35px;
-    transition: transform 0.3s, box-shadow 0.3s;
+.hero span{
+  background:linear-gradient(90deg,var(--accent1),var(--accent2));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
 }
 
-.profile-img:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 45px rgba(255,0,0,0.7);
+.hero p{
+  margin-top:10px;
+  color:var(--muted);
 }
 
-h1 {
-    font-size: 38px;
-    margin: 10px 0;
-    text-shadow: 0 0 15px rgba(255,255,255,0.3);
+.hero-actions{
+  margin-top:20px;
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
 }
 
-.subtitle {
-    font-size: 16px;
-    color: #ccc;
-    margin-bottom: 40px;
+/* ===== BUTTONS (SEULE PARTIE MODIFIÉE) ===== */
+.btn{
+  padding:12px 20px;
+  border-radius:14px;
+  border:none;
+  cursor:pointer;
+  font-weight:700;
+  font-size:14px;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
 }
 
-/* BOUTONS PRINCIPAUX */
-button.main-btn {
-    width: 100%;
-    padding: 22px;
-    font-size: 24px;
-    border: none;
-    border-radius: 16px;
-    cursor: pointer;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 18px;
-    transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+.btn:hover{
+  transform:scale(1.08);
 }
 
-.subscribe {
-    background: linear-gradient(135deg, #ff2d2d, #ff0000);
-    margin-bottom: 25px;
-    color: white;
-}
-.subscribe img {
-    width: 55px;
-    height: 55px;
-    border-radius: 12px;
-}
-.subscribe:hover {
-    transform: scale(1.06);
-    box-shadow: 0 0 30px rgba(255,255,255,0.35);
+.btn:active{
+  transform:scale(0.96);
 }
 
-.later {
-    background: linear-gradient(135deg, #444, #222);
-    color: #ddd;
-}
-.later:hover {
-    transform: scale(1.06);
-    box-shadow: 0 0 30px rgba(255,255,255,0.35);
+.btn-primary{
+  background:linear-gradient(90deg,var(--accent1),var(--accent2));
+  color:#050509;
+  box-shadow:0 8px 24px rgba(0,0,0,.4);
 }
 
-/* TEXTE EXPLICATIF */
-.text-info {
-    font-size: 18px;
-    color: black;
-    line-height: 1.6;
-    text-align: left;
-    max-width: 600px;
-    margin-top: 250px;
-    margin-bottom: 100px;
-    opacity: 0;
-    transform: translateY(50px);
-    transition: opacity 1s ease, transform 1s ease;
+.btn-primary:hover{
+  box-shadow:0 14px 40px rgba(0,0,0,.6);
 }
 
-.text-info.visible {
-    opacity: 1;
-    transform: translateY(0);
+.btn-ghost{
+  background:var(--glass);
+  color:var(--text);
+  border:1px solid var(--border);
 }
 
-footer {
-    text-align: center;
-    margin-top: 50px;
-    color: #fff;
-    font-size: 14px;
+.btn-ghost:hover{
+  background:rgba(255,255,255,0.1);
 }
+
+/* ===== SECTIONS ===== */
+.section{
+  margin-top:40px;
+}
+
+.section h2{
+  font-size:24px;
+  margin-bottom:18px;
+}
+
+/* ===== SHORTS GRID ===== */
+.shorts-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:22px;
+}
+
+.short-card{
+  background:var(--glass);
+  border:1px solid var(--border);
+  border-radius:22px;
+  padding:14px;
+  backdrop-filter:blur(10px);
+  transition:transform .25s, box-shadow .25s;
+}
+
+.short-card:hover{
+  transform:translateY(-10px);
+  box-shadow:0 30px 80px rgba(0,0,0,.7);
+}
+
+.short-embed{
+  width:100%;
+  aspect-ratio:9/16;
+  border-radius:16px;
+  overflow:hidden;
+  background:#000;
+}
+
+.short-embed iframe{
+  width:100%;
+  height:100%;
+  border:none;
+}
+
+.short-card h3{
+  margin-top:12px;
+  font-size:15px;
+  color:var(--muted);
+  text-align:center;
+}
+
+/* ===== BOTTOM NAV ===== */
+.bottom-nav{
+  position:fixed;
+  bottom:18px;
+  left:50%;
+  transform:translateX(-50%);
+  display:flex;
+  gap:10px;
+  padding:10px;
+  background:rgba(0,0,0,.6);
+  border:1px solid var(--border);
+  border-radius:999px;
+  backdrop-filter:blur(10px);
+  z-index:1000;
+}
+
+.bottom-nav button{
+  padding:10px 16px;
+  border-radius:14px;
+  border:none;
+  background:transparent;
+  color:var(--muted);
+  font-weight:700;
+  cursor:pointer;
+  transition:transform 0.2s ease, background 0.2s ease;
+}
+
+.bottom-nav button:hover{
+  transform:scale(1.08);
+  background:linear-gradient(90deg,var(--accent1),var(--accent2));
+  color:#050509;
+}
+
+/* ===== FOOTER ===== */
+footer{
+  margin-top:60px;
+  text-align:center;
+  color:var(--muted);
+  font-size:13px;
+}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:800px){
+  .hero{
+    flex-direction:column;
+    text-align:center;
+  }
+}
+
+/* ===== LEFT BUTTONS ===== */
+.left-buttons{
+  position:fixed;
+  left:18px;
+  top:50%;
+  transform:translateY(-50%);
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  z-index:1000;
+}
+
+.left-buttons .btn{
+  padding:10px 16px;
+  font-size:13px;
+  white-space:nowrap;
+}
+
+/* ===== HERO-RIGHT BUTTONS ===== */
+.hero-right{
+  display:flex;
+  flex-direction:column;
+  gap:10px; /* un peu moins d’espace entre les boutons */
+  margin-left:auto; /* pousse à droite */
+}
+
+/* style des boutons */
+.hero-right .btn{
+  position:relative;
+  overflow:hidden;
+  background:var(--glass);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:16px;       /* légèrement plus petit que 14px */
+  padding:14px 20px;         /* moins de padding pour bouton plus compact */
+  font-size:13px;            /* un peu plus petit */
+  cursor:pointer;
+  font-weight:700;
+  
+  /* transitions pour hover et scale doux */
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+/* hover doux avec glow vert et scale */
+.hero-right .btn:hover{
+  transform: scale(1.08);
+  box-shadow:0 6px 20px rgba(0,255,213,0.35); /* glow vert */
+}
+
+/* REFLET BLANC GLISSANT */
+.hero-right .btn::after{
+  content:"";
+  position:absolute;
+  top:-150%;
+  left:-70%;
+  width:50%;
+  height:350%;
+  background:linear-gradient(
+    120deg,
+    transparent,
+    rgba(255,255,255,0.45),
+    transparent
+  );
+  transform:rotate(20deg);
+  transition:all .6s ease;
+  pointer-events:none;
+}
+
+.hero-right .btn:hover::after{
+  left:140%;
+}
+
+/* focus accessible */
+.hero-right .btn:focus-visible{
+  outline:none;
+  box-shadow:
+    0 0 0 2px var(--accent2),
+    0 0 16px rgba(0,255,213,0.4);
+}
+
+
 </style>
 </head>
 
 <body>
 
-<!-- BARRE DU HAUT -->
-<div class="navbar">
-    <button class="nav-btn totk" onclick="goTOTK()">TOTK</button>
-    <button class="nav-btn smo" onclick="goSMO()">SMO</button>
-    <button class="nav-btn botw" onclick="goBOTW()">BOTW</button>
-    <button class="nav-btn chatsmo" onclick="goChatSMO()">ChatSmo</button>
-</div>
+<div class="container">
 
-<!-- BOUTONS FIXES BAS -->
-<button class="jumps-btn" onclick="goJumps()">Serveurs Trickjumps</button>
-<button class="shorts-btn" onclick="goShorts()">Mes Shorts</button>
+<section class="hero">
+  <div class="avatar">
+    <img src="https://yt3.ggpht.com/0DVAPHQYW8br9AR2vJF0rCaXFP2HR0yBjGZ3OKTFq0hE7-VapkyXWpT8-9ORIjT2gxoNa0kpub0=s600-c-k-c0x00ffffff-no-rj-rp-mo">
+  </div>
 
-<!-- CONTENU -->
-<div class="page">
-    <div class="card">
-        <img src="https://yt3.ggpht.com/0DVAPHQYW8br9AR2vJF0rCaXFP2HR0yBjGZ3OKTFq0hE7-VapkyXWpT8-9ORIjT2gxoNa0kpub0=s600-c-k-c0x00ffffff-no-rj-rp-mo" alt="Dani_MK" class="profile-img">
+  <div>
+    <h1>Dani_<span>MK</span></h1>
+    <p>YouTube • Shorts • Gaming • Trickjumps</p>
 
-        <h1>Dani_MK</h1>
-        <div class="subtitle">
-            YouTube • Gaming • Fun 🎮🔥
-        </div>
+    <div class="hero-actions">
+      <button class="btn btn-primary"
+        onclick="openLink('https://www.youtube.com/channel/UCw3v5XVphqVzScmTXs-8Yrw?sub_confirmation=1')">
+        S'abonner
+      </button>
 
-        <button class="main-btn subscribe" onclick="abonner()">
-            <img src="https://yt3.ggpht.com/0DVAPHQYW8br9AR2vJF0rCaXFP2HR0yBjGZ3OKTFq0hE7-VapkyXWpT8-9ORIjT2gxoNa0kpub0=s600-c-k-c0x00ffffff-no-rj-rp-mo" alt="Dani_MK">
-            S'abonner à Dani_MK
-        </button>
-
-        <button class="main-btn later" onclick="rejoindreDiscord()">
-            Rejoindre le Discord
-        </button>
-        <footer>
-            © 2026 • Dani_MK
-        </footer>
+      <button class="btn btn-ghost"
+        onclick="openLink('https://discord.gg/wySG6ykZ62')">
+        Discord
+      </button>
     </div>
+  </div>
+
+  <div class="hero-right">
+    <button class="btn btn-ghost"
+      onclick="openLink('https://discord.com/invite/KnTCgTHjWG')">
+      The Trickjump Database
+    </button>
+
+    <button class="btn btn-ghost"
+      onclick="openLink('https://discord.com/invite/smo-trickjumping-469869605570084886')">
+      SMO Trickjumping
+    </button>
+  </div>
+</section>
+
+
+  <section class="section">
+    <h2 class="section-title">
+      🔥 Shorts récents
+      <span class="section-link" onclick="openLink('https://www.youtube.com/@Dani_MK-SMO/shorts')">
+        Voir tout
+       </span>
+    </h2>
+
+
+    <div class="shorts-grid">
+      <div class="short-card">
+        <div class="short-embed">
+          <iframe src="https://www.youtube-nocookie.com/embed/XAMDLNXVKLc" allowfullscreen></iframe>
+        </div>
+        <h3>Tuto Vaults</h3>
+      </div>
+
+      <div class="short-card">
+        <div class="short-embed">
+          <iframe src="https://www.youtube-nocookie.com/embed/7yndClItC44" allowfullscreen></iframe>
+        </div>
+        <h3>Glitch</h3>
+      </div>
+
+      <div class="short-card">
+        <div class="short-embed">
+          <iframe src="https://www.youtube-nocookie.com/embed/dNNV309vMxI" allowfullscreen></iframe>
+        </div>
+        <h3>Trickjumps</h3>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    © 2026 — Dani_MK
+  </footer>
+
 </div>
+
+<nav class="bottom-nav">
+  <button onclick="go('totk.html')">TOTK</button>
+  <button onclick="go('smo.html')">SMO</button>
+  <button onclick="go('botw.html')">BOTW</button>
+  <button onclick="go('chatsmo.html')">ChatSmo</button>
+</nav>
 
 <script>
-// Scroll animation
-const textInfo = document.getElementById('text-info');
-
-function handleScroll() {
-    const rect = textInfo.getBoundingClientRect();
-    const windowHeight = window.innerHeight || document.documentElement.clientHeight;
-
-    if(rect.top <= windowHeight - 100 && rect.bottom >= 0) {
-        textInfo.classList.add('visible');
-    } else {
-        textInfo.classList.remove('visible');
-    }
+function openLink(url){
+  window.open(url,'_blank');
 }
-
-window.addEventListener('scroll', handleScroll);
-window.addEventListener('resize', handleScroll);
-handleScroll();
-
-// Navigation
-function abonner() {
-    window.open("https://www.youtube.com/channel/UCw3v5XVphqVzScmTXs-8Yrw?sub_confirmation=1", "_blank");
+function go(page){
+  window.location.href = page;
 }
-function rejoindreDiscord() {
-    window.open("https://discord.gg/wySG6ykZ62", "_blank");
-}
-function goTOTK() { window.location.href = "totk.html"; }
-function goSMO() { window.location.href = "smo.html"; }
-function goBOTW() { window.location.href = "botw.html"; }
-function goChatSMO() { window.location.href = "chatsmo.html"; }
-function goJumps() { window.location.href = "jumps.html"; }
-function goShorts() { window.location.href = "shorts.html"; }
 </script>
 
 </body>
 </html>
-
-
