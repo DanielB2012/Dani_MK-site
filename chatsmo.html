@@ -325,7 +325,9 @@ const input=document.getElementById("input");
 function addBubble(text,type){
   const b=document.createElement("div");
   b.className="bubble "+type;
-  b.innerHTML=text.replace(/\n/g,"<br>");
+  b.innerHTML = text
+    .replace(/(https?:\/\/[^\s]+)/g,'<a href="$1" target="_blank">$1</a>')
+    .replace(/\n/g,"<br>");
   chat.appendChild(b);
   chat.scrollTop=chat.scrollHeight;
 }
@@ -402,3 +404,4 @@ window.addEventListener('resize', updatePopupFade);
 
 </body>
 </html>
+
