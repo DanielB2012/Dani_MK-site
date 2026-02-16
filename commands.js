@@ -47,7 +47,56 @@ function getJump(name) {
 function infoCommand(name) {
   const jump = getJump(name);
   if (!jump) return `Jump "${name}" not found.`;
-  return jump.name || "Nom non défini";
+
+  const lines = [];
+
+  // Nom
+  if (jump.name) {
+    lines.push(jump.name);
+  }
+
+  // Difficulty
+  if (jump.diff) {
+    if (Array.isArray(jump.diff)) {
+      lines.push(`Difficulty: ${jump.diff.join(", ")}`);
+    } else {
+      lines.push(`Difficulty: ${jump.diff}`);
+    }
+  }
+
+  // Type (direct ou via tricks)
+  let type = jump.type;
+  if (!type) {
+    type = getTypeFromTricks(jump.name);
+  }
+  if (type) {
+    lines.push(`Type: ${type}`);
+  }
+
+  // Found / Proven
+  if (jump.finder && jump.prover) {
+    lines.push(`Found & Proven by ${jump.finder}`);
+  } else if (jump.finder) {
+    lines.push(`Found by ${jump.finder}`);
+  } else if (jump.prover) {
+    lines.push(`Proven by ${jump.prover}`);
+  }
+
+  // Source
+  if (jump.source) {
+    lines.push(jump.source);
+  }
+
+  // Lien
+  if (jump.links) {
+    if (Array.isArray(jump.links)) {
+      lines.push(jump.links[0]);
+    } else {
+      lines.push(jump.links);
+    }
+  }
+
+  return lines.join("\n");
 }
 
 function randomCommand() {
@@ -238,3 +287,4 @@ async function runCommand(input,callback){
 // ----------------- EXPORT -----------------
 window.runCommand=runCommand;
 window.getJump=getJump;
+
