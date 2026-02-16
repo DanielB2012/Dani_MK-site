@@ -343,9 +343,6 @@ function send(){
 
   runCommand(val,res=>{
     addBubble(res,"bot");
-
-    const link=res.match(/https?:\/\/[^\s]+/);
-    if(link) window.open(link[0],"_blank");
   });
 
   input.value="";
@@ -405,3 +402,4 @@ window.addEventListener('resize', updatePopupFade);
 
 </body>
 </html>
+
