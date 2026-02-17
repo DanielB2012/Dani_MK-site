@@ -1,140 +1,121 @@
-// ----------------- DATABASE -----------------
+// ================= DATABASE =================
 let jumpDB = null;
 
-// ----------------- UTILITAIRES -----------------
+// ================= LOAD =================
 async function loadDatabases() {
   if (!jumpDB) {
-    const resp = await fetch('Jumps-database/jump_data.json');
+    const resp = await fetch("Jumps-database/jump_data.json");
     jumpDB = await resp.json();
   }
 }
 
-function normalize(s) {
-  return s ? String(s).trim().toLowerCase() : "";
+// ================= UTILS =================
+function normalize(v) {
+  return v ? String(v).trim().toLowerCase() : "";
 }
 
-// Recherche uniquement dans jump_data
+function tokenizeInput(input) {
+  return input.match(/(?:[^\s"]+|"[^"]*")+/g)?.map(t => t.replace(/^"|"$/g, "")) || [];
+}
+
+// ================= GET JUMP =================
 function getJump(name) {
   if (!jumpDB) return null;
-  const key = normalize(name);
-  return jumpDB[key] || null;
+  return jumpDB[normalize(name)] || null;
 }
 
-// ----------------- COMMANDES -----------------
+// ================= INFO =================
 function infoCommand(name) {
   const jump = getJump(name);
   if (!jump) return `Jump "${name}" not found.`;
 
   const lines = [];
 
-  // Nom
-  if (jump.name) {
-    lines.push(jump.name);
-  }
+  lines.push(jump.name);
 
-  // Location
-  if (jump.location?.length) {
+  if (jump.location?.length)
     lines.push(`Location: ${jump.location.join(", ")}`);
-  }
 
-  // Difficulty
-  if (jump.diff) {
+  if (jump.diff)
     lines.push(`Difficulty: ${jump.diff}`);
-  }
 
-  // Tier
-  if (jump.tier) {
+  if (jump.tier)
     lines.push(`Tier: ${jump.tier}`);
-  }
 
-  // Type
-  if (jump.type?.length) {
+  if (jump.type?.length)
     lines.push(`Type: ${jump.type.join(", ")}`);
-  }
 
-  // Finder / Prover
-  if (jump.finder?.length && jump.prover?.length) {
-    lines.push(`Found by ${jump.finder.join(", ")}`);
-    lines.push(`Proven by ${jump.prover.join(", ")}`);
-  } else if (jump.finder?.length) {
-    lines.push(`Found by ${jump.finder.join(", ")}`);
-  } else if (jump.prover?.length) {
-    lines.push(`Proven by ${jump.prover.join(", ")}`);
-  }
+  if (jump.finder?.length)
+    lines.push(`Found by: ${jump.finder.join(", ")}`);
 
-  // Lien
-  if (jump.links?.length) {
+  if (jump.prover?.length)
+    lines.push(`Proven by: ${jump.prover.join(", ")}`);
+
+  if (jump.links?.length)
     lines.push(jump.links[0]);
-  }
 
   return lines.join("\n");
 }
 
+// ================= RANDOM =================
 function randomCommand() {
-  if (!jumpDB) return "Database not loaded yet.";
-  const allJumps = Object.values(jumpDB);
-  if (!allJumps.length) return "Database vide.";
-  const randJump = allJumps[Math.floor(Math.random() * allJumps.length)];
-  return randJump.name || "Nom non défini";
+  if (!jumpDB) return "Database not loaded.";
+  const jumps = Object.values(jumpDB);
+  if (!jumps.length) return "Database empty.";
+  return jumps[Math.floor(Math.random() * jumps.length)].name;
 }
 
-// ----------------- TOKENIZE -----------------
-function tokenizeInput(input) {
-  return input.match(/(?:[^\s"]+|"[^"]*")+/g)?.map(a => a.replace(/^"|"$/g, "")) || [];
+// ================= FILTER =================
+function matchAttr(attr, value) {
+  if (!attr) return false;
+  const v = normalize(value);
+  if (Array.isArray(attr))
+    return attr.some(a => normalize(a).includes(v));
+  return normalize(attr).includes(v);
 }
 
-// ----------------- PARSING -----------------
+function passesFilters(jump, filters) {
+  for (const f of filters) {
+    if (!matchAttr(jump[f.key], f.value)) return false;
+  }
+  return true;
+}
+
+// ================= PARSE LIST =================
 function parseListArguments(tokens) {
-  const attrMap = {
+  const map = {
     diff: "diff", d: "diff",
-    ty: "type", type: "type",
-    k: "location", kingdom: "location", loc: "location",
-    s: "server", server: "server",
-    f: "finder", finder: "finder",
-    p: "prover", prover: "prover",
-    name: "name", n: "name",
-    tier: "tier", t: "tier"
+    tier: "tier", t: "tier",
+    type: "type", ty: "type",
+    location: "location", loc: "location", k: "location",
+    finder: "finder", f: "finder",
+    prover: "prover", p: "prover",
+    server: "server", s: "server",
+    name: "name", n: "name"
   };
 
-  let filters = [];
+  const filters = [];
   for (let i = 0; i < tokens.length; i += 2) {
-    const key = attrMap[tokens[i]?.toLowerCase()];
+    const key = map[tokens[i]?.toLowerCase()];
     const value = tokens[i + 1];
     if (key && value !== undefined) {
       filters.push({ key, value });
     }
   }
-
   return filters;
 }
 
-// ----------------- FILTRAGE -----------------
-function matchAttribute(attrRaw, filterValue) {
-  if (!attrRaw) return false;
-  const fv = normalize(filterValue);
-
-  if (Array.isArray(attrRaw)) {
-    return attrRaw.some(v => normalize(v).includes(fv));
-  }
-  return normalize(attrRaw).includes(fv);
-}
-
-function passesFilters(jump, filters) {
-  if (!filters.length) return true;
-  return filters.every(f => matchAttribute(jump[f.key], f.value));
-}
-
-// ----------------- LIST COMMAND -----------------
+// ================= LIST (WITH GIST) =================
 async function listCommandFromTokens(tokens) {
-  if (!jumpDB) return "Database non chargée.";
+  if (!jumpDB) return "Database not loaded.";
 
   const filters = parseListArguments(tokens);
-  let jumps = Object.values(jumpDB).filter(j => passesFilters(j, filters));
+  const jumps = Object.values(jumpDB).filter(j => passesFilters(j, filters));
 
-  if (!jumps.length) return "Aucun jump trouvé avec ces filtres.";
+  if (!jumps.length)
+    return "Aucun jump trouvé avec ces filtres.";
 
-  const output = jumps.map(j => j.name).join("\n");
-  if (!output.trim()) return "Aucun contenu à poster.";
+  const content = jumps.map(j => j.name).join("\n");
 
   try {
     const res = await fetch(
@@ -142,7 +123,7 @@ async function listCommandFromTokens(tokens) {
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content: output })
+        body: JSON.stringify({ content })
       }
     );
 
@@ -150,62 +131,51 @@ async function listCommandFromTokens(tokens) {
     if (data?.url) {
       return `Liste créée: ${data.url}`;
     }
-    return `Erreur: ${data?.error ?? "Gist non créé"}`;
+    return "Erreur: Gist non créé.";
   } catch (err) {
-    return `Erreur: ${err?.message ?? "Erreur inconnue"}`;
+    return `Erreur: ${err.message}`;
   }
 }
 
-async function listCommand(argsStr = "") {
-  const tokens = tokenizeInput(argsStr);
-  return await listCommandFromTokens(tokens);
-}
-
-// ----------------- RUN COMMAND -----------------
+// ================= RUN =================
 async function runCommand(input, callback) {
   await loadDatabases();
 
-  if (!input || typeof input !== "string") {
+  if (!input.startsWith("!"))
     return callback("Commande invalide.");
-  }
-  if (!input.startsWith("!")) {
-    return callback("Commande doit commencer par '!'");
-  }
 
-  const args = tokenizeInput(input);
-  if (!args.length) {
-    return callback("Commande vide.");
-  }
+  const tokens = tokenizeInput(input);
+  const cmd = tokens[0].slice(1).toLowerCase();
+  const args = tokens.slice(1);
 
-  const cmd = args[0].substring(1).toLowerCase();
-  const restTokens = args.slice(1);
+  let result = "";
 
-  let res = "";
   try {
     switch (cmd) {
       case "info":
-        res = restTokens.length
-          ? infoCommand(restTokens.join(" "))
-          : "Fournir un nom de jump !";
+        result = args.length
+          ? infoCommand(args.join(" "))
+          : "Donne un nom de jump.";
         break;
+
       case "random":
-        res = randomCommand();
+        result = randomCommand();
         break;
+
       case "list":
-        res = await listCommandFromTokens(restTokens);
+        result = await listCommandFromTokens(args);
         break;
+
       default:
-        res = "Commande inconnue !";
-        break;
+        result = "Commande inconnue.";
     }
-  } catch (err) {
-    res = `Erreur interne: ${err?.message ?? String(err)}`;
+  } catch (e) {
+    result = `Erreur interne: ${e.message}`;
   }
 
-  callback(res);
+  callback(result);
 }
 
-// ----------------- EXPORT -----------------
+// ================= EXPORT =================
 window.runCommand = runCommand;
 window.getJump = getJump;
-
