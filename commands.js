@@ -133,7 +133,27 @@ async function listCommandFromTokens(tokens) {
 
   if (!jumps.length) return "Aucun jump trouvé avec ces filtres.";
 
-  return jumps.map(j => j.name).join("\n");
+  const output = jumps.map(j => j.name).join("\n");
+  if (!output.trim()) return "Aucun contenu à poster.";
+
+  try {
+    const res = await fetch(
+      "https://my-worker-simple.daniel-a-bernard.workers.dev/",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content: output })
+      }
+    );
+
+    const data = await res.json();
+    if (data?.url) {
+      return `Liste créée: ${data.url}`;
+    }
+    return `Erreur: ${data?.error ?? "Gist non créé"}`;
+  } catch (err) {
+    return `Erreur: ${err?.message ?? "Erreur inconnue"}`;
+  }
 }
 
 async function listCommand(argsStr = "") {
@@ -188,3 +208,4 @@ async function runCommand(input, callback) {
 // ----------------- EXPORT -----------------
 window.runCommand = runCommand;
 window.getJump = getJump;
+
