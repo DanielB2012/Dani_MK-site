@@ -128,14 +128,20 @@ async function listCommandFromTokens(tokens) {
     );
 
     const data = await res.json();
-    if (data?.url) {
+
+    // ✅ SUCCÈS → lien uniquement
+    if (data && typeof data.url === "string") {
       return `Liste créée: ${data.url}`;
     }
-    return "Erreur: Gist non créé.";
+
+    // ❌ ÉCHEC → message court, JAMAIS le contenu
+    return "❌ Erreur : impossible de créer le Gist.";
+
   } catch (err) {
-    return `Erreur: ${err.message}`;
+    return "❌ Erreur réseau lors de la création du Gist.";
   }
 }
+
 
 // ================= RUN =================
 async function runCommand(input, callback) {
@@ -179,3 +185,4 @@ async function runCommand(input, callback) {
 // ================= EXPORT =================
 window.runCommand = runCommand;
 window.getJump = getJump;
+
