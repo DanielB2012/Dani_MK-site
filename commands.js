@@ -131,7 +131,8 @@ async function listCommandFromTokens(tokens) {
 
     // ✅ SUCCÈS → lien uniquement
     if (data && typeof data.url === "string") {
-      return `Liste créée: ${data.url}`;
+      return `Liste créée: 
+          ${data.url}`;
     }
 
     // ❌ ÉCHEC → message court, JAMAIS le contenu
@@ -185,4 +186,5 @@ async function runCommand(input, callback) {
 // ================= EXPORT =================
 window.runCommand = runCommand;
 window.getJump = getJump;
+
 
