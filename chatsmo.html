@@ -313,6 +313,7 @@ body {
   <button onclick="go('totk.html')">TOTK</button>
   <button onclick="go('botw.html')">BOTW</button>
   <button onclick="go('smo.html')">SMO</button>
+  <button onclick="go('modding.html')">Modding</button>
 </nav>
 
 <script src="commands.js"></script>
@@ -325,9 +326,7 @@ const input=document.getElementById("input");
 function addBubble(text,type){
   const b=document.createElement("div");
   b.className="bubble "+type;
-  b.innerHTML = text
-    .replace(/(https?:\/\/[^\s]+)/g,'<a href="$1" target="_blank">$1</a>')
-    .replace(/\n/g,"<br>");
+  b.innerHTML=text.replace(/\n/g,"<br>");
   chat.appendChild(b);
   chat.scrollTop=chat.scrollHeight;
 }
@@ -345,6 +344,9 @@ function send(){
 
   runCommand(val,res=>{
     addBubble(res,"bot");
+
+    const link=res.match(/https?:\/\/[^\s]+/);
+    if(link) window.open(link[0],"_blank");
   });
 
   input.value="";
@@ -404,4 +406,3 @@ window.addEventListener('resize', updatePopupFade);
 
 </body>
 </html>
-
