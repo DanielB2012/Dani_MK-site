@@ -2,35 +2,38 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Jumpedia</title>
-
-<link rel="icon" href="favicon.ico" type="image/x-icon">
 
 <style>
 /* ===== RESET ===== */
 * { box-sizing:border-box; }
 body {
   margin:0;
-  height:100vh;
+  min-height:100vh;
   background:
-    radial-gradient(600px 400px at 10% 10%, rgba(127,92,255,.15), transparent),
-    radial-gradient(600px 400px at 90% 90%, rgba(0,255,213,.12), transparent),
-    linear-gradient(180deg,#050509,#0b0b16); 
+    radial-gradient(700px 500px at 12% 8%, rgba(127,92,255,.22), transparent),
+    radial-gradient(700px 500px at 88% 92%, rgba(0,255,213,.16), transparent),
+    radial-gradient(500px 400px at 50% 50%, rgba(60,20,120,.08), transparent),
+    linear-gradient(180deg,#040408,#0a0a14);
   font-family: "Segoe UI", system-ui, sans-serif;
   display:flex;
   justify-content:center;
   align-items:center;
-  color:#fff;
+  color:#f5f7fa;
 }
 
-/* ===== CARD ===== */
+/* ===== APP CARD ===== */
 .app {
-  width: min(900px, 95vw);
-  height: min(700px, 92vh);
-  background: rgba(10,10,20,.9);
-  border-radius: 24px;
-  box-shadow: 0 40px 120px rgba(0,0,0,.6);
+  width: min(880px, 96vw);
+  height: min(680px, 92vh);
+  background: rgba(7,7,18,0.95);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 26px;
+  box-shadow:
+    0 50px 140px rgba(0,0,0,.8),
+    0 0 0 1px rgba(127,92,255,0.15),
+    0 0 90px rgba(127,92,255,0.07);
   display:flex;
   flex-direction:column;
   overflow:hidden;
@@ -38,75 +41,104 @@ body {
 
 /* ===== HEADER ===== */
 .header {
-  padding:16px 22px;
-  font-weight:900;
-  font-size:22px;
-  letter-spacing:.5px;
-  background: linear-gradient(90deg,#7f5cff,#00ffd5);
-  color:#050509;
-  display:flex;
-  align-items:center;
+  padding: 16px 22px;
+  font-weight: 900;
+  font-size: 20px;
+  letter-spacing: .4px;
+  background: rgba(5,5,15,0.85);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  display: flex;
+  align-items: center;
   justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.header-title {
+  background: linear-gradient(90deg,#7f5cff,#00ffd5);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 /* ===== CHAT ===== */
 .chat {
   flex:1;
-  padding:18px;
-  overflow-y:auto;
-  display:flex;
-  flex-direction:column;
-  gap:12px;
+  padding: 20px 18px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
   background:
-    radial-gradient(circle at 20% 10%,rgba(255,255,255,.06),transparent 40%),
-    radial-gradient(circle at 80% 90%,rgba(255,255,255,.05),transparent 40%);
+    radial-gradient(circle at 15% 15%, rgba(127,92,255,.05), transparent 55%),
+    radial-gradient(circle at 85% 85%, rgba(0,255,213,.04), transparent 55%);
 }
 
+.chat::-webkit-scrollbar { width:4px; }
+.chat::-webkit-scrollbar-track { background:transparent; }
+.chat::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.13); border-radius:4px; }
+.chat::-webkit-scrollbar-thumb:hover { background:rgba(127,92,255,0.5); }
+
 .bubble {
-  max-width:72%;
-  padding:10px 14px;
-  border-radius:18px;
-  font-size:14.5px;
-  line-height:1.4;
-  animation: pop .15s ease-out;
+  max-width: 70%;
+  padding: 11px 15px;
+  border-radius: 18px;
+  font-size: 14px;
+  line-height: 1.48;
+  animation: pop .2s cubic-bezier(.2,.9,.2,1);
 }
 
 .user {
-  align-self:flex-end;
-  background: linear-gradient(135deg,#7f5cff,#b28cff);
-  color:#050509;
-  border-bottom-right-radius:6px;
+  align-self: flex-end;
+  background: linear-gradient(135deg,#7f5cff,#a07aff);
+  color: #fff;
+  border-bottom-right-radius: 5px;
+  box-shadow: 0 4px 18px rgba(127,92,255,0.32);
 }
 
 .bot {
-  align-self:flex-start;
-  background: linear-gradient(135deg,#00ffd5,#7fffe9);
-  color:#050509;
-  border-bottom-left-radius:6px;
+  align-self: flex-start;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.09);
+  color: #dde0f0;
+  border-bottom-left-radius: 5px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.25);
 }
 
 @keyframes pop {
-  from { transform:scale(.9); opacity:0; }
-  to   { transform:scale(1); opacity:1; }
+  from { transform:scale(.92) translateY(5px); opacity:0; }
+  to   { transform:scale(1) translateY(0); opacity:1; }
 }
 
-/* ===== INPUT ===== */
+/* ===== INPUT BAR ===== */
 .input-bar {
-  padding:14px;
-  display:flex;
-  gap:10px;
-  background: rgba(0,0,0,.55);
-  align-items:center;
+  padding: 13px 16px;
+  display: flex;
+  gap: 10px;
+  background: rgba(4,4,13,0.75);
+  border-top: 1px solid rgba(255,255,255,0.06);
+  align-items: center;
+  flex-shrink: 0;
 }
 
 .input-bar input {
-  flex:1;
-  padding:12px 16px;
-  border-radius:16px;
-  border:none;
-  outline:none;
-  font-size:15px;
+  flex: 1;
+  padding: 12px 18px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.1);
+  outline: none;
+  font-size: 14px;
+  background: rgba(255,255,255,0.05);
+  color: #f5f7fa;
+  transition: border-color 0.2s, background 0.2s;
+  font-family: inherit;
 }
+
+.input-bar input:focus {
+  border-color: rgba(127,92,255,0.5);
+  background: rgba(255,255,255,0.07);
+}
+
+.input-bar input::placeholder { color:rgba(255,255,255,0.28); }
 
 /* ===== BOUTON I + POPUP ===== */
 .info-wrap{ position:relative; display:flex; align-items:center; }
@@ -115,23 +147,24 @@ body {
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  width:36px;
-  height:36px;
+  width:32px;
+  height:32px;
   border-radius:50%;
-  border:2px solid rgba(5,5,9,0.95);
-  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-  color:#050509;
+  border:1.5px solid rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.07);
+  color:rgba(255,255,255,0.65);
   font-weight:800;
+  font-style:italic;
   cursor:pointer;
-  font-size:14px;
-  transition: transform .16s cubic-bezier(.2,.9,.2,1), box-shadow .16s ease;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.02);
+  font-size:13px;
+  transition: all .18s ease;
 }
 
 .info-badge:hover{
-  transform: scale(1.08);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.45);
-  text-decoration: underline;
+  background: rgba(127,92,255,0.18);
+  border-color: rgba(127,92,255,0.5);
+  color:#fff;
+  transform: scale(1.1);
 }
 
 .info-popup{
@@ -228,19 +261,26 @@ body {
 
 /* ===== ENVOYER ===== */
 .input-bar button.send-btn {
-  padding:12px 22px;
-  border-radius:16px;
-  border:none;
-  cursor:pointer;
-  font-weight:900;
+  padding: 12px 22px;
+  border-radius: 16px;
+  border: none;
+  cursor: pointer;
+  font-weight: 800;
+  font-size: 14px;
+  font-family: inherit;
   background: linear-gradient(90deg,#7f5cff,#00ffd5);
-  color:#050509;
-  transition: transform 0.15s ease;
+  color: #050509;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  white-space: nowrap;
+  box-shadow: 0 4px 20px rgba(127,92,255,0.35);
 }
 
 .input-bar button.send-btn:hover {
-  transform:scale(1.05);
+  transform: scale(1.05);
+  box-shadow: 0 6px 28px rgba(127,92,255,0.55);
 }
+
+.input-bar button.send-btn:active { transform:scale(0.97); }
 
 /* ===== NAVBAR ===== */
 .bottom-nav{
@@ -275,13 +315,43 @@ body {
   color:#050509;
 }
 
+/* ===== HAMBURGER + DRAWER ===== */
+.hamburger,.drawer,.drawer-overlay{ display:none; }
+
+.hamburger span{ display:block; width:20px; height:2px; background:#fff; border-radius:2px; transition:transform 0.35s cubic-bezier(0.4,0,0.2,1),opacity 0.22s ease; }
+.hamburger.open span:nth-child(1){ transform:translateY(7px) rotate(45deg); }
+.hamburger.open span:nth-child(2){ opacity:0; transform:scaleX(0); }
+.hamburger.open span:nth-child(3){ transform:translateY(-7px) rotate(-45deg); }
+@keyframes ham-pop{ 0%{ transform:scale(1); } 45%{ transform:scale(1.22); } 100%{ transform:scale(1); } }
+
+.drawer-overlay.show{ opacity:1; pointer-events:auto; }
+.drawer.open{ transform:translateX(0); }
+.drawer-header{ padding:38px 20px 34px 20px; display:flex; align-items:center; justify-content:center; border-bottom:1px solid rgba(255,255,255,0.06); }
+.drawer-title{ font-weight:900; font-size:17px; background:linear-gradient(90deg,#7f5cff,#00ffd5); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.drawer-links{ flex:1; display:flex; flex-direction:column; gap:8px; padding:20px 14px; overflow-y:auto; }
+.drawer-links button{ width:100%; padding:15px 18px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.07); border-radius:14px; color:#f5f7fa; font-family:inherit; font-weight:700; font-size:15px; cursor:pointer; text-align:left; transition:background 0.15s,transform 0.15s,border-color 0.15s; }
+.drawer-links button:hover{ background:rgba(127,92,255,0.12); border-color:rgba(127,92,255,0.28); transform:translateX(4px); }
+.drawer-links button:active{ transform:scale(0.97); }
+.drawer-footer{ padding:14px 20px; padding-bottom:max(14px,env(safe-area-inset-bottom)); font-size:12px; color:rgba(255,255,255,0.22); border-top:1px solid rgba(255,255,255,0.05); text-align:center; }
+
+@media(max-width:800px){
+  .bottom-nav{ display:none; }
+  body{ align-items:flex-start; padding-top:82px; }
+  .app{ width:100%; border-radius:0; height:calc(100vh - 82px); height:calc(100dvh - 82px); min-height:0; }
+  .hamburger{ display:flex; flex-direction:column; justify-content:center; align-items:center; gap:5px; position:fixed; top:calc(env(safe-area-inset-top,0px) + 24px); left:25px; z-index:3000; width:48px; height:48px; background:rgba(7,7,12,0.88); border:1px solid rgba(255,255,255,0.14); border-radius:14px; cursor:pointer; backdrop-filter:blur(16px); box-shadow:0 8px 30px rgba(0,0,0,0.5),0 0 0 1px rgba(127,92,255,0.15); transition:transform 0.25s ease,background 0.35s ease,box-shadow 0.35s ease,border-color 0.35s ease; }
+  .hamburger:active{ transform:scale(0.9); }
+  .hamburger.open{ animation:ham-pop 0.32s cubic-bezier(0.34,1.56,0.64,1); }
+  .drawer-overlay{ display:block; position:fixed; inset:0; background:rgba(0,0,0,0.55); backdrop-filter:blur(3px); z-index:1500; opacity:0; pointer-events:none; transition:opacity 0.3s ease; }
+  .drawer{ display:flex; position:fixed; top:0; left:0; width:75vw; max-width:280px; height:100vh; height:100dvh; background:rgba(7,7,16,0.97); border-right:1px solid rgba(255,255,255,0.07); backdrop-filter:blur(24px); z-index:2000; flex-direction:column; transform:translateX(-100%); transition:transform 0.32s cubic-bezier(0.4,0,0.2,1); box-shadow:20px 0 60px rgba(0,0,0,0.5); }
+}
+
 </style>
 </head>
 <body>
 
 <div class="app">
   <div class="header">
-    Jumpedia
+    <span class="header-title">Jumpedia</span>
     <div class="info-wrap">
       <div id="infoBadge" class="info-badge" aria-expanded="false" role="button" title="Infos">i</div>
 
@@ -316,6 +386,20 @@ body {
   <button onclick="go('botw.html')">BOTW</button>
   <button onclick="go('smo.html')">SMO</button>
   <button onclick="go('modding.html')">Modding</button>
+</nav>
+
+<button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<nav class="drawer" id="drawer">
+  <div class="drawer-header"><span class="drawer-title">Navigation</span></div>
+  <div class="drawer-links">
+    <button onclick="go('index.html')">Accueil</button>
+    <button onclick="go('totk.html')">TOTK</button>
+    <button onclick="go('botw.html')">BOTW</button>
+    <button onclick="go('smo.html')">SMO</button>
+    <button onclick="go('modding.html')">Modding</button>
+  </div>
+  <div class="drawer-footer">© 2026 — Dani_MK</div>
 </nav>
 
 <script src="commands.js"></script>
@@ -404,6 +488,15 @@ document.addEventListener('keydown', (e) => {
 });
 
 window.addEventListener('resize', updatePopupFade);
+
+(function(){
+  var ham=document.getElementById('hamburger'),drw=document.getElementById('drawer'),ovr=document.getElementById('drawerOverlay');
+  function openDrw(){ham.classList.add('open');drw.classList.add('open');ovr.classList.add('show');document.body.style.overflow='hidden';}
+  function closeDrw(){ham.classList.remove('open');drw.classList.remove('open');ovr.classList.remove('show');document.body.style.overflow='';}
+  ham.addEventListener('click',function(){drw.classList.contains('open')?closeDrw():openDrw();});
+  ovr.addEventListener('click',closeDrw);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeDrw();});
+})();
 </script>
 
 </body>
