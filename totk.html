@@ -5,8 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>TOTK Downloads — Dani_MK</title>
 
-<link rel="icon" href="favicon.ico" type="image/x-icon">
-
 <style>
 :root{
   --bg:#07070c;
@@ -73,6 +71,17 @@ body{
   gap:18px;
 }
 
+.downloads .download-btn{
+  display:block;
+  width:100%;
+}
+
+.download-btn{
+  display:block;
+  text-align:center;
+  text-decoration:none;
+}
+
 .download-btn{
   padding:20px;
   font-size:18px;
@@ -99,6 +108,58 @@ body{
 
 .download-btn.ghost:hover{
   background:rgba(255,255,255,0.1);
+}
+
+.download-row .download-btn:only-child{
+  width:calc(100% - 55px);
+}
+
+.download-row .download-btn{
+  transition:transform .2s ease, box-shadow .2s ease;
+}
+
+.download-row .download-btn:hover{
+  transform:scale(1.04);
+  box-shadow:0 18px 50px rgba(0,0,0,.6);
+}
+
+.download-row .download-btn:hover + .github-btn,
+.download-row .download-btn:hover + .gamebanana-btn{
+  transform:translateX(8px);
+}
+
+/* ===== SIDE BUTTONS ===== */
+.download-row{
+  display:flex;
+  gap:10px;
+  align-items:center;
+}
+
+.github-btn{
+  width:45px;
+  height:45px;
+  padding:0;
+  border:none;
+  border-radius:14px;
+  background:var(--glass);
+  border:1px solid var(--border);
+  flex-shrink:0;
+  color:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.github-btn:hover{
+  background:rgba(255,255,255,.18);
+  transform:scale(1.06);
+}
+
+.github-btn svg{
+  width:20px;
+  height:20px;
 }
 
 /* ===== FOOTER ===== */
@@ -162,20 +223,21 @@ footer{
     <div class="subtitle">Télécharge les fichiers The Legend of Zelda: TOTK</div>
 
     <div class="downloads">
-      <button class="download-btn"
-        onclick="openLink('https://github.com/MaxLastBreath/nx-optimizer/archive/refs/heads/main.zip')">
-        Télécharger • NXOptimizer
-      </button>
 
-      <button class="download-btn ghost"
-        onclick="alert('Pas encore disponible')">
-        Télécharger le fichier 2
-      </button>
+      <div class="download-row">
+        <button class="download-btn"
+          onclick="openLink('https://github.com/MaxLastBreath/nx-optimizer/archive/refs/heads/main.zip')">
+          Télécharger • NXOptimizer
+        </button>
+        <a class="github-btn"
+          href="https://github.com/MaxLastBreath/nx-optimizer"
+          target="_blank">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 .5a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2.2c-3.3.7-4-1.6-4-1.6-.5-1.4-1.3-1.8-1.3-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-6 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.7 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.7-5.5 6 .4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .5z"/>
+          </svg>
+        </a>
+      </div>
 
-      <button class="download-btn ghost"
-        onclick="alert('Pas encore disponible')">
-        Télécharger le fichier 3
-      </button>
     </div>
 
     <footer>
