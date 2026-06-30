@@ -5,8 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>SMO Downloads — Dani_MK</title>
 
-<link rel="icon" href="favicon.ico" type="image/x-icon">
-
 <style>
 :root{
   --bg:#07070c;
@@ -73,6 +71,17 @@ body{
   gap:18px;
 }
 
+.downloads .download-btn{
+  display:block;
+  width:100%;
+}
+
+.download-btn{
+  display:block;
+  text-align:center;
+  text-decoration:none;
+}
+
 .download-btn{
   padding:20px;
   font-size:18px;
@@ -89,6 +98,58 @@ body{
 .download-btn:hover{
   transform:scale(1.06);
   box-shadow:0 18px 50px rgba(0,0,0,.6);
+}
+
+.download-row .download-btn:only-child{
+  width:calc(100% - 55px);
+}
+
+.download-row .download-btn{
+  transition:transform .2s ease, box-shadow .2s ease;
+}
+
+.download-row .download-btn:hover{
+  transform:scale(1.04);
+  box-shadow:0 18px 50px rgba(0,0,0,.6);
+}
+
+.download-row .download-btn:hover + .github-btn,
+.download-row .download-btn:hover + .gamebanana-btn{
+  transform:translateX(8px);
+}
+
+/* ===== SIDE BUTTONS ===== */
+.download-row{
+  display:flex;
+  gap:10px;
+  align-items:center;
+}
+
+.gamebanana-btn{
+  width:45px;
+  height:45px;
+  border:none;
+  border-radius:14px;
+  background:var(--glass);
+  border:1px solid var(--border);
+  flex-shrink:0;
+  color:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.gamebanana-btn:hover{
+  background:rgba(255,255,255,.18);
+  transform:scale(1.06);
+}
+
+.gamebanana-btn img{
+  width:26px;
+  height:26px;
+  object-fit:contain;
 }
 
 /* ===== FOOTER ===== */
@@ -152,20 +213,43 @@ footer{
     <div class="subtitle">Télécharge les fichiers Super Mario Odyssey</div>
 
     <div class="downloads">
-      <button class="download-btn"
-        onclick="openLink('https://gamebanana.com/dl/1415492')">
-        Télécharger • Infinite Cap Dives
-      </button>
 
-      <button class="download-btn"
-        onclick="openLink('https://gamebanana.com/dl/886171')">
-        Télécharger • Hatsune Miku Skin
-      </button>
+      <div class="download-row">
+        <button class="download-btn"
+          onclick="openLink('https://gamebanana.com/dl/1415492')">
+          Télécharger • Infinite Cap Dives
+        </button>
+        <a class="gamebanana-btn"
+          href="https://gamebanana.com/mods/586509"
+          target="_blank">
+          <img src="images-removebg-preview.png">
+        </a>
+      </div>
 
-      <button class="download-btn"
-        onclick="openLink('https://gamebanana.com/dl/782089')">
-        Télécharger • Practice Mod
-      </button>
+      <div class="download-row">
+        <button class="download-btn"
+          onclick="openLink('https://gamebanana.com/dl/886171')">
+          Télécharger • Hatsune Miku Skin
+        </button>
+        <a class="gamebanana-btn"
+          href="https://gamebanana.com/mods/410220"
+          target="_blank">
+          <img src="images-removebg-preview.png">
+        </a>
+      </div>
+
+      <div class="download-row">
+        <button class="download-btn"
+          onclick="openLink('https://gamebanana.com/dl/782089')">
+          Télécharger • Practice Mod
+        </button>
+        <a class="gamebanana-btn"
+          href="https://gamebanana.com/mods/370546"
+          target="_blank">
+          <img src="images-removebg-preview.png">
+        </a>
+      </div>
+
     </div>
 
     <footer>
