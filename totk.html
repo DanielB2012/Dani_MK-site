@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SMO Downloads — Dani_MK</title>
+<title>TOTK Downloads — Dani_MK</title>
 
 <style>
 :root{
@@ -100,6 +100,16 @@ body{
   box-shadow:0 18px 50px rgba(0,0,0,.6);
 }
 
+.download-btn.ghost{
+  background:var(--glass);
+  color:var(--text);
+  border:1px solid var(--border);
+}
+
+.download-btn.ghost:hover{
+  background:rgba(255,255,255,0.1);
+}
+
 .download-row .download-btn:only-child{
   width:calc(100% - 55px);
 }
@@ -125,9 +135,10 @@ body{
   align-items:center;
 }
 
-.gamebanana-btn{
+.github-btn{
   width:45px;
   height:45px;
+  padding:0;
   border:none;
   border-radius:14px;
   background:var(--glass);
@@ -141,15 +152,14 @@ body{
   transition:.2s;
 }
 
-.gamebanana-btn:hover{
+.github-btn:hover{
   background:rgba(255,255,255,.18);
   transform:scale(1.06);
 }
 
-.gamebanana-btn img{
-  width:26px;
-  height:26px;
-  object-fit:contain;
+.github-btn svg{
+  width:20px;
+  height:20px;
 }
 
 /* ===== FOOTER ===== */
@@ -209,44 +219,22 @@ footer{
 <div class="container">
 
   <div class="card">
-    <h1>SMO <span>Downloads</span></h1>
-    <div class="subtitle">Télécharge les fichiers Super Mario Odyssey</div>
+    <h1>TOTK <span>Downloads</span></h1>
+    <div class="subtitle">Télécharge les fichiers The Legend of Zelda: TOTK</div>
 
     <div class="downloads">
 
       <div class="download-row">
         <button class="download-btn"
-          onclick="openLink('https://gamebanana.com/dl/1415492')">
-          Télécharger • Infinite Cap Dives
+          onclick="openLink('https://github.com/MaxLastBreath/nx-optimizer/archive/refs/heads/main.zip')">
+          Télécharger • NXOptimizer
         </button>
-        <a class="gamebanana-btn"
-          href="https://gamebanana.com/mods/586509"
+        <a class="github-btn"
+          href="https://github.com/MaxLastBreath/nx-optimizer"
           target="_blank">
-          <img src="images-removebg-preview.png">
-        </a>
-      </div>
-
-      <div class="download-row">
-        <button class="download-btn"
-          onclick="openLink('https://gamebanana.com/dl/886171')">
-          Télécharger • Hatsune Miku Skin
-        </button>
-        <a class="gamebanana-btn"
-          href="https://gamebanana.com/mods/410220"
-          target="_blank">
-          <img src="images-removebg-preview.png">
-        </a>
-      </div>
-
-      <div class="download-row">
-        <button class="download-btn"
-          onclick="openLink('https://gamebanana.com/dl/782089')">
-          Télécharger • Practice Mod
-        </button>
-        <a class="gamebanana-btn"
-          href="https://gamebanana.com/mods/370546"
-          target="_blank">
-          <img src="images-removebg-preview.png">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 .5a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2.2c-3.3.7-4-1.6-4-1.6-.5-1.4-1.3-1.8-1.3-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-6 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.7 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.7-5.5 6 .4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .5z"/>
+          </svg>
         </a>
       </div>
 
@@ -261,7 +249,7 @@ footer{
 
 <nav class="bottom-nav">
   <button onclick="go('index.html')">Accueil</button>
-  <button onclick="go('totk.html')">TOTK</button>
+  <button onclick="go('smo.html')">SMO</button>
   <button onclick="go('botw.html')">BOTW</button>
   <button onclick="go('chatsmo.html')">ChatSmo</button>
   <button onclick="go('modding.html')">Modding</button>
