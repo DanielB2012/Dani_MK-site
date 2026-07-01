@@ -3,9 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Modding Downloads — Dani_MK</title>
+<title>Modding — Téléchargements — Dani_MK</title>
+<meta name="description" content="Outils de modding Switch : MoonLight et MoonFlow.">
 
-<link rel="icon" href="favicon.ico" type="image/x-icon">
+<link rel="icon" href="channels4_profile-removebg-preview.png" type="image/png">
+
+<link rel="stylesheet" href="assets/css/base.css">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap"></noscript>
 
 <script>
 (function(){
@@ -16,690 +24,153 @@
 </script>
 
 <style>
-:root{
-  --bg:#07070c;
-  --glass:rgba(255,255,255,0.06);
-  --border:rgba(255,255,255,0.08);
-  --accent1:#7f5cff;
-  --accent2:#00ffd5;
-  --text:#f5f7fa;
-  --muted:#b8bfd4;
-}
-
-html[data-theme="light"]{
-  --bg:#f4f5fb;
-  --glass:rgba(10,10,30,0.045);
-  --border:rgba(10,10,30,0.1);
-  --text:#15151f;
-  --muted:#52546b;
-}
-
-html[data-theme="light"] .card{ box-shadow:0 10px 30px rgba(90,70,200,0.07); }
-html[data-theme="light"] .bottom-nav{ background:rgba(255,255,255,0.75); }
-
-html[data-theme="light"] .download-btn.ghost,
-html[data-theme="light"] .github-btn,
-html[data-theme="light"] .drawer-links button,
-html[data-theme="light"] .theme-toggle{
-  background:linear-gradient(135deg, rgba(127,92,255,0.14), rgba(0,255,213,0.10));
-  border:1px solid rgba(127,92,255,0.3);
-  color:#2a2750;
-  box-shadow:0 2px 10px rgba(90,70,200,0.1);
-}
-html[data-theme="light"] .download-btn.ghost:hover,
-html[data-theme="light"] .github-btn:hover,
-html[data-theme="light"] .drawer-links button:hover,
-html[data-theme="light"] .theme-toggle:hover{
-  background:linear-gradient(135deg, rgba(127,92,255,0.24), rgba(0,255,213,0.18));
-  border-color:rgba(127,92,255,0.55);
-  box-shadow:0 8px 22px rgba(90,70,200,0.2);
-}
-html[data-theme="light"] .drawer-links button:hover{ transform:translateX(4px); }
-
-html[data-theme="light"] .download-btn{ box-shadow:0 8px 22px rgba(110,80,220,0.25); }
-html[data-theme="light"] .download-btn:hover,
-html[data-theme="light"] .download-row .download-btn:hover{ box-shadow:0 12px 32px rgba(110,80,220,0.32); }
-
-html[data-theme="light"] .popup-overlay{ background:rgba(20,18,40,0.35); }
-html[data-theme="light"] .popup{
-  background:#ffffff;
-  box-shadow:0 16px 44px rgba(90,70,200,0.16);
-}
-html[data-theme="light"] .select-button,
-html[data-theme="light"] .select-menu{
-  background:#eef0fa;
-  color:#15151f;
-}
-html[data-theme="light"] .select-menu div:hover{ background:rgba(127,92,255,0.15); }
-html[data-theme="light"] .cancel-btn{
-  background:#e3e5f5;
-  color:#15151f;
-}
-
-html[data-theme="light"] .theme-toggle-fab{
-  background:linear-gradient(135deg, rgba(127,92,255,0.16), rgba(0,255,213,0.12));
-  border-color:rgba(127,92,255,0.32);
-  box-shadow:0 6px 18px rgba(90,70,200,0.16);
-}
-html[data-theme="light"] .theme-toggle-fab:hover{
-  box-shadow:0 10px 26px rgba(90,70,200,0.26);
-  border-color:rgba(127,92,255,0.55);
-}
-html[data-theme="light"] .hamburger span{ background:#15151f; }
-html[data-theme="light"] .hamburger{
-  background:rgba(255,255,255,0.85);
-  border-color:rgba(10,10,30,0.12);
-  box-shadow:0 8px 22px rgba(30,25,60,0.16),0 0 0 1px rgba(127,92,255,0.15);
-}
-html[data-theme="light"] .drawer{
-  background:rgba(255,255,255,0.97);
-  border-right-color:rgba(10,10,30,0.08);
-  box-shadow:14px 0 40px rgba(30,25,60,0.14);
-}
-html[data-theme="light"] .drawer-header{ border-bottom-color:rgba(10,10,30,0.08); }
-html[data-theme="light"] .drawer-footer{
-  color:rgba(10,10,30,0.35);
-  border-top-color:rgba(10,10,30,0.08);
-}
-
-*{box-sizing:border-box;margin:0;padding:0;}
-
-body{
-  font-family:system-ui,SegoeUI,Arial,sans-serif;
-  background:
-    radial-gradient(600px 400px at 10% 10%, rgba(127,92,255,.15), transparent),
-    radial-gradient(600px 400px at 90% 90%, rgba(0,255,213,.12), transparent),
-    linear-gradient(180deg,#050509,#0b0b16);
-  color:var(--text);
-  min-height:100vh;
-  transition: color .4s ease;
-}
-
-/* Fondu du fond de page : overlay clair en fondu d'opacité au-dessus du fond sombre fixe */
-body::before{
-  content:"";
-  position:fixed;
-  inset:0;
-  z-index:-1;
-  pointer-events:none;
-  opacity:0;
-  transition:opacity .5s ease;
-  background:
-    radial-gradient(600px 400px at 10% 10%, rgba(127,92,255,.10), transparent),
-    radial-gradient(600px 400px at 90% 90%, rgba(0,255,213,.10), transparent),
-    linear-gradient(180deg,#f7f8fd,#eceefa);
-}
-html[data-theme="light"] body::before{ opacity:1; }
-
-/* Transition douce du thème pour tout ce qui n'a pas déjà sa propre transition */
-body *{
-  transition: background-color .4s ease, color .4s ease, border-color .4s ease, box-shadow .4s ease, fill .4s ease;
-}
-
-.downloads .download-btn{
-  display:block;
-  width:100%;
-}
-
-.download-btn{
-  display:block;
-  text-align:center;
-  text-decoration:none;
-}
-
-.container{
-  max-width:1200px;
-  margin:auto;
-  padding:40px 30px;
-}
-
-.card{
-  background:var(--glass);
-  border:1px solid var(--border);
-  border-radius:26px;
-  padding:60px 50px;
-  backdrop-filter:blur(14px);
-  box-shadow:0 20px 60px rgba(0,0,0,.6);
-  text-align:center;
-  max-width:700px;
-  margin:auto;
-}
-
-.card h1{
-  font-size:36px;
-}
-
-.card h1 span{
-  background:linear-gradient(90deg,var(--accent1),var(--accent2));
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-}
-
-.subtitle{
-  margin-top:10px;
-  color:var(--muted);
-  margin-bottom:40px;
-}
-
-.downloads{
-  display:flex;
-  flex-direction:column;
-  gap:18px;
-}
-
-.download-row{
-  display:flex;
-  gap:10px;
-  align-items:center;
-}
-
-.download-row .download-btn:hover + .github-btn{
-  transform:translateX(8px);
-}
-
-.download-row .download-btn:only-child{
-  width:calc(100% - 55px);
-}
-
-.download-row .download-btn{
-  transition:transform .2s ease, box-shadow .2s ease;
-}
-
-.github-btn{
-  width:45px;
-  height:45px;
-
-  padding:0;
-
-  border:none;
-  border-radius:14px;
-
-  background:var(--glass);
-  border:1px solid var(--border);
-
-  color:white;
-
-  display:flex;
-  align-items:center;
-  justify-content:center;
-
-  cursor:pointer;
-
-  transition:.2s;
-}
-
-.github-btn:hover{
-  background:rgba(255,255,255,.18);
-  transform:scale(1.06);
-}
-
-.github-btn svg{
-  width:20px;
-  height:20px;
-}
-
-.download-btn{
-  padding:20px;
-  font-size:18px;
-  font-weight:700;
-  border:none;
-  border-radius:18px;
-  cursor:pointer;
-  background:linear-gradient(90deg,var(--accent1),var(--accent2));
-  color:#050509;
-  transition:transform .2s, box-shadow .2s, background-color .4s ease, color .4s ease, border-color .4s ease;
-  box-shadow:0 10px 30px rgba(0,0,0,.4);
-}
-
-.download-btn:hover{
-  transform:scale(1.06);
-  box-shadow:0 18px 50px rgba(0,0,0,.6);
-}
-
-.download-row{
-  overflow:visible;
-}
-
-.download-row .download-btn:hover{
-  transform:scale(1.04);
-  box-shadow:0 18px 50px rgba(0,0,0,.6);
-}
-
-.download-btn.ghost{
-  background:var(--glass);
-  color:var(--text);
-  border:1px solid(var(--border));
-}
-
-.download-btn.ghost:hover{
-  background:rgba(255,255,255,0.1);
-}
-
-/* POPUP */
-
+/* ===== POPUP (choix d'OS pour MoonFlow) ===== */
 .popup-overlay{
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,.75);
+  background:rgba(0,0,0,.7);
   display:flex;
   align-items:center;
   justify-content:center;
   opacity:0;
   visibility:hidden;
-  transition:.25s;
+  transition:opacity .25s ease, visibility .25s ease;
   z-index:5000;
+  backdrop-filter:blur(4px);
 }
-
-.popup-overlay.show{
-  opacity:1;
-  visibility:visible;
-}
+.popup-overlay.show{ opacity:1; visibility:visible; }
 
 .popup{
   width:360px;
-  background:#10101a;
+  background:var(--bg-1);
   border:1px solid var(--border);
-  border-radius:22px;
+  border-radius:var(--radius-lg);
   padding:30px;
   text-align:center;
-  box-shadow:0 20px 60px rgba(0,0,0,.7);
-
+  box-shadow:var(--shadow-lg);
   transform:scale(.92);
-  transition:.25s ease;
+  transition:transform .25s var(--ease);
 }
+.popup-overlay.show .popup{ transform:scale(1); }
 
-.popup h2{
-  margin-bottom:20px;
-}
-
-/* MENU CUSTOM */
-
-.custom-select{
-  margin-bottom:0;
-}
+.popup h2{ margin-bottom:20px; font-size:19px; font-weight:700; }
 
 .select-button{
   width:100%;
-  padding:15px;
-  border:none;
-  border-radius:14px;
-  background:#181825;
-  color:white;
-  font-size:16px;
+  padding:14px;
+  border:1px solid var(--border);
+  border-radius:13px;
+  background:var(--surface-2);
+  color:var(--text-1);
+  font-family:inherit;
+  font-size:15px;
   font-weight:700;
   cursor:pointer;
 }
 
 .select-menu{
-
-  background:#181825;
-  border-radius:14px;
+  background:var(--surface-2);
+  border-radius:13px;
   overflow:hidden;
   border:1px solid var(--border);
-
   max-height:0;
   opacity:0;
-
   margin-top:0;
-
-  transition:
-    max-height .25s ease,
-    opacity .25s ease,
-    margin-top .25s ease;
-
+  transition:max-height .25s ease, opacity .25s ease, margin-top .25s ease;
 }
-
-.select-menu.show{
-
-  max-height:90px;
-  opacity:1;
-
-  margin-top:8px;
-
-}
-
-.select-menu div{
-  padding:9px 14px;
-  font-size:14px;
-}
-
-.select-menu div:hover{
-  background:rgba(255,255,255,0.12);
-  color:var(--text);
-}
-
-.popup-buttons{
-  display:flex;
-  gap:12px;
-
-  opacity:0;
-  max-height:0;
-  overflow:hidden;
-
-  pointer-events:none;
-
-  margin-top:0;
-  transform:translateY(-8px);
-
-  transition:
-    opacity .25s ease,
-    max-height .25s ease,
-    margin-top .25s ease,
-    transform .25s ease;
-}
-
-
-.popup-buttons:not(.hidden){
-  opacity:1;
-
-  max-height:80px;
-
-  pointer-events:auto;
-
-  margin-top:18px;
-
-  transform:translateY(0);
-}
-
-.cancel-btn{
-  flex:1;
-  border:none;
-  border-radius:18px;
-  background:#2d2d38;
-  color:white;
-  font-weight:700;
-  cursor:pointer;
-}
-
-#downloadPopupBtn{
-  flex:1;
-}
-
-#downloadPopupBtn:disabled{
-  opacity:.45;
-  cursor:not-allowed;
-  transform:none;
-}
-
-
-/* TA NAVBAR ORIGINALE */
-
-.bottom-nav{
-  position:fixed;
-  bottom:18px;
-  left:50%;
-  transform:translateX(-50%);
-  display:flex;
-  gap:10px;
-  padding:10px;
-  background:rgba(0,0,0,.6);
-  border:1px solid(var(--border));
-  border-radius:999px;
-  backdrop-filter:blur(10px);
-  z-index:1000;
-}
-
-.bottom-nav button{
-  padding:10px 16px;
-  border-radius:14px;
-  border:none;
-  background:transparent;
-  color:var(--muted);
-  font-weight:700;
-  cursor:pointer;
-  transition:transform 0.2s ease, background 0.2s ease, color .4s ease;
-}
-
-.bottom-nav button:hover{
-  transform:scale(1.08);
-  background:linear-gradient(90deg,var(--accent1),var(--accent2));
-  color:#050509;
-}
-
-footer{
-  margin-top:40px;
-  font-size:13px;
-  color:var(--muted);
-}
-
-.popup-buttons .download-btn,
-.popup-buttons .cancel-btn{
-  padding:12px 16px;
-  font-size:15px;
-  border-radius:14px;
-}
-
-#downloadPopupBtn{
-  background:linear-gradient(90deg,#00ff88,#00c853);
-  color:#050509;
-}
-
-#downloadPopupBtn:hover{
-  background:linear-gradient(90deg,#00ff88,#00e676);
-}
+.select-menu.show{ max-height:90px; opacity:1; margin-top:8px; }
 
 .select-menu div{
   padding:10px 14px;
   font-size:14px;
+  text-align:left;
+  cursor:pointer;
 }
+.select-menu div:hover{ background:var(--accent-soft); color:var(--text-1); }
 
-.select-button{
-  padding:12px 14px;
-  font-size:15px;
-}
-
-.hidden{
+.popup-buttons{
+  display:flex;
+  gap:12px;
   opacity:0;
-  transform:translateY(-12px);
   max-height:0;
   overflow:hidden;
   pointer-events:none;
   margin-top:0;
+  transform:translateY(-8px);
+  transition:opacity .25s ease, max-height .25s ease, margin-top .25s ease, transform .25s ease;
 }
+.popup-buttons:not(.hidden){ opacity:1; max-height:80px; pointer-events:auto; margin-top:18px; transform:translateY(0); }
 
-/* ===== HAMBURGER + DRAWER ===== */
-.hamburger,.drawer,.drawer-overlay{ display:none; }
-
-.hamburger span{ display:block; width:20px; height:2px; background:#fff; border-radius:2px; transition:transform 0.35s cubic-bezier(0.4,0,0.2,1),opacity 0.22s ease, background-color .4s ease; }
-.hamburger.open span:nth-child(1){ transform:translateY(7px) rotate(45deg); }
-.hamburger.open span:nth-child(2){ opacity:0; transform:scaleX(0); }
-.hamburger.open span:nth-child(3){ transform:translateY(-7px) rotate(-45deg); }
-@keyframes ham-pop{ 0%{ transform:scale(1); } 45%{ transform:scale(1.22); } 100%{ transform:scale(1); } }
-
-.drawer-overlay.show{ opacity:1; pointer-events:auto; }
-.drawer.open{ transform:translateX(0); }
-.drawer.closing{ transition:transform 0.16s cubic-bezier(0.4,0,1,1); }
-.drawer-overlay.closing{ transition:opacity 0.14s ease; }
-.hamburger.closing span{ transition:transform 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.22s ease; }
-.drawer-header{ padding:38px 20px 34px 20px; display:flex; align-items:center; justify-content:center; border-bottom:1px solid rgba(255,255,255,0.06); }
-.drawer-title{ font-weight:900; font-size:17px; background:linear-gradient(90deg,#7f5cff,#00ffd5); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-.drawer-links{ flex:1; display:flex; flex-direction:column; gap:8px; padding:20px 14px; overflow-y:auto; }
-.drawer-links button{ width:100%; padding:15px 18px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.07); border-radius:14px; color:#f5f7fa; font-family:inherit; font-weight:700; font-size:15px; cursor:pointer; text-align:left; transition:background 0.15s,transform 0.15s,border-color 0.15s, color .4s ease; }
-.drawer-links button:hover{ background:rgba(127,92,255,0.12); border-color:rgba(127,92,255,0.28); transform:translateX(4px); }
-.drawer-links button:active{ transform:scale(0.97); }
-.drawer-theme{ padding:0 14px 10px 14px; }
-.theme-toggle{ width:100%; display:flex; align-items:center; gap:10px; padding:13px 18px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.07); border-radius:14px; color:#f5f7fa; font-family:inherit; font-weight:700; font-size:14px; cursor:pointer; text-align:left; transition:background 0.15s,border-color 0.15s,transform 0.15s, color .4s ease; }
-.theme-toggle:hover{ background:rgba(127,92,255,0.12); border-color:rgba(127,92,255,0.28); }
-.theme-toggle:active{ transform:scale(0.97); }
-.theme-toggle-icon{ font-size:16px; line-height:1; }
-
-.theme-toggle-fab{
-  position:fixed;
-  top:24px;
-  left:25px;
-  width:50px;
-  height:50px;
-  border-radius:50%;
-  border:1px solid var(--border);
-  background:var(--glass);
-  backdrop-filter:blur(14px);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:20px;
+.popup-buttons button{
+  flex:1;
+  padding:12px 16px;
+  font-size:14.5px;
+  font-weight:700;
+  font-family:inherit;
+  border:none;
+  border-radius:13px;
   cursor:pointer;
-  z-index:1000;
-  box-shadow:0 8px 24px rgba(0,0,0,.35);
-  transition:transform .25s cubic-bezier(.34,1.56,.64,1), box-shadow .3s ease, background .3s ease, border-color .3s ease;
+  transition:transform .2s var(--ease), box-shadow .2s ease, opacity .2s ease;
 }
-.theme-toggle-fab:hover{ transform:scale(1.1) rotate(-10deg); box-shadow:0 10px 30px rgba(127,92,255,.35); border-color:rgba(127,92,255,0.4); }
-.theme-toggle-fab:active{ transform:scale(0.92); }
-.theme-fab-icon{ display:flex; align-items:center; justify-content:center; width:100%; height:100%; line-height:1; }
-@keyframes theme-fab-spin{
-  0%{ transform:rotate(0deg) scale(1); }
-  50%{ transform:rotate(180deg) scale(0.55); opacity:.35; }
-  100%{ transform:rotate(360deg) scale(1); opacity:1; }
-}
-.theme-toggle-fab.spin .theme-fab-icon{ animation:theme-fab-spin .45s cubic-bezier(.34,1.56,.64,1); }
-.drawer-footer{ padding:14px 20px; padding-bottom:max(14px,env(safe-area-inset-bottom)); font-size:12px; color:rgba(255,255,255,0.22); border-top:1px solid rgba(255,255,255,0.05); text-align:center; }
+.popup-buttons button:hover{ transform:translateY(-2px); }
 
-@media(max-width:800px){
-  .bottom-nav{ display:none; }
-  .theme-toggle-fab{ display:none; }
-  .hamburger{ display:flex; flex-direction:column; justify-content:center; align-items:center; gap:5px; position:fixed; top:calc(env(safe-area-inset-top,0px) + 24px); left:25px; z-index:3000; width:48px; height:48px; background:rgba(7,7,12,0.88); border:1px solid rgba(255,255,255,0.14); border-radius:14px; cursor:pointer; backdrop-filter:blur(16px); box-shadow:0 8px 30px rgba(0,0,0,0.5),0 0 0 1px rgba(127,92,255,0.15); transition:transform 0.25s ease,background 0.35s ease,box-shadow 0.35s ease,border-color 0.35s ease; }
-  .hamburger:active{ transform:scale(0.9); }
-  .hamburger.open{ animation:ham-pop 0.32s cubic-bezier(0.34,1.56,0.64,1); }
-  .drawer-overlay{ display:block; position:fixed; inset:0; background:rgba(0,0,0,0.55); backdrop-filter:blur(3px); z-index:1500; opacity:0; pointer-events:none; transition:opacity 0.3s ease; }
-  .drawer{ display:flex; position:fixed; top:0; left:0; width:75vw; max-width:280px; height:100vh; height:100dvh; background:rgba(7,7,16,0.97); border-right:1px solid rgba(255,255,255,0.07); backdrop-filter:blur(24px); z-index:2000; flex-direction:column; transform:translateX(-100%); transition:transform 0.32s cubic-bezier(0.4,0,0.2,1), background-color .4s ease, border-color .4s ease, box-shadow .4s ease; box-shadow:20px 0 60px rgba(0,0,0,0.5); }
-}
-@media(max-width:480px){
-  .container{ padding:12px; }
-  .card{ padding:24px 14px; }
-  .popup{ width:min(360px,90vw); padding:22px 16px; }
-}
+.cancel-btn{ background:var(--surface-2); border:1px solid var(--border); color:var(--text-1); }
 
+#downloadPopupBtn{
+  background:var(--accent-grad);
+  color:#05050b;
+  box-shadow:0 8px 20px rgba(127,92,255,.24);
+}
+#downloadPopupBtn:disabled{ opacity:.4; cursor:not-allowed; transform:none; box-shadow:none; }
 </style>
 </head>
 
 <body>
 
+<div class="page-container">
 
-<div class="container">
+  <a class="back-link" href="index.html">← Accueil</a>
 
-<div class="card">
+  <div class="page-card glass">
+    <h1>Modding <span>Downloads</span></h1>
+    <div class="page-subtitle">Télécharge les fichiers de Modding</div>
 
-<h1>Modding<br><span>Downloads</span></h1>
+    <div class="downloads">
 
-<div class="subtitle">
-Télécharge les fichiers de Modding
-</div>
+      <div class="download-row">
+        <a class="download-btn"
+          href="https://github.com/Kirbymimi/Spotlight/releases/download/Whatever/Moonlight.zip"
+          download>
+          Télécharger • MoonLight
+        </a>
+        <a class="github-btn"
+          href="https://github.com/Kirbymimi/Spotlight"
+          target="_blank">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 .5a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2.2c-3.3.7-4-1.6-4-1.6-.5-1.4-1.3-1.8-1.3-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-6 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.7 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.7-5.5 6 .4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .5z"/>
+          </svg>
+        </a>
+      </div>
 
-<div class="downloads">
+      <div class="download-row">
+        <button class="download-btn" onclick="openPopup()">
+          Télécharger • MoonFlow
+        </button>
+        <a class="github-btn"
+          href="https://github.com/Amethyst-szs/MoonFlow"
+          target="_blank">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 .5a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2.2c-3.3.7-4-1.6-4-1.6-.5-1.4-1.3-1.8-1.3-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-6 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.7 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.7-5.5 6 .4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .5z"/>
+          </svg>
+        </a>
+      </div>
 
+    </div>
 
-<div class="download-row">
-
-<a class="download-btn"
-href="https://github.com/Kirbymimi/Spotlight/releases/download/Whatever/Moonlight.zip"
-download>
-
-Télécharger • MoonLight
-
-</a>
-
-
-<a class="github-btn"
-href="https://github.com/Kirbymimi/Spotlight"
-target="_blank">
-
-<svg viewBox="0 0 24 24" fill="currentColor">
-<path d="M12 .5a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2.2c-3.3.7-4-1.6-4-1.6-.5-1.4-1.3-1.8-1.3-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-6 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.7 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.7-5.5 6 .4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .5z"/>
-</svg>
-
-</a>
-
-</div>
-
-
-
-
-<div class="download-row">
-
-<a class="download-btn"
-onclick="openPopup()">
-
-Télécharger • MoonFlow
-
-</a>
-
-
-<a class="github-btn"
-href="https://github.com/Amethyst-szs/MoonFlow"
-target="_blank">
-
-<svg viewBox="0 0 24 24" fill="currentColor">
-<path d="M12 .5a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2.2c-3.3.7-4-1.6-4-1.6-.5-1.4-1.3-1.8-1.3-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-6 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.7 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.7-5.5 6 .4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .5z"/>
-</svg>
-
-</a>
+    <footer class="site-footer">© 2026 — Dani_MK</footer>
+  </div>
 
 </div>
-
-
-<div class="download-row">
-
-
-</button>
-
-</div>
-
-</div>
-
-<footer>
-© 2026 — Dani_MK
-</footer>
-
-</div>
-</div>
-
-
-
-<div id="downloadPopup" class="popup-overlay">
-
-<div class="popup">
-
-<h2>Télécharger MoonFlow</h2>
-
-
-<div class="custom-select">
-
-<button id="selectButton" class="select-button" onclick="toggleSelect()">
-Choisir un système ▼
-</button>
-
-
-<div id="selectMenu" class="select-menu">
-
-<div onclick="chooseOS('windows')">
-🪟 Windows
-</div>
-
-<div onclick="chooseOS('linux')">
-🐧 Linux
-</div>
-
-</div>
-
-</div>
-
-
-<div id="popupButtons" class="popup-buttons hidden">
-
-<button class="cancel-btn" onclick="closePopup()">
-Annuler
-</button>
-
-<button id="downloadPopupBtn" class="download-btn" onclick="downloadSelected()">
-Download
-</button>
-
-</div>
-
-</div>
-
-</div>
-
-
 
 <button class="theme-toggle-fab" id="themeToggleFab" aria-label="Changer de thème" title="Changer de thème">
   <span class="theme-fab-icon" id="themeFabIcon">☀️</span>
@@ -733,155 +204,75 @@ Download
   <div class="drawer-footer">© 2026 — Dani_MK</div>
 </nav>
 
+<div id="downloadPopup" class="popup-overlay">
+  <div class="popup">
+    <h2>Télécharger MoonFlow</h2>
+
+    <div class="custom-select">
+      <button id="selectButton" class="select-button" type="button" onclick="toggleSelect()">
+        Choisir un système ▼
+      </button>
+      <div id="selectMenu" class="select-menu">
+        <div onclick="chooseOS('windows')">🪟 Windows</div>
+        <div onclick="chooseOS('linux')">🐧 Linux</div>
+      </div>
+    </div>
+
+    <div id="popupButtons" class="popup-buttons hidden">
+      <button class="cancel-btn" type="button" onclick="closePopup()">Annuler</button>
+      <button id="downloadPopupBtn" type="button" onclick="downloadSelected()" disabled>Download</button>
+    </div>
+  </div>
+</div>
+
+<script src="assets/js/site.js"></script>
 <script>
-
-let selectedOS="";
-
-
-function go(page){
-  var drw=document.getElementById('drawer');
-  if(drw && drw.classList.contains('open')){
-    var ham=document.getElementById('hamburger');
-    var ovr=document.getElementById('drawerOverlay');
-    drw.classList.add('closing');
-    drw.classList.remove('open');
-    if(ham){ham.classList.add('closing');ham.classList.remove('open');}
-    if(ovr){ovr.classList.add('closing');ovr.classList.remove('show');}
-    document.body.style.overflow='';
-    setTimeout(function(){ window.location.href=page; },160);
-  } else {
-    window.location.href=page;
-  }
-}
-
+let selectedOS = "";
 
 function openPopup(){
- document.getElementById("downloadPopup").classList.add("show");
+  document.getElementById("downloadPopup").classList.add("show");
 }
 
-
 function closePopup(){
-
   document.getElementById("downloadPopup").classList.remove("show");
-
-  setTimeout(() => {
-
-    selectedOS="";
-
-    document.getElementById("selectButton").innerHTML =
-    "Choisir un système ▼";
-
+  setTimeout(function(){
+    selectedOS = "";
+    document.getElementById("selectButton").innerHTML = "Choisir un système ▼";
     document.getElementById("selectMenu").classList.remove("show");
-
-    document.querySelector(".popup")
-    .classList.remove("expanded");
-
-    document.getElementById("popupButtons")
-    .classList.add("hidden");
-
-
+    document.getElementById("popupButtons").classList.add("hidden");
     updateDownloadButton();
-
   }, 250);
-
 }
 
 document.getElementById("downloadPopup").addEventListener("click", function(e){
-
-  if(e.target === this){
-    closePopup();
-  }
-
+  if(e.target === this) closePopup();
 });
 
 function toggleSelect(){
- document.getElementById("selectMenu").classList.toggle("show");
+  document.getElementById("selectMenu").classList.toggle("show");
 }
-
 
 function chooseOS(os){
-
-  selectedOS=os;
-
-  document.getElementById("selectButton").innerHTML =
-  os==="windows"
-  ?"🪟 Windows ▼"
-  :"🐧 Linux ▼";
-
+  selectedOS = os;
+  document.getElementById("selectButton").innerHTML = os === "windows" ? "🪟 Windows ▼" : "🐧 Linux ▼";
   document.getElementById("selectMenu").classList.remove("show");
-
-  let buttons = document.getElementById("popupButtons");
-
-  buttons.classList.remove("hidden");
-
+  document.getElementById("popupButtons").classList.remove("hidden");
   updateDownloadButton();
-
 }
-
 
 function updateDownloadButton(){
-
- document.getElementById("downloadPopupBtn").disabled = selectedOS==="";
-
+  document.getElementById("downloadPopupBtn").disabled = selectedOS === "";
 }
-
 
 function downloadSelected(){
-
- if(selectedOS==="windows"){
- window.location.href="https://github.com/Amethyst-szs/MoonFlow/releases/download/v1.3.5/win-x86_64.zip";
- }
-
-
- if(selectedOS==="linux"){
- window.location.href="https://github.com/Amethyst-szs/MoonFlow/releases/download/v1.3.5/linux-x86_64.zip";
- }
-
- closePopup();
-
+  if(selectedOS === "windows"){
+    window.location.href = "https://github.com/Amethyst-szs/MoonFlow/releases/download/v1.3.5/win-x86_64.zip";
+  }
+  if(selectedOS === "linux"){
+    window.location.href = "https://github.com/Amethyst-szs/MoonFlow/releases/download/v1.3.5/linux-x86_64.zip";
+  }
+  closePopup();
 }
-
-(function(){
-  var ham=document.getElementById('hamburger'),drw=document.getElementById('drawer'),ovr=document.getElementById('drawerOverlay');
-  function openDrw(){ham.classList.remove('closing');drw.classList.remove('closing');ovr.classList.remove('closing');ham.classList.add('open');drw.classList.add('open');ovr.classList.add('show');document.body.style.overflow='hidden';}
-  function closeDrw(){ham.classList.remove('open');drw.classList.remove('open');ovr.classList.remove('show');document.body.style.overflow='';}
-  ham.addEventListener('click',function(){drw.classList.contains('open')?closeDrw():openDrw();});
-  ovr.addEventListener('click',closeDrw);
-  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeDrw();});
-
-  var themeToggle=document.getElementById('themeToggle');
-  var themeIcon=document.getElementById('themeToggleIcon');
-  var themeLabel=document.getElementById('themeToggleLabel');
-  var themeFab=document.getElementById('themeToggleFab');
-  var themeFabIcon=document.getElementById('themeFabIcon');
-  function syncThemeUI(){
-    var isLight=document.documentElement.getAttribute('data-theme')==='light';
-    themeIcon.textContent=isLight?'🌙':'☀️';
-    themeLabel.textContent=isLight?'Thème sombre':'Thème clair';
-    if(themeFabIcon){ themeFabIcon.textContent=isLight?'🌙':'☀️'; }
-    if(themeFab){ themeFab.title=isLight?'Activer le thème sombre':'Activer le thème clair'; }
-  }
-  function toggleTheme(){
-    var root=document.documentElement;
-    var isLight=root.getAttribute('data-theme')==='light';
-    if(isLight){ root.removeAttribute('data-theme'); localStorage.setItem('theme','dark'); }
-    else{ root.setAttribute('data-theme','light'); localStorage.setItem('theme','light'); }
-    syncThemeUI();
-  }
-  themeToggle.addEventListener('click',toggleTheme);
-  if(themeFab){
-    themeFab.addEventListener('click',function(){
-      toggleTheme();
-      themeFab.classList.remove('spin');
-      void themeFab.offsetWidth;
-      themeFab.classList.add('spin');
-    });
-  }
-  syncThemeUI();
-})();
-
 </script>
-
-
 </body>
 </html>
