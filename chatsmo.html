@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Jumpedia — Dani_MK</title>
-<meta name="description" content="Jumpedia — bot de commandes pour retrouver les trickjumps Super Mario Odyssey.">
+<title>Dani_MK — Gaming, Zelda & Trickjumps</title>
+<meta name="description" content="Chaîne YouTube Dani_MK : trickjumps, tech de speedrun et mods sur Zelda Breath of the Wild / Tears of the Kingdom et Super Mario Odyssey.">
 
 <link rel="icon" href="channels4_profile-removebg-preview.png" type="image/png">
 
@@ -24,217 +24,272 @@
 </script>
 
 <style>
-body{
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  min-height:100vh;
-}
 
-/* ===== APP CARD ===== */
-.app{
-  width:min(880px, 94vw);
-  height:min(660px, 82vh);
-  background:var(--bg-1);
-  border:1px solid var(--border);
-  border-radius:var(--radius-xl);
-  box-shadow:var(--shadow-lg), 0 0 0 1px rgba(127,92,255,.12), 0 0 90px rgba(127,92,255,.07);
+/* ===== HERO ===== */
+.hero{
   display:flex;
-  flex-direction:column;
+  align-items:center;
+  gap:36px;
+  padding:44px;
+  position:relative;
   overflow:hidden;
 }
-
-.app-header{
-  padding:16px 22px;
-  font-weight:700;
-  font-size:19px;
-  background:var(--surface);
-  border-bottom:1px solid var(--border);
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  flex-shrink:0;
-}
-.app-header-title{
-  font-family:var(--font-display);
-  background:var(--accent-grad);
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-}
-
-/* ===== CHAT ===== */
-.chat{
-  flex:1;
-  padding:20px 18px;
-  overflow-y:auto;
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  background:
-    radial-gradient(circle at 15% 15%, rgba(127,92,255,.05), transparent 55%),
-    radial-gradient(circle at 85% 85%, rgba(0,255,213,.04), transparent 55%);
-}
-
-.bubble{
-  max-width:70%;
-  padding:11px 15px;
-  border-radius:18px;
-  font-size:14px;
-  line-height:1.48;
-  animation:bubble-pop .2s cubic-bezier(.2,.9,.2,1);
-}
-
-.user{
-  align-self:flex-end;
-  background:linear-gradient(135deg, var(--accent), #a07aff);
-  color:#fff;
-  border-bottom-right-radius:5px;
-  box-shadow:0 4px 18px rgba(127,92,255,.3);
-}
-
-.bot{
-  align-self:flex-start;
-  background:var(--surface);
-  border:1px solid var(--border);
-  color:var(--text-1);
-  border-bottom-left-radius:5px;
-  box-shadow:0 2px 10px rgba(0,0,0,.2);
-}
-
-@keyframes bubble-pop{
-  from{ transform:scale(.92) translateY(5px); opacity:0; }
-  to{ transform:scale(1) translateY(0); opacity:1; }
-}
-
-/* ===== INPUT BAR ===== */
-.input-bar{
-  padding:13px 16px;
-  display:flex;
-  gap:10px;
-  background:var(--surface);
-  border-top:1px solid var(--border);
-  align-items:center;
-  flex-shrink:0;
-}
-
-.input-bar input{
-  flex:1;
-  padding:12px 18px;
-  border-radius:14px;
-  border:1px solid var(--border);
-  outline:none;
-  font-size:14px;
-  background:var(--surface-2);
-  color:var(--text-1);
-  font-family:inherit;
-  transition:border-color .2s ease, background-color .2s ease;
-}
-.input-bar input:focus{ border-color:rgba(127,92,255,.5); background:var(--surface-3); }
-.input-bar input::placeholder{ color:var(--text-3); }
-
-.send-btn{
-  padding:12px 22px;
-  border-radius:14px;
-  border:none;
-  cursor:pointer;
-  font-weight:700;
-  font-size:14px;
-  font-family:inherit;
-  background:var(--accent-grad);
-  color:#05050b;
-  transition:transform .15s ease, box-shadow .15s ease;
-  white-space:nowrap;
-  box-shadow:0 4px 20px rgba(127,92,255,.32);
-}
-.send-btn:hover{ transform:scale(1.05); box-shadow:0 6px 28px rgba(127,92,255,.5); }
-.send-btn:active{ transform:scale(.97); }
-
-/* ===== BOUTON INFO + POPUP ===== */
-.info-wrap{ position:relative; display:flex; align-items:center; }
-
-.info-badge{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  width:32px; height:32px;
-  border-radius:50%;
-  border:1.5px solid var(--border-strong);
-  background:var(--surface-2);
-  color:var(--text-2);
-  font-weight:800;
-  font-style:italic;
-  cursor:pointer;
-  font-size:13px;
-  transition:all .18s ease;
-}
-.info-badge:hover{ background:var(--accent-soft); border-color:rgba(127,92,255,.5); color:var(--text-1); transform:scale(1.1); }
-
-.info-popup{
+.hero::before{
+  content:"";
   position:absolute;
-  top:calc(100% + 12px);
-  right:0;
-  min-width:220px;
-  max-width:320px;
-  background:linear-gradient(180deg, rgba(255,255,255,.98), rgba(250,250,250,.97));
-  color:#050509;
-  padding:12px 14px;
-  border-radius:12px;
-  box-shadow:0 18px 40px rgba(4,6,12,.55);
-  border:1px solid rgba(0,0,0,.06);
-  transform:scale(.88);
-  transform-origin:top right;
-  opacity:0;
+  top:-45%; right:-8%;
+  width:440px; height:440px;
+  background:radial-gradient(circle, rgba(127,92,255,.22), transparent 70%);
   pointer-events:none;
-  transition:transform .26s cubic-bezier(.2,.9,.2,1), opacity .18s ease;
-  z-index:40;
+}
+
+.hero-avatar{
+  width:148px;
+  height:148px;
+  border-radius:24px;
   overflow:hidden;
-  backdrop-filter:blur(6px) saturate(120%);
+  flex-shrink:0;
+  border:1px solid var(--border-strong);
+  box-shadow:var(--shadow-md);
 }
-.info-popup.show{ transform:scale(1); opacity:1; pointer-events:auto; }
+.hero-avatar img{ width:100%; height:100%; object-fit:cover; }
 
-.info-popup .row{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:8px; }
-.info-popup .title{ font-weight:800; font-size:13px; color:#050509; }
-.info-popup .close{ background:transparent; border:none; font-weight:800; font-size:13px; color:rgba(5,5,9,.8); cursor:pointer; padding:6px; border-radius:8px; transition:background .12s ease, transform .12s ease; }
-.info-popup .close:hover{ background:rgba(0,0,0,.05); transform:scale(1.05); }
-.info-popup .content{ font-size:13px; line-height:1.35; color:#090909; white-space:normal; }
+.hero-body{ flex:1; min-width:0; position:relative; z-index:1; }
 
-/* ===== RESPONSIVE ===== */
-@media(max-width:800px){
-  body{ align-items:flex-start; padding-top:82px; }
-  .app{ width:100%; height:calc(100vh - 82px); height:calc(100dvh - 82px); border-radius:0; min-height:0; }
+.hero-logo{
+  display:block;
+  max-width:250px;
+  width:100%;
+  height:auto;
+  margin-top:10px;
+  filter:invert(93%) drop-shadow(0 0 20px rgba(127,92,255,.3));
 }
+html[data-theme="light"] .hero-logo{ filter:none; }
+
+.hero-lead{
+  margin-top:14px;
+  color:var(--text-2);
+  font-size:15.5px;
+  max-width:54ch;
+}
+
+.hero-actions{ margin-top:22px; display:flex; gap:12px; flex-wrap:wrap; }
+
+.hero-communities{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  padding-left:32px;
+  border-left:1px solid var(--border);
+  flex-shrink:0;
+  width:196px;
+  position:relative;
+  z-index:1;
+}
+.hero-communities-label{
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--text-3);
+  margin-bottom:2px;
+}
+.community-link{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:13px;
+  padding:12px 13px;
+  cursor:pointer;
+  text-align:left;
+  color:var(--text-1);
+  font-family:inherit;
+  font-weight:600;
+  font-size:12.5px;
+  line-height:1.25;
+  transition:transform .2s var(--ease), background-color .2s ease, border-color .2s ease;
+}
+.community-link:hover{ transform:translateY(-2px); background:var(--accent-soft); border-color:rgba(127,92,255,.4); }
+
+@media(max-width:860px){
+  .hero{ flex-direction:column; text-align:center; padding:34px 24px; }
+  .hero-actions{ justify-content:center; }
+  .hero-logo{ margin:10px auto 0; }
+  .hero-communities{
+    border-left:none;
+    padding-left:0; padding-top:14px; margin-top:28px; width:100%;
+    flex-direction:row; flex-wrap:wrap;
+    position:relative;
+  }
+  .hero-communities::before{
+    content:"";
+    position:absolute;
+    top:0; left:0; right:0;
+    height:1px;
+    background:var(--border);
+  }
+  .hero-communities-label{
+    position:absolute;
+    top:0; left:50%;
+    transform:translate(-50%,-50%);
+    margin-bottom:0;
+    background:var(--bg-1);
+    border:1px solid var(--border);
+    border-radius:999px;
+    padding:5px 14px;
+    white-space:nowrap;
+  }
+  .community-link{ flex:1; min-width:150px; }
+}
+
+/* ===== HUB (liens rapides) ===== */
+.hub-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+  gap:16px;
+}
+.hub-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius-lg);
+  padding:22px 20px;
+  text-decoration:none;
+  color:var(--text-1);
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+  transition:transform .25s var(--ease), box-shadow .25s ease, border-color .25s ease;
+}
+.hub-card:hover{ transform:translateY(-6px); box-shadow:var(--shadow-md); border-color:var(--border-strong); }
+.hub-title{ font-family:var(--font-display); font-weight:700; font-size:17px; }
+.hub-desc{ font-size:12.5px; color:var(--text-3); }
+
+/* ===== SHORTS ===== */
+.shorts-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:22px;
+}
+.short-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius-lg);
+  padding:14px;
+  transition:transform .3s var(--ease), box-shadow .3s ease, border-color .3s ease;
+}
+.short-card:hover{ transform:translateY(-8px); box-shadow:var(--shadow-md); border-color:var(--border-strong); }
+.short-embed{ width:100%; aspect-ratio:9/16; border-radius:14px; overflow:hidden; background:#000; }
+.short-embed iframe{ width:100%; height:100%; border:none; }
+.short-card h3{ margin-top:12px; font-size:14px; font-weight:600; color:var(--text-2); text-align:center; }
+
 </style>
 </head>
 
 <body>
 
-<div class="app">
-  <div class="app-header">
-    <span class="app-header-title">Jumpedia</span>
-    <div class="info-wrap">
-      <div id="infoBadge" class="info-badge" aria-expanded="false" role="button" title="Infos">i</div>
-      <div id="infoPopup" class="info-popup" role="dialog" aria-hidden="true">
-        <div class="row">
-          <div class="title">⚠️</div>
-          <button class="close" id="infoClose" aria-label="Fermer">✕</button>
-        </div>
-        <div class="content" id="infoContent">
-          Version non-officielle, commandes comme "!give" impossibles
-        </div>
+<div class="container">
+
+  <section class="hero glass">
+    <div class="hero-avatar">
+      <img src="https://yt3.ggpht.com/Ss_VtYmCO66SfCkyye3FIubTvQNCNRU9ZdD0F5Ko94EtyfG31BOYyE_YNieE2lC_NEUNGvzvOw=s600-c-k-c0x00ffffff-no-rj-rp-mo" alt="Dani_MK">
+    </div>
+
+    <div class="hero-body">
+      <span class="section-kicker">YouTube • Gaming • Trickjumps</span>
+      <img src="banniere-logo.png" alt="Dani_MK" class="hero-logo">
+      <p class="hero-lead">Zelda, Super Mario Odyssey — trickjumps, tech de speedrun et découvertes de mods.</p>
+
+      <div class="hero-actions">
+        <button class="btn btn-primary"
+          onclick="openLink('https://www.youtube.com/channel/UCw3v5XVphqVzScmTXs-8Yrw?sub_confirmation=1')">
+          Youtube
+        </button>
+        <button class="btn btn-ghost"
+          onclick="openLink('https://www.twitch.tv/dani_mklive')">
+          Twitch
+        </button>
+        <button class="btn btn-ghost"
+          onclick="openLink('https://discord.gg/wySG6ykZ62')">
+          Discord
+        </button>
       </div>
     </div>
-  </div>
 
-  <div class="chat" id="chat">
-    <div class="bubble bot">
-      👋 Tape une commande (ex: <b>!info jump</b>, <b>!random</b>, <b>!list</b>)
+    <div class="hero-communities">
+      <span class="hero-communities-label">Communautés</span>
+      <button class="community-link"
+        onclick="openLink('https://discord.com/invite/KnTCgTHjWG')">
+        <span>The Trickjump Database</span>
+      </button>
+      <button class="community-link"
+        onclick="openLink('https://discord.com/invite/smo-trickjumping-469869605570084886')">
+        <span>SMO Trickjumping</span>
+      </button>
     </div>
-  </div>
+  </section>
 
-  <div class="input-bar">
-    <input id="input" placeholder="Tapez une commande commençant par !">
-    <button class="send-btn" id="send">Envoyer</button>
-  </div>
+  <section class="section">
+    <h2 class="section-title">Explorer</h2>
+    <div class="hub-grid">
+      <a class="hub-card" href="totk.html">
+        <span class="hub-title">TOTK</span>
+        <span class="hub-desc">Téléchargements & outils</span>
+      </a>
+      <a class="hub-card" href="smo.html">
+        <span class="hub-title">SMO</span>
+        <span class="hub-desc">Mods Super Mario Odyssey</span>
+      </a>
+      <a class="hub-card" href="botw.html">
+        <span class="hub-title">BOTW</span>
+        <span class="hub-desc">Mods Breath of the Wild</span>
+      </a>
+      <a class="hub-card" href="chatsmo.html">
+        <span class="hub-title">Jumpedia</span>
+        <span class="hub-desc">Bot de commandes trickjump</span>
+      </a>
+      <a class="hub-card" href="modding.html">
+        <span class="hub-title">Modding</span>
+        <span class="hub-desc">Outils de modding Switch</span>
+      </a>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2 class="section-title">
+      🔥 Shorts récents
+      <span class="section-link" onclick="openLink('https://www.youtube.com/@Dani_MK-SMO/shorts')">
+        Voir tout →
+      </span>
+    </h2>
+
+    <div class="shorts-grid">
+      <div class="short-card">
+        <div class="short-embed">
+          <iframe src="https://www.youtube-nocookie.com/embed/XAMDLNXVKLc" allowfullscreen></iframe>
+        </div>
+        <h3>Tutos</h3>
+      </div>
+
+      <div class="short-card">
+        <div class="short-embed">
+          <iframe src="https://www.youtube-nocookie.com/embed/7yndClItC44" allowfullscreen></iframe>
+        </div>
+        <h3>Glitchs</h3>
+      </div>
+
+      <div class="short-card">
+        <div class="short-embed">
+          <iframe src="https://www.youtube-nocookie.com/embed/dNNV309vMxI" allowfullscreen></iframe>
+        </div>
+        <h3>Trickjumps</h3>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">© 2026 — Dani_MK</footer>
+
 </div>
 
 <button class="theme-toggle-fab" id="themeToggleFab" aria-label="Changer de thème" title="Changer de thème">
@@ -242,22 +297,26 @@ body{
 </button>
 
 <nav class="bottom-nav">
-  <button onclick="go('index.html')">Accueil</button>
   <button onclick="go('totk.html')">TOTK</button>
-  <button onclick="go('botw.html')">BOTW</button>
   <button onclick="go('smo.html')">SMO</button>
+  <button onclick="go('botw.html')">BOTW</button>
+  <button onclick="go('chatsmo.html')">ChatSmo</button>
   <button onclick="go('modding.html')">Modding</button>
 </nav>
 
-<button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+<button class="hamburger" id="hamburger" aria-label="Menu">
+  <span></span><span></span><span></span>
+</button>
 <div class="drawer-overlay" id="drawerOverlay"></div>
 <nav class="drawer" id="drawer">
-  <div class="drawer-header"><span class="drawer-title">Navigation</span></div>
+  <div class="drawer-header">
+    <span class="drawer-title">Navigation</span>
+  </div>
   <div class="drawer-links">
-    <button onclick="go('index.html')">Accueil</button>
     <button onclick="go('totk.html')">TOTK</button>
-    <button onclick="go('botw.html')">BOTW</button>
     <button onclick="go('smo.html')">SMO</button>
+    <button onclick="go('botw.html')">BOTW</button>
+    <button onclick="go('chatsmo.html')">ChatSmo</button>
     <button onclick="go('modding.html')">Modding</button>
   </div>
   <div class="drawer-theme">
@@ -269,79 +328,6 @@ body{
   <div class="drawer-footer">© 2026 — Dani_MK</div>
 </nav>
 
-<script src="Jumps-database/jump_data.js"></script>
-<script src="Jumps-database/tricks.js"></script>
-<script src="commands.js"></script>
 <script src="assets/js/site.js"></script>
-<script>
-const chat = document.getElementById("chat");
-const input = document.getElementById("input");
-
-function addBubble(text, type){
-  const b = document.createElement("div");
-  b.className = "bubble " + type;
-  b.innerHTML = text.replace(/\n/g, "<br>");
-  chat.appendChild(b);
-  chat.scrollTop = chat.scrollHeight;
-}
-
-function send(){
-  const val = input.value.trim();
-  if(!val) return;
-
-  addBubble(val, "user");
-
-  if(typeof runCommand !== "function"){
-    addBubble("❌ commands.js non chargé", "bot");
-    return;
-  }
-
-  runCommand(val, res => {
-    addBubble(res, "bot");
-    const link = res.match(/https?:\/\/[^\s]+/);
-    if(link) window.open(link[0], "_blank");
-  });
-
-  input.value = "";
-}
-
-document.getElementById("send").onclick = send;
-input.addEventListener("keydown", e => { if(e.key === "Enter") send(); });
-
-/* ===== INFO POPUP ===== */
-const infoBadge = document.getElementById('infoBadge');
-const infoPopup = document.getElementById('infoPopup');
-const infoClose = document.getElementById('infoClose');
-
-infoBadge.addEventListener('click', () => {
-  const showing = infoPopup.classList.toggle('show');
-  infoPopup.setAttribute('aria-hidden', !showing);
-  infoBadge.setAttribute('aria-expanded', showing);
-});
-
-infoClose.addEventListener('click', () => {
-  infoPopup.classList.remove('show');
-  infoPopup.setAttribute('aria-hidden', 'true');
-  infoBadge.setAttribute('aria-expanded', 'false');
-});
-
-document.addEventListener('click', (e) => {
-  if(!infoBadge.contains(e.target) && !infoPopup.contains(e.target)){
-    if(infoPopup.classList.contains('show')){
-      infoPopup.classList.remove('show');
-      infoPopup.setAttribute('aria-hidden', 'true');
-      infoBadge.setAttribute('aria-expanded', 'false');
-    }
-  }
-});
-
-document.addEventListener('keydown', (e) => {
-  if(e.key === 'Escape' && infoPopup.classList.contains('show')){
-    infoPopup.classList.remove('show');
-    infoPopup.setAttribute('aria-hidden', 'true');
-    infoBadge.setAttribute('aria-expanded', 'false');
-  }
-});
-</script>
 </body>
 </html>
