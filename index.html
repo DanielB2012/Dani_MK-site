@@ -211,6 +211,11 @@ body *{
   max-width:210px;
   width:100%;
   height:auto;
+  filter:invert(77%);
+}
+
+html[data-theme="light"] .hero-banner{
+  filter:none;
 }
 
 .hero p{
@@ -370,6 +375,9 @@ footer{
   }
   .hero-actions{
     justify-content:center;
+  }
+  .hero-banner{
+    margin:0 auto;
   }
 }
 
