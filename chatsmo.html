@@ -6,16 +6,6 @@
 <title>Jumpedia — Dani_MK</title>
 <meta name="description" content="Jumpedia — moteur de recherche pour retrouver les trickjumps Super Mario Odyssey.">
 
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-MKC6WGP3ZT"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-MKC6WGP3ZT');
-</script>
-
 <link rel="icon" href="channels4_profile-removebg-preview.png" type="image/png">
 
 <link rel="stylesheet" href="assets/css/base.css">
@@ -150,6 +140,24 @@ html[data-theme="light"] .list-status a{ color:#2563eb; }
 }
 .search-mode-toggle:hover{ border-color:rgba(127,92,255,.4); background:var(--surface-3); }
 .search-mode-toggle.active{ color:var(--accent-2); border-color:rgba(127,92,255,.4); background:var(--accent-soft); }
+
+.random-jump-btn{
+  flex:0 0 auto;
+  width:36px;
+  height:36px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:10px;
+  border:1px solid var(--border);
+  background:var(--surface-2);
+  font-size:16px;
+  line-height:1;
+  cursor:pointer;
+  transition:border-color .2s ease, background-color .2s ease, transform .15s ease;
+}
+.random-jump-btn:hover{ border-color:rgba(127,92,255,.4); background:var(--surface-3); transform:scale(1.06); }
+.random-jump-btn:active{ transform:scale(.95); }
 
 /* ===== MENU DÉROULANT PERSONNALISÉ ===== */
 .cselect{
@@ -448,6 +456,8 @@ html[data-theme="light"] .sri-detail-row a{ color:#2563eb; }
           <div class="cselect-option active" data-value="">Tout type</div>
         </div>
       </div>
+
+      <button type="button" class="random-jump-btn" id="randomJumpBtn" title="Choisir un jump au hasard (parmi les filtres actuels)">🎲</button>
     </div>
     <div class="search-meta" id="searchMeta"></div>
 
@@ -815,6 +825,16 @@ function initSearch(){
     runSearch();
   });
   updateSearchModeToggle();
+
+  document.getElementById('randomJumpBtn').addEventListener('click', () => {
+    const pool = getFilteredJumps({ ignoreName: true });
+    if(!pool.length) return;
+    const pick = pool[Math.floor(Math.random() * pool.length)];
+    searchNameMode = 'strict';
+    updateSearchModeToggle();
+    document.getElementById('searchName').value = pick.name;
+    runSearch();
+  });
 
   document.getElementById('searchResults').addEventListener('click', (e) => {
     if(e.target.closest('a')) return;
