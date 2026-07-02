@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Dani_MK — Gaming, Zelda & Trickjumps</title>
-<meta name="description" content="Chaîne YouTube Dani_MK : trickjumps, tech de speedrun et mods sur Zelda Breath of the Wild / Tears of the Kingdom et Super Mario Odyssey.">
+<title>Jumpedia — Dani_MK</title>
+<meta name="description" content="Jumpedia — moteur de recherche pour retrouver les trickjumps Super Mario Odyssey.">
 
 <link rel="icon" href="channels4_profile-removebg-preview.png" type="image/png">
 
@@ -24,272 +24,430 @@
 </script>
 
 <style>
-
-/* ===== HERO ===== */
-.hero{
+body{
   display:flex;
+  justify-content:center;
   align-items:center;
-  gap:36px;
-  padding:44px;
-  position:relative;
-  overflow:hidden;
-}
-.hero::before{
-  content:"";
-  position:absolute;
-  top:-45%; right:-8%;
-  width:440px; height:440px;
-  background:radial-gradient(circle, rgba(127,92,255,.22), transparent 70%);
-  pointer-events:none;
+  min-height:100vh;
 }
 
-.hero-avatar{
-  width:148px;
-  height:148px;
-  border-radius:24px;
-  overflow:hidden;
-  flex-shrink:0;
-  border:1px solid var(--border-strong);
-  box-shadow:var(--shadow-md);
-}
-.hero-avatar img{ width:100%; height:100%; object-fit:cover; }
-
-.hero-body{ flex:1; min-width:0; position:relative; z-index:1; }
-
-.hero-logo{
-  display:block;
-  max-width:250px;
-  width:100%;
-  height:auto;
-  margin-top:10px;
-  filter:invert(93%) drop-shadow(0 0 20px rgba(127,92,255,.3));
-}
-html[data-theme="light"] .hero-logo{ filter:none; }
-
-.hero-lead{
-  margin-top:14px;
-  color:var(--text-2);
-  font-size:15.5px;
-  max-width:54ch;
-}
-
-.hero-actions{ margin-top:22px; display:flex; gap:12px; flex-wrap:wrap; }
-
-.hero-communities{
+/* ===== APP CARD ===== */
+.app{
+  width:min(980px, 94vw);
+  height:min(660px, 82vh);
+  background:var(--bg-1);
+  border:1px solid var(--border);
+  border-radius:var(--radius-xl);
+  box-shadow:var(--shadow-lg), 0 0 0 1px rgba(127,92,255,.12), 0 0 90px rgba(127,92,255,.07);
   display:flex;
   flex-direction:column;
-  gap:10px;
-  padding-left:32px;
-  border-left:1px solid var(--border);
-  flex-shrink:0;
-  width:196px;
-  position:relative;
-  z-index:1;
+  overflow:hidden;
 }
-.hero-communities-label{
-  font-size:11px;
-  font-weight:700;
-  letter-spacing:.1em;
-  text-transform:uppercase;
-  color:var(--text-3);
-  margin-bottom:2px;
-}
-.community-link{
+
+.app-header{
+  padding:14px 22px;
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
   display:flex;
   align-items:center;
+  flex-shrink:0;
+}
+
+.app-title{
+  font-family:var(--font-display);
+  font-weight:700;
+  font-size:16px;
+  background:var(--accent-grad);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+.app-panel{ flex:1; display:flex; flex-direction:column; overflow:hidden; min-height:0; }
+
+/* ===== RECHERCHE ===== */
+
+.list-footer{
+  padding:12px 18px 16px;
+  border-top:1px solid var(--border);
+  display:none;
+  flex-direction:column;
+  gap:8px;
+  flex-shrink:0;
+}
+.list-footer.visible{ display:flex; }
+.list-status{ font-size:13px; color:var(--text-2); word-break:break-word; }
+.list-status a{ color:var(--accent-2); text-decoration:none; font-weight:600; }
+.list-status a:hover{ text-decoration:underline; }
+html[data-theme="light"] .list-status a{ color:#2563eb; }
+
+.search-filters{
+  display:flex;
+  flex-wrap:wrap;
+  padding:14px 18px;
+  border-bottom:1px solid var(--border);
+  flex-shrink:0;
+}
+.search-filters > *{ margin-right:8px; }
+.search-filters > *:last-child{ margin-right:0; }
+
+.search-filters input{
+  flex:1;
+  min-width:120px;
+  padding:9px 12px;
+  border-radius:10px;
+  border:1px solid var(--border);
+  background:var(--surface-2);
+  color:var(--text-1);
+  font-family:inherit;
+  font-size:13px;
+  outline:none;
+  overflow:hidden;
+  transition:border-color .2s ease, background-color .2s ease,
+    flex-grow .4s cubic-bezier(.22,1,.36,1), flex-basis .4s cubic-bezier(.22,1,.36,1),
+    min-width .4s cubic-bezier(.22,1,.36,1), margin-right .4s cubic-bezier(.22,1,.36,1),
+    padding .4s cubic-bezier(.22,1,.36,1), border-width .3s ease, opacity .3s ease;
+}
+.search-filters input:focus{ border-color:rgba(127,92,255,.5); background:var(--surface-3); }
+
+/* Le bouton stricte/approximatif vit à l'intérieur du champ "Nom du jump" pour bien
+   montrer qu'il agit sur cette recherche précise (et non sur les autres filtres). */
+.search-name-wrap{
+  position:relative;
+  flex:1;
+  min-width:220px;
+}
+.search-name-wrap input{
+  width:100%;
+  padding-right:104px;
+}
+.search-name-wrap input[type="search"]::-webkit-search-cancel-button{ display:none; }
+.search-mode-toggle{
+  position:absolute;
+  right:4px; top:4px; bottom:4px;
+  min-width:88px;
+  padding:0 11px;
+  border-radius:8px;
+  border:1px solid var(--border);
+  background:var(--surface-2);
+  color:var(--text-2);
+  font-family:inherit;
+  font-weight:700;
+  font-size:11.5px;
+  cursor:pointer;
+  white-space:nowrap;
+  overflow:hidden;
+  transition:border-color .2s ease, background-color .2s ease, color .2s ease;
+}
+.search-mode-toggle:hover{ border-color:rgba(127,92,255,.4); background:var(--surface-3); }
+.search-mode-toggle.active{ color:var(--accent-2); border-color:rgba(127,92,255,.4); background:var(--accent-soft); }
+
+/* ===== MENU DÉROULANT PERSONNALISÉ ===== */
+.cselect{
+  position:relative;
+  flex:1;
+  min-width:150px;
+}
+/* La flèche est visuellement à l'intérieur du champ, mais reste un <button> distinct
+   posé par-dessus (et non un ::before/::after, non affiché sur les <input>) : cliquer
+   dessus ouvre/ferme le menu, cliquer ailleurs dans le champ ne fait que taper. */
+.cselect-arrow{
+  position:absolute;
+  left:4px; top:4px; bottom:4px;
+  width:22px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:0;
+  border:none;
+  background:transparent;
+  appearance:none;
+  -webkit-appearance:none;
+  color:var(--text-2);
+  font-size:15px;
+  line-height:1;
+  cursor:pointer;
+  z-index:2;
+  transition:transform .2s ease;
+}
+.cselect.open .cselect-arrow{ transform:rotate(180deg); }
+
+.search-filters .cselect-btn{
+  width:100%;
+  height:100%;
+  text-align:left;
+  padding:9px 12px 9px 30px;
+  border-radius:10px;
+  border:1px solid var(--border);
+  background:var(--surface-2);
+  color:var(--text-1);
+  font-family:inherit;
+  font-size:13px;
+  font-weight:600;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  outline:none;
+  transition:border-color .2s ease, background-color .2s ease;
+}
+.search-filters .cselect-btn:hover, .search-filters .cselect.open .cselect-btn, .search-filters .cselect-btn:focus{ border-color:rgba(127,92,255,.4); background:var(--surface-3); }
+
+/* Champ à pastilles pour le filtre Type (plusieurs types à la fois) : chaque type
+   confirmé par une virgule devient une petite case grisée, à côté de la zone de
+   saisie pour le suivant. min-height + peu de padding vertical garantit la même
+   hauteur de 36px que les champs royaumes/difficulté tant qu'une seule ligne suffit. */
+.cselect-chipbox{
+  width:100%;
+  min-height:36px;
+  max-height:58px; /* ~2 lignes ; au-delà, ça défile au lieu de continuer à grandir */
+  display:flex;
+  flex-wrap:wrap;
+  align-content:flex-start;
+  align-items:center;
+  gap:4px;
+  padding:4px 6px 4px 30px;
+  border-radius:10px;
+  border:1px solid var(--border);
+  background:var(--surface-2);
+  cursor:text;
+  overflow-y:auto;
+  scrollbar-width:thin;
+  scrollbar-color:var(--text-3) transparent;
+  transition:border-color .2s ease, background-color .2s ease;
+}
+.cselect.open .cselect-chipbox, .cselect-chipbox:focus-within{ border-color:rgba(127,92,255,.4); background:var(--surface-3); }
+.cselect-chipbox::-webkit-scrollbar{ width:5px; }
+.cselect-chipbox::-webkit-scrollbar-track{ background:transparent; }
+.cselect-chipbox::-webkit-scrollbar-thumb{ background:var(--text-3); border-radius:4px; }
+.cselect-chipbox::-webkit-scrollbar-thumb:hover{ background:var(--text-1); }
+
+.cselect-chip{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  padding:2px 5px 2px 8px;
+  border-radius:999px;
+  border:1px solid var(--border);
+  background:var(--surface-3);
+  color:var(--text-1);
+  font-size:11.5px;
+  font-weight:700;
+  line-height:1.4;
+  white-space:nowrap;
+}
+.cselect-chip-remove{
+  border:none;
+  background:transparent;
+  color:var(--text-3);
+  font-size:13px;
+  line-height:1;
+  padding:0 2px;
+  cursor:pointer;
+}
+.cselect-chip-remove:hover{ color:var(--text-1); }
+
+.search-filters .cselect-chip-input{
+  flex:1 1 50px;
+  min-width:50px;
+  border:none;
+  outline:none;
+  background:transparent;
+  color:var(--text-1);
+  font-family:inherit;
+  font-size:13px;
+  font-weight:600;
+  padding:2px 0;
+}
+
+.cselect-menu{
+  position:absolute;
+  top:calc(100% + 6px);
+  left:0; right:0;
+  max-height:0;
+  opacity:0;
+  overflow:hidden;
+  pointer-events:none;
+  background:var(--bg-1);
+  border:1px solid var(--border);
+  border-radius:12px;
+  box-shadow:var(--shadow-md);
+  z-index:60;
+  transition:max-height .2s ease, opacity .2s ease;
+}
+.cselect.open .cselect-menu{
+  max-height:220px;
+  opacity:1;
+  overflow-y:auto;
+  pointer-events:auto;
+}
+.cselect-option{
+  padding:9px 13px;
+  font-size:13px;
+  color:var(--text-1);
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
   gap:10px;
+  transition:background-color .12s ease;
+}
+.cselect-option:hover{ background:var(--accent-soft); }
+.cselect-option.active{ color:var(--accent-2); font-weight:600; background:var(--accent-soft); }
+.cselect-option.active::after{ content:"✓"; font-size:12px; flex-shrink:0; }
+
+.search-meta{
+  padding:9px 18px 0;
+  font-size:12px;
+  color:var(--text-3);
+  flex-shrink:0;
+}
+
+.search-results{
+  flex:1;
+  overflow-y:auto;
+  padding:10px 18px 18px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.search-result-item{
+  padding:11px 14px;
   background:var(--surface);
   border:1px solid var(--border);
   border-radius:13px;
-  padding:12px 13px;
   cursor:pointer;
-  text-align:left;
-  color:var(--text-1);
-  font-family:inherit;
+  transition:border-color .15s ease;
+}
+.search-result-item:hover{ border-color:var(--border-strong); }
+
+.sri-row{ display:flex; align-items:center; gap:10px; }
+.sri-main{ flex:1; min-width:0; }
+.sri-name{ font-weight:700; font-size:14px; }
+.sri-tags{ display:flex; flex-wrap:wrap; gap:5px; margin-top:6px; }
+.sri-tag{
+  font-size:11px;
   font-weight:600;
-  font-size:12.5px;
-  line-height:1.25;
-  transition:transform .2s var(--ease), background-color .2s ease, border-color .2s ease;
-}
-.community-link:hover{ transform:translateY(-2px); background:var(--accent-soft); border-color:rgba(127,92,255,.4); }
-
-@media(max-width:860px){
-  .hero{ flex-direction:column; text-align:center; padding:34px 24px; }
-  .hero-actions{ justify-content:center; }
-  .hero-logo{ margin:10px auto 0; }
-  .hero-communities{
-    border-left:none;
-    padding-left:0; padding-top:14px; margin-top:28px; width:100%;
-    flex-direction:row; flex-wrap:wrap;
-    position:relative;
-  }
-  .hero-communities::before{
-    content:"";
-    position:absolute;
-    top:0; left:0; right:0;
-    height:1px;
-    background:var(--border);
-  }
-  .hero-communities-label{
-    position:absolute;
-    top:0; left:50%;
-    transform:translate(-50%,-50%);
-    margin-bottom:0;
-    background:var(--bg-1);
-    border:1px solid var(--border);
-    border-radius:999px;
-    padding:5px 14px;
-    white-space:nowrap;
-  }
-  .community-link{ flex:1; min-width:150px; }
-}
-
-/* ===== HUB (liens rapides) ===== */
-.hub-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
-  gap:16px;
-}
-.hub-card{
-  background:var(--surface);
+  color:var(--text-2);
+  background:var(--surface-2);
   border:1px solid var(--border);
-  border-radius:var(--radius-lg);
-  padding:22px 20px;
-  text-decoration:none;
+  padding:2px 9px;
+  border-radius:999px;
+}
+.sri-diff{ color:var(--accent-2); border-color:rgba(0,255,213,.25); }
+html[data-theme="light"] .sri-diff{ color:#2563eb; border-color:rgba(37,99,235,.25); }
+
+.sri-link,
+.sri-toggle{
+  width:28px; height:28px;
+  flex-shrink:0;
+  border-radius:8px;
+  border:1px solid var(--border);
+  background:var(--surface-2);
   color:var(--text-1);
+  font-size:14px;
+  line-height:1;
+  cursor:pointer;
   display:flex;
-  flex-direction:column;
-  gap:7px;
-  transition:transform .25s var(--ease), box-shadow .25s ease, border-color .25s ease;
+  align-items:center;
+  justify-content:center;
+  text-decoration:none;
+  transition:background-color .15s ease, border-color .15s ease, transform .15s ease;
 }
-.hub-card:hover{ transform:translateY(-6px); box-shadow:var(--shadow-md); border-color:var(--border-strong); }
-.hub-title{ font-family:var(--font-display); font-weight:700; font-size:17px; }
-.hub-desc{ font-size:12.5px; color:var(--text-3); }
+.sri-toggle{ font-size:16px; }
+.sri-link:hover{ background:var(--surface-3); transform:scale(1.08); }
+.sri-toggle::before{ content:"+"; }
+.search-result-item.expanded .sri-toggle::before{ content:"−"; }
+.search-result-item:hover .sri-toggle{ border-color:rgba(127,92,255,.4); }
+.search-result-item.expanded .sri-toggle{ background:var(--accent-soft); border-color:rgba(127,92,255,.4); }
 
-/* ===== SHORTS ===== */
-.shorts-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:22px;
+.sri-details{
+  max-height:0;
+  overflow:hidden;
+  transition:max-height .4s ease-in-out;
 }
-.short-card{
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:var(--radius-lg);
-  padding:14px;
-  transition:transform .3s var(--ease), box-shadow .3s ease, border-color .3s ease;
+.sri-details-inner{
+  padding-top:20px;
+  border-top:1px solid transparent;
+  opacity:0;
+  transition:opacity .3s ease, border-color .3s ease;
 }
-.short-card:hover{ transform:translateY(-8px); box-shadow:var(--shadow-md); border-color:var(--border-strong); }
-.short-embed{ width:100%; aspect-ratio:9/16; border-radius:14px; overflow:hidden; background:#000; }
-.short-embed iframe{ width:100%; height:100%; border:none; }
-.short-card h3{ margin-top:12px; font-size:14px; font-weight:600; color:var(--text-2); text-align:center; }
+.search-result-item.expanded .sri-details-inner{
+  opacity:1;
+  border-top-color:var(--border);
+}
+.sri-detail-row{ display:flex; gap:8px; font-size:12.5px; margin-bottom:6px; }
+.sri-detail-row:last-child{ margin-bottom:0; }
+.sri-detail-label{ color:var(--text-3); font-weight:600; min-width:110px; flex-shrink:0; }
+.sri-detail-row a{ color:var(--accent-2); text-decoration:none; margin-right:10px; }
+.sri-detail-row a:hover{ text-decoration:underline; }
+html[data-theme="light"] .sri-detail-row a{ color:#2563eb; }
+.sri-detail-empty{ font-size:12px; color:var(--text-3); font-style:italic; }
 
+.search-empty{
+  text-align:center;
+  color:var(--text-3);
+  font-size:13px;
+  padding:36px 0;
+}
+
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:800px){
+  body{ align-items:flex-start; padding-top:82px; }
+  .app{ width:100%; height:calc(100vh - 82px); height:calc(100dvh - 82px); border-radius:0; min-height:0; }
+}
 </style>
 </head>
 
 <body>
 
-<div class="container">
+<div class="app">
+  <div class="app-header">
+    <span class="app-title">Jumpedia</span>
+  </div>
 
-  <section class="hero glass">
-    <div class="hero-avatar">
-      <img src="https://yt3.ggpht.com/Ss_VtYmCO66SfCkyye3FIubTvQNCNRU9ZdD0F5Ko94EtyfG31BOYyE_YNieE2lC_NEUNGvzvOw=s600-c-k-c0x00ffffff-no-rj-rp-mo" alt="Dani_MK">
-    </div>
-
-    <div class="hero-body">
-      <span class="section-kicker">YouTube • Gaming • Trickjumps</span>
-      <img src="banniere-logo.png" alt="Dani_MK" class="hero-logo">
-      <p class="hero-lead">Zelda, Super Mario Odyssey — trickjumps, tech de speedrun et découvertes de mods.</p>
-
-      <div class="hero-actions">
-        <button class="btn btn-primary"
-          onclick="openLink('https://www.youtube.com/channel/UCw3v5XVphqVzScmTXs-8Yrw?sub_confirmation=1')">
-          Youtube
-        </button>
-        <button class="btn btn-ghost"
-          onclick="openLink('https://www.twitch.tv/dani_mklive')">
-          Twitch
-        </button>
-        <button class="btn btn-ghost"
-          onclick="openLink('https://discord.gg/wySG6ykZ62')">
-          Discord
-        </button>
+  <div class="app-panel" id="panelSearch">
+    <div class="search-filters">
+      <div class="search-name-wrap">
+        <input type="search" id="searchName" placeholder="Nom du jump...">
+        <button type="button" class="search-mode-toggle active" id="searchModeToggle" title="Basculer entre recherche stricte (nom exact) et approximative (nom proche)">Approximative</button>
       </div>
-    </div>
 
-    <div class="hero-communities">
-      <span class="hero-communities-label">Communautés</span>
-      <button class="community-link"
-        onclick="openLink('https://discord.com/invite/KnTCgTHjWG')">
-        <span>The Trickjump Database</span>
-      </button>
-      <button class="community-link"
-        onclick="openLink('https://discord.com/invite/smo-trickjumping-469869605570084886')">
-        <span>SMO Trickjumping</span>
-      </button>
-    </div>
-  </section>
-
-  <section class="section">
-    <h2 class="section-title">Explorer</h2>
-    <div class="hub-grid">
-      <a class="hub-card" href="totk.html">
-        <span class="hub-title">TOTK</span>
-        <span class="hub-desc">Téléchargements & outils</span>
-      </a>
-      <a class="hub-card" href="smo.html">
-        <span class="hub-title">SMO</span>
-        <span class="hub-desc">Mods Super Mario Odyssey</span>
-      </a>
-      <a class="hub-card" href="botw.html">
-        <span class="hub-title">BOTW</span>
-        <span class="hub-desc">Mods Breath of the Wild</span>
-      </a>
-      <a class="hub-card" href="chatsmo.html">
-        <span class="hub-title">Jumpedia</span>
-        <span class="hub-desc">Bot de commandes trickjump</span>
-      </a>
-      <a class="hub-card" href="modding.html">
-        <span class="hub-title">Modding</span>
-        <span class="hub-desc">Outils de modding Switch</span>
-      </a>
-    </div>
-  </section>
-
-  <section class="section">
-    <h2 class="section-title">
-      🔥 Shorts récents
-      <span class="section-link" onclick="openLink('https://www.youtube.com/@Dani_MK-SMO/shorts')">
-        Voir tout →
-      </span>
-    </h2>
-
-    <div class="shorts-grid">
-      <div class="short-card">
-        <div class="short-embed">
-          <iframe src="https://www.youtube-nocookie.com/embed/XAMDLNXVKLc" allowfullscreen></iframe>
+      <div class="cselect" id="kingdomCselect">
+        <button type="button" class="cselect-arrow" id="kingdomCselectArrow" aria-label="Ouvrir la liste des royaumes">▼</button>
+        <input type="text" class="cselect-btn" id="kingdomCselectBtn" placeholder="Tous les royaumes" autocomplete="off">
+        <div class="cselect-menu" id="kingdomCselectMenu">
+          <div class="cselect-option active" data-value="">Tous les royaumes</div>
         </div>
-        <h3>Tutos</h3>
       </div>
 
-      <div class="short-card">
-        <div class="short-embed">
-          <iframe src="https://www.youtube-nocookie.com/embed/7yndClItC44" allowfullscreen></iframe>
+      <div class="cselect" id="diffCselect">
+        <button type="button" class="cselect-arrow" id="diffCselectArrow" aria-label="Ouvrir la liste des difficultés">▼</button>
+        <input type="text" class="cselect-btn" id="diffCselectBtn" placeholder="Toute difficulté" autocomplete="off">
+        <div class="cselect-menu" id="diffCselectMenu">
+          <div class="cselect-option active" data-value="">Toute difficulté</div>
         </div>
-        <h3>Glitchs</h3>
       </div>
 
-      <div class="short-card">
-        <div class="short-embed">
-          <iframe src="https://www.youtube-nocookie.com/embed/dNNV309vMxI" allowfullscreen></iframe>
+      <div class="cselect" id="typeCselect">
+        <button type="button" class="cselect-arrow" id="typeCselectArrow" aria-label="Ouvrir la liste des types">▼</button>
+        <div class="cselect-chipbox" id="typeCselectChipbox">
+          <input type="text" class="cselect-chip-input" id="typeCselectBtn" placeholder="Tout type" autocomplete="off">
         </div>
-        <h3>Trickjumps</h3>
+        <div class="cselect-menu" id="typeCselectMenu">
+          <div class="cselect-option active" data-value="">Tout type</div>
+        </div>
       </div>
     </div>
-  </section>
+    <div class="search-meta" id="searchMeta"></div>
 
-  <footer class="site-footer">© 2026 — Dani_MK</footer>
+    <div class="search-results" id="searchResults"></div>
 
+    <div class="list-footer" id="listFooter">
+      <button type="button" class="btn btn-primary btn-block" id="generateListBtn">Générer un lien de liste (paste.ee)</button>
+      <div class="list-status" id="listStatus"></div>
+    </div>
+  </div>
 </div>
 
 <button class="theme-toggle-fab" id="themeToggleFab" aria-label="Changer de thème" title="Changer de thème">
@@ -297,26 +455,22 @@ html[data-theme="light"] .hero-logo{ filter:none; }
 </button>
 
 <nav class="bottom-nav">
+  <button onclick="go('index.html')">Accueil</button>
   <button onclick="go('totk.html')">TOTK</button>
-  <button onclick="go('smo.html')">SMO</button>
   <button onclick="go('botw.html')">BOTW</button>
-  <button onclick="go('chatsmo.html')">ChatSmo</button>
+  <button onclick="go('smo.html')">SMO</button>
   <button onclick="go('modding.html')">Modding</button>
 </nav>
 
-<button class="hamburger" id="hamburger" aria-label="Menu">
-  <span></span><span></span><span></span>
-</button>
+<button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
 <div class="drawer-overlay" id="drawerOverlay"></div>
 <nav class="drawer" id="drawer">
-  <div class="drawer-header">
-    <span class="drawer-title">Navigation</span>
-  </div>
+  <div class="drawer-header"><span class="drawer-title">Navigation</span></div>
   <div class="drawer-links">
+    <button onclick="go('index.html')">Accueil</button>
     <button onclick="go('totk.html')">TOTK</button>
-    <button onclick="go('smo.html')">SMO</button>
     <button onclick="go('botw.html')">BOTW</button>
-    <button onclick="go('chatsmo.html')">ChatSmo</button>
+    <button onclick="go('smo.html')">SMO</button>
     <button onclick="go('modding.html')">Modding</button>
   </div>
   <div class="drawer-theme">
@@ -328,6 +482,511 @@ html[data-theme="light"] .hero-logo{ filter:none; }
   <div class="drawer-footer">© 2026 — Dani_MK</div>
 </nav>
 
+<script src="Jumps-database/jump_data.js"></script>
 <script src="assets/js/site.js"></script>
+<script>
+/* ===== RECHERCHE DANS LA BASE DE JUMPS ===== */
+const KINGDOM_ORDER = [
+  "Cap Kingdom","Cascade Kingdom","Sand Kingdom","Lake Kingdom","Wooded Kingdom","Cloud Kingdom",
+  "Lost Kingdom","Metro Kingdom","Snow Kingdom","Seaside Kingdom","Luncheon Kingdom","Bowser's Kingdom",
+  "Moon Kingdom","Mushroom Kingdom","Dark Side","Darker Side","Ruined Kingdom","Odyssey"
+];
+const DIFF_ORDER = [
+  "0/10","0.5/10","1/10","1.5/10","2/10","2.5/10","3/10","3.5/10","4/10","4.5/10","5/10","5.5/10",
+  "6/10","6.5/10","7/10","7.5/10","8/10","8.5/10","9/10","9.5/10","10/10",
+  "Low Elite","Mid Elite","High Elite","Insanity Elite","God Tier","Hell Tier","Unproven"
+];
+const SEARCH_RESULT_CAP = 30; // limité pour rester fluide sur mobile
+
+let searchInitialized = false;
+let currentKingdom = '';
+let currentDiff = '';
+let currentType = new Set(); // plusieurs types peuvent être cochés en même temps
+let searchNameMode = 'fuzzy'; // 'fuzzy' = approximatif, 'strict' = nom exact/sous-chaîne
+
+/* Récupère tous les tags de type individuels présents dans la base (ex: "Longjump, Spinless" -> deux tags),
+   dédoublonnés en ignorant la casse, triés alphabétiquement. */
+function computeTypeTags(all){
+  const seen = new Map();
+  all.forEach(j => {
+    const t = j.type;
+    if(!t) return;
+    const vals = Array.isArray(t) ? t : [t];
+    vals.forEach(raw => {
+      const tag = String(raw).trim();
+      if(!tag) return;
+      const key = tag.toLowerCase();
+      if(!seen.has(key)) seen.set(key, tag);
+    });
+  });
+  return Array.from(seen.values()).sort((a, b) => a.localeCompare(b));
+}
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+/* ===== RECHERCHE APPROXIMATIVE (fuzzy) SUR LE NOM DU JUMP ===== */
+const NAME_MATCH_THRESHOLD = 0.55;
+const EXTRA_WORD_PENALTY = 0.15;
+
+function levenshtein(a, b){
+  const m = a.length, n = b.length;
+  if(m === 0) return n;
+  if(n === 0) return m;
+  let prev = new Array(n + 1);
+  let curr = new Array(n + 1);
+  for(let j = 0; j <= n; j++) prev[j] = j;
+  for(let i = 1; i <= m; i++){
+    curr[0] = i;
+    for(let j = 1; j <= n; j++){
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      curr[j] = Math.min(curr[j - 1] + 1, prev[j] + 1, prev[j - 1] + cost);
+    }
+    [prev, curr] = [curr, prev];
+  }
+  return prev[n];
+}
+
+/* Renvoie un score de pertinence entre 0 (aucun rapport) et 1 (correspondance exacte).
+   Un match exact ou une sous-chaîne obtient toujours le meilleur score. Sinon, chaque
+   mot de la recherche doit trouver un mot proche dans le nom (logique "ET" mot par mot,
+   pas une comparaison globale des deux chaînes) : ça évite qu'une requête à deux mots
+   matche par coïncidence un nom sans rapport juste parce que les caractères s'alignent
+   bien position par position. */
+function nameMatchScore(name, query){
+  if(!query) return 1;
+  const n = String(name || '').toLowerCase();
+  if(n === query) return 1;
+  if(n.startsWith(query)) return 0.95;
+  if(n.includes(query)) return 0.85;
+  if(query.length < 3) return 0;
+
+  const nameWords = n.split(/[^a-z0-9]+/).filter(Boolean);
+  const queryWords = query.split(/[^a-z0-9]+/).filter(Boolean);
+  if(!queryWords.length || !nameWords.length) return 0;
+
+  const wordSim = (a, b) => {
+    if(a === b) return 1;
+    if(a.length >= 3 && b.length >= 3 && (a.includes(b) || b.includes(a))) return 0.9;
+    const dist = levenshtein(a, b);
+    const maxLen = Math.max(a.length, b.length);
+    return maxLen ? 1 - dist / maxLen : 0;
+  };
+
+  let worst = 1;
+  for(const qw of queryWords){
+    let best = 0;
+    for(const nw of nameWords){
+      const sim = wordSim(qw, nw);
+      if(sim > best) best = sim;
+    }
+    if(best < worst) worst = best;
+  }
+
+  // Un nom qui a des mots en plus par rapport à la recherche est un peu moins pertinent
+  // qu'un nom qui correspond mot pour mot (ex: pour "matro impossible", "Metro Impossible"
+  // doit passer devant "Upper Mantro Impossible" même si "mantro" colle mieux que "metro").
+  const extraWords = Math.max(0, nameWords.length - queryWords.length);
+  return Math.max(0, worst - extraWords * EXTRA_WORD_PENALTY);
+}
+
+/* Menu déroulant personnalisé (pas de <select> natif du navigateur), avec un champ de
+   recherche à la place du texte fixe : utile dès qu'une liste (types, royaumes...) a
+   trop d'entrées pour être parcourue visuellement. Une seule map partagée permet de
+   refermer proprement un autre menu déjà ouvert (et de restaurer son texte) quand on
+   en ouvre un nouveau. */
+const openCselects = new Map();
+
+function setupCselect(rootId, btnId, menuId, options, onSelect, multi){
+  const root = document.getElementById(rootId);
+  const input = document.getElementById(btnId);
+  const menu = document.getElementById(menuId);
+  const arrow = root.querySelector('.cselect-arrow');
+  const chipbox = multi ? root.querySelector('.cselect-chipbox') : null;
+  let selectedLabel = input.value;
+  let confirmedValues = []; // mode multi (Type) uniquement, ordre d'ajout
+
+  options.forEach(value => {
+    const opt = document.createElement('div');
+    opt.className = 'cselect-option';
+    opt.dataset.value = value;
+    opt.textContent = value;
+    menu.appendChild(opt);
+  });
+
+  function filterOptions(query){
+    const q = query.trim().toLowerCase();
+    menu.querySelectorAll('.cselect-option').forEach(opt => {
+      opt.style.display = (!q || opt.textContent.toLowerCase().includes(q)) ? '' : 'none';
+    });
+  }
+
+  // Mode multi (Type) : chaque type déjà confirmé (choisi dans le menu, ou tapé puis
+  // validé par une virgule) devient une petite case grisée dans le champ ; l'<input>
+  // ne contient plus que le texte en cours de saisie pour le prochain type.
+  function renderChips(){
+    if(!chipbox) return;
+    chipbox.querySelectorAll('.cselect-chip').forEach(el => el.remove());
+    confirmedValues.forEach(val => {
+      const chip = document.createElement('span');
+      chip.className = 'cselect-chip';
+      chip.textContent = val;
+      const rm = document.createElement('button');
+      rm.type = 'button';
+      rm.className = 'cselect-chip-remove';
+      rm.dataset.value = val;
+      rm.setAttribute('aria-label', 'Retirer ' + val);
+      rm.textContent = '×';
+      chip.appendChild(rm);
+      chipbox.insertBefore(chip, input);
+    });
+  }
+
+  function setConfirmed(values){
+    confirmedValues = values;
+    const lower = confirmedValues.map(s => s.toLowerCase());
+    menu.querySelectorAll('.cselect-option').forEach(o => {
+      if(o.dataset.value === ''){
+        o.classList.toggle('active', confirmedValues.length === 0);
+      } else {
+        o.classList.toggle('active', lower.includes(o.dataset.value.toLowerCase()));
+      }
+    });
+    renderChips();
+    onSelect(confirmedValues.slice());
+  }
+
+  // Retrouve le type correspondant à un texte tapé avant une virgule : correspondance
+  // exacte d'abord, sinon le premier type encore visible dans la liste filtrée.
+  function resolveTypedValue(text){
+    const q = text.trim();
+    if(!q) return null;
+    const exact = options.find(o => o.toLowerCase() === q.toLowerCase());
+    if(exact) return exact;
+    filterOptions(q);
+    const firstVisible = Array.from(menu.querySelectorAll('.cselect-option'))
+      .find(o => o.dataset.value !== '' && o.style.display !== 'none');
+    return firstVisible ? firstVisible.dataset.value : null;
+  }
+
+  function closeCselect(){
+    root.classList.remove('open');
+    filterOptions('');
+    input.value = multi ? '' : selectedLabel;
+    openCselects.delete(root);
+  }
+  function openCselect(){
+    openCselects.forEach((close, otherRoot) => { if(otherRoot !== root) close(); });
+    root.classList.add('open');
+    openCselects.set(root, closeCselect);
+  }
+
+  arrow.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if(root.classList.contains('open')){
+      closeCselect();
+    } else {
+      openCselect();
+      filterOptions('');
+      input.focus();
+      input.select();
+    }
+  });
+
+  if(chipbox){
+    chipbox.addEventListener('click', (e) => {
+      const rm = e.target.closest('.cselect-chip-remove');
+      if(rm){
+        e.stopPropagation();
+        setConfirmed(confirmedValues.filter(v => v !== rm.dataset.value));
+        return;
+      }
+      if(e.target === chipbox) input.focus();
+    });
+  }
+
+  input.addEventListener('input', () => {
+    if(!root.classList.contains('open')) openCselect();
+    if(multi && input.value.includes(',')){
+      const parts = input.value.split(',');
+      const trailing = parts.pop();
+      const next = confirmedValues.slice();
+      parts.forEach(part => {
+        const match = resolveTypedValue(part);
+        if(match && !next.some(v => v.toLowerCase() === match.toLowerCase())) next.push(match);
+      });
+      input.value = trailing;
+      setConfirmed(next);
+    }
+    filterOptions(input.value);
+  });
+
+  menu.addEventListener('click', (e) => {
+    const opt = e.target.closest('.cselect-option');
+    if(!opt) return;
+
+    if(!multi){
+      menu.querySelectorAll('.cselect-option').forEach(o => o.classList.remove('active'));
+      opt.classList.add('active');
+      selectedLabel = opt.dataset.value === '' ? '' : opt.textContent;
+      closeCselect();
+      onSelect(opt.dataset.value);
+      return;
+    }
+
+    // Mode multi (Type) : "Tout type" réinitialise tout ; cliquer un type déjà coché
+    // le retire (toggle), sinon on l'ajoute. Le menu reste ouvert pour continuer.
+    if(opt.dataset.value === ''){
+      input.value = '';
+      setConfirmed([]);
+      filterOptions('');
+      closeCselect();
+      return;
+    }
+    const isSelected = confirmedValues.some(v => v.toLowerCase() === opt.dataset.value.toLowerCase());
+    if(isSelected){
+      setConfirmed(confirmedValues.filter(v => v.toLowerCase() !== opt.dataset.value.toLowerCase()));
+    } else {
+      setConfirmed(confirmedValues.concat([opt.dataset.value]));
+    }
+    input.value = '';
+    filterOptions('');
+    input.focus();
+  });
+
+  document.addEventListener('click', (e) => { if(!root.contains(e.target) && root.classList.contains('open')) closeCselect(); });
+  document.addEventListener('keydown', (e) => {
+    if(e.key === 'Escape' && root.classList.contains('open')){ closeCselect(); input.blur(); }
+  });
+}
+
+function initSearch(){
+  if(searchInitialized) return;
+  searchInitialized = true;
+
+  const db = window.JUMP_DB_DATA || {};
+  const all = Object.values(db);
+
+  const kingdomsPresent = new Set();
+  const diffsPresent = new Set();
+  all.forEach(j => {
+    (j.location || []).forEach(l => kingdomsPresent.add(l));
+    if(j.diff) diffsPresent.add(String(j.diff));
+  });
+
+  setupCselect(
+    'kingdomCselect', 'kingdomCselectBtn', 'kingdomCselectMenu',
+    KINGDOM_ORDER.filter(k => kingdomsPresent.has(k)),
+    (val) => { currentKingdom = val; runSearch(); }
+  );
+  setupCselect(
+    'diffCselect', 'diffCselectBtn', 'diffCselectMenu',
+    DIFF_ORDER.filter(d => diffsPresent.has(d)),
+    (val) => { currentDiff = val; runSearch(); }
+  );
+  setupCselect(
+    'typeCselect', 'typeCselectBtn', 'typeCselectMenu',
+    computeTypeTags(all),
+    (vals) => { currentType = new Set(vals.map(v => v.toLowerCase())); runSearch(); },
+    true
+  );
+
+  document.getElementById('searchName').addEventListener('input', runSearch);
+
+  const searchModeToggle = document.getElementById('searchModeToggle');
+  function updateSearchModeToggle(){
+    searchModeToggle.textContent = searchNameMode === 'fuzzy' ? 'Approximative' : 'Stricte';
+    searchModeToggle.classList.toggle('active', searchNameMode === 'fuzzy');
+  }
+  searchModeToggle.addEventListener('click', () => {
+    searchNameMode = searchNameMode === 'fuzzy' ? 'strict' : 'fuzzy';
+    updateSearchModeToggle();
+    runSearch();
+  });
+  updateSearchModeToggle();
+
+  document.getElementById('searchResults').addEventListener('click', (e) => {
+    if(e.target.closest('a')) return;
+    const item = e.target.closest('.search-result-item');
+    if(!item) return;
+    const details = item.querySelector('.sri-details');
+    const expanding = !item.classList.contains('expanded');
+
+    if(expanding){
+      details.style.maxHeight = details.scrollHeight + 'px';
+    } else {
+      details.style.maxHeight = details.scrollHeight + 'px';
+      // force reflow so the browser has a concrete starting height to animate down from
+      void details.offsetHeight;
+      details.style.maxHeight = '0px';
+    }
+
+    item.classList.toggle('expanded', expanding);
+    const toggle = item.querySelector('.sri-toggle');
+    if(toggle) toggle.setAttribute('aria-expanded', String(expanding));
+  });
+
+  /* ===== GÉNÉRATION DE LISTE (paste.ee, même système qu'avant) ===== */
+  document.getElementById('generateListBtn').addEventListener('click', generateList);
+
+  runSearch();
+}
+
+function getFilteredJumps(opts){
+  opts = opts || {};
+  const db = window.JUMP_DB_DATA || {};
+  const all = Object.values(db);
+
+  const nameQ = opts.ignoreName ? '' : document.getElementById('searchName').value.trim().toLowerCase();
+  const kingdomQ = currentKingdom;
+  const diffQ = currentDiff;
+
+  // Un jump doit avoir TOUS les types cochés (il peut en avoir d'autres en plus) :
+  // on compte combien des types sélectionnés il possède, et on exige le compte complet.
+  const typeMatchCount = (j) => {
+    if(!currentType.size) return 0;
+    const t = j.type;
+    const vals = Array.isArray(t) ? t : (t ? [t] : []);
+    const jumpTypes = new Set(vals.map(v => String(v).trim().toLowerCase()));
+    let n = 0;
+    currentType.forEach(sel => { if(jumpTypes.has(sel)) n++; });
+    return n;
+  };
+
+  let results = all.filter(j => {
+    if(kingdomQ && !(j.location || []).includes(kingdomQ)) return false;
+    if(diffQ && String(j.diff || '') !== diffQ) return false;
+    if(currentType.size && typeMatchCount(j) < currentType.size) return false;
+    return true;
+  });
+
+  if(nameQ){
+    if(searchNameMode === 'strict'){
+      results = results.filter(j => (j.name || '').toLowerCase().includes(nameQ));
+    } else {
+      results = results
+        .map(j => ({ j, score: nameMatchScore(j.name, nameQ) }))
+        .filter(r => r.score >= NAME_MATCH_THRESHOLD)
+        .sort((a, b) => b.score - a.score)
+        .map(r => r.j);
+    }
+  }
+
+  return results;
+}
+
+function updateListFooterVisibility(){
+  const nameQ = document.getElementById('searchName').value.trim();
+  const hasFilter = !!(currentKingdom || currentDiff || currentType.size);
+  document.getElementById('listFooter').classList.toggle('visible', !nameQ && hasFilter);
+}
+
+function runSearch(){
+  updateListFooterVisibility();
+  const filtered = getFilteredJumps();
+
+  const meta = document.getElementById('searchMeta');
+  const resultsEl = document.getElementById('searchResults');
+
+  meta.textContent = filtered.length + ' jump' + (filtered.length > 1 ? 's' : '') +
+    (filtered.length > SEARCH_RESULT_CAP ? ' — ' + SEARCH_RESULT_CAP + ' premiers affichés, affine ta recherche' : '');
+
+  if(!filtered.length){
+    resultsEl.innerHTML = '<div class="search-empty">Aucun jump trouvé.</div>';
+    return;
+  }
+
+  resultsEl.innerHTML = filtered.slice(0, SEARCH_RESULT_CAP).map(j => {
+    const kingdoms = (j.location || []).map(l => `<span class="sri-tag">${escapeHtml(l)}</span>`).join('');
+    const diff = j.diff ? `<span class="sri-tag sri-diff">${escapeHtml(String(j.diff))}</span>` : '';
+    const type = j.type ? `<span class="sri-tag">${escapeHtml(Array.isArray(j.type) ? j.type.join(', ') : j.type)}</span>` : '';
+
+    const joinField = (v) => Array.isArray(v) ? v.join(', ') : v;
+
+    const locationRow = (j.location && j.location.length) ? `<div class="sri-detail-row"><span class="sri-detail-label">Location</span><span>${escapeHtml(j.location.join(', '))}</span></div>` : '';
+    const diffRow = j.diff ? `<div class="sri-detail-row"><span class="sri-detail-label">Difficulty</span><span>${escapeHtml(String(j.diff))}</span></div>` : '';
+    const typeRow = j.type ? `<div class="sri-detail-row"><span class="sri-detail-label">Type</span><span>${escapeHtml(joinField(j.type))}</span></div>` : '';
+    const taserRow = (j.taser && j.taser.length) ? `<div class="sri-detail-row"><span class="sri-detail-label">Taser</span><span>${escapeHtml(joinField(j.taser))}</span></div>` : '';
+
+    const finder = (j.finder && j.finder.length) ? j.finder.join(', ') : null;
+    const prover = (j.prover && j.prover.length) ? j.prover.join(', ') : null;
+    let peopleRow;
+    if(finder && prover && finder.toLowerCase() === prover.toLowerCase()){
+      peopleRow = `<div class="sri-detail-row"><span class="sri-detail-label">Found & Proven by</span><span>${escapeHtml(finder)}</span></div>`;
+    } else {
+      const finderRow = finder ? `<div class="sri-detail-row"><span class="sri-detail-label">Finder</span><span>${escapeHtml(finder)}</span></div>` : '';
+      const proverRow = prover ? `<div class="sri-detail-row"><span class="sri-detail-label">Prover</span><span>${escapeHtml(prover)}</span></div>` : '';
+      peopleRow = finderRow + proverRow;
+    }
+    const tierRow = j.tier ? `<div class="sri-detail-row"><span class="sri-detail-label">Tier</span><span>${escapeHtml(j.tier)}</span></div>` : '';
+    const linkRow = (j.links && j.links.length)
+      ? `<div class="sri-detail-row"><span class="sri-detail-label">Proof</span><span>${j.links.map((l, i) => `<a href="${escapeHtml(l)}" target="_blank" rel="noopener">Link${j.links.length > 1 ? ' ' + (i + 1) : ''} ↗</a>`).join('')}</span></div>`
+      : '';
+    const detailsContent = diffRow + typeRow + locationRow + taserRow + peopleRow + tierRow + linkRow ||
+      '<div class="sri-detail-empty">No extra info.</div>';
+
+    const quickLink = (j.links && j.links[0])
+      ? `<a class="sri-link" href="${escapeHtml(j.links[0])}" target="_blank" rel="noopener" title="Voir la preuve">↗</a>`
+      : '';
+
+    return `<div class="search-result-item">
+      <div class="sri-row">
+        <div class="sri-main">
+          <div class="sri-name">${escapeHtml(j.name || '(sans nom)')}</div>
+          <div class="sri-tags">${kingdoms}${diff}${type}</div>
+        </div>
+        ${quickLink}
+        <button type="button" class="sri-toggle" aria-label="Voir les détails" aria-expanded="false"></button>
+      </div>
+      <div class="sri-details"><div class="sri-details-inner">${detailsContent}</div></div>
+    </div>`;
+  }).join('');
+}
+
+/* ===== GÉNÉRATION DE LISTE PASTE.EE (même worker que la commande !list du chat) ===== */
+async function generateList(){
+  const btn = document.getElementById('generateListBtn');
+  const statusEl = document.getElementById('listStatus');
+
+  const filtered = getFilteredJumps({ ignoreName: true });
+  if(!filtered.length){
+    statusEl.textContent = 'Aucun jump ne correspond à ces critères.';
+    return;
+  }
+
+  const lines = filtered.map(j => {
+    const parts = [];
+    if(j.location && j.location.length) parts.push('location: ' + j.location.join('; '));
+    if(j.diff) parts.push('diff: ' + j.diff);
+    if(j.type) parts.push('type: ' + (Array.isArray(j.type) ? j.type.join('; ') : j.type));
+    return parts.length ? `${j.name} [${parts.join(', ')}]` : j.name;
+  });
+  const content = lines.join('\n');
+
+  btn.disabled = true;
+  statusEl.textContent = 'Génération de la liste (' + filtered.length + ' jump' + (filtered.length > 1 ? 's' : '') + ')...';
+
+  try{
+    const res = await fetch('https://my-worker-simple.daniel-a-bernard.workers.dev/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ content })
+    });
+    const data = await res.json();
+    if(data && data.url){
+      statusEl.innerHTML = 'Liste créée : <a href="' + escapeHtml(data.url) + '" target="_blank" rel="noopener">' + escapeHtml(data.url) + '</a>';
+    } else {
+      statusEl.textContent = 'Erreur : ' + (data && data.error ? data.error : 'lien non créé');
+    }
+  } catch(err){
+    statusEl.textContent = 'Erreur : ' + (err && err.message ? err.message : 'erreur inconnue');
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+initSearch();
+</script>
 </body>
 </html>
