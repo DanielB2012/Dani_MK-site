@@ -863,7 +863,7 @@ function getFilteredJumps(opts){
 
   if(nameQ){
     if(searchNameMode === 'strict'){
-      results = results.filter(j => (j.name || '').toLowerCase().includes(nameQ));
+      results = results.filter(j => (j.name || '').toLowerCase() === nameQ);
     } else {
       results = results
         .map(j => ({ j, score: nameMatchScore(j.name, nameQ) }))
